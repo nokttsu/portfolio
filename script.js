@@ -353,14 +353,15 @@ function initLoadSequence(firstVisit) {
   if (firstVisit) tl.from(".header", { y: -20, autoAlpha: 0, duration: 0.6 });
 
   // Home page
+  // Strict top-down order: lead text → divider line → email/CV → tabs → experience
   const lead = $(".intro__lead");
   if (lead) {
     const split = SplitText.create(lead, { type: "lines", mask: "lines" });
     tl.from(split.lines, { yPercent: 110, stagger: 0.08, onComplete: () => split.revert() }, "-=0.3");
-    tl.from(".intro__divider", { scaleX: 0, transformOrigin: "left center", duration: 0.7, ease: "power2.inOut" }, "-=0.4");
-    tl.from(".intro__links > *", { y: 16, autoAlpha: 0, stagger: 0.1, duration: 0.6 }, "-=0.4");
-    tl.from(".tabs__item", { y: 28, autoAlpha: 0, stagger: 0.07, duration: 0.6 }, "-=0.3");
-    tl.from('[data-panel="experience"] .exp-card', { y: 16, autoAlpha: 0, stagger: 0.06, duration: 0.5 }, "-=0.4");
+    tl.from(".intro__divider", { scaleX: 0, transformOrigin: "left center", duration: 0.5, ease: "power2.inOut" }, "-=0.1");
+    tl.from(".intro__links > *", { y: 16, autoAlpha: 0, stagger: 0.08, duration: 0.5 }, "-=0.1");
+    tl.from(".tabs__item", { y: 28, autoAlpha: 0, stagger: 0.07, duration: 0.6 }, "-=0.1");
+    tl.from('[data-panel="experience"] .exp-card', { y: 16, autoAlpha: 0, stagger: 0.06, duration: 0.5 }, "-=0.15");
   }
 
   // Project page
