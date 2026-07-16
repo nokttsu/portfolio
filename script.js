@@ -15,12 +15,8 @@ const I18N = {
     exp2: "Art director",
     exp3: "communications & UI",
     exp4: "Freelance",
-    skillsProductLabel: "Product",
-    skillsProduct: "UX/UI, design systems, prototyping, user research",
-    skillsVisualLabel: "Visual",
-    skillsVisual: "Art direction, identity, illustration, motion",
-    skillsToolsLabel: "Tools",
-    skillsTools: "Figma, Adobe CC, Blender, AI workflows",
+    skillsText:
+      "UX/UI, design systems, prototyping and user research. Art direction, identity, illustration, motion. Figma, Adobe CC, Blender, AI workflows.",
     aboutText:
       "I'm Vadim, a product designer with 8+ years across fintech, aviation and communication design. I care about visual systems that scale and interfaces that feel effortless.",
     projectsTitle: "Projects",
@@ -45,12 +41,8 @@ const I18N = {
     exp2: "Арт-директор",
     exp3: "Коммуникации и UI",
     exp4: "Фриланс",
-    skillsProductLabel: "Продукт",
-    skillsProduct: "UX/UI, дизайн-системы, прототипирование, исследования",
-    skillsVisualLabel: "Визуал",
-    skillsVisual: "Арт-дирекшн, айдентика, иллюстрация, моушн",
-    skillsToolsLabel: "Инструменты",
-    skillsTools: "Figma, Adobe CC, Blender, AI-инструменты",
+    skillsText:
+      "UX/UI, дизайн-системы, прототипирование и исследования. Арт-дирекшн, айдентика, иллюстрация, моушн. Figma, Adobe CC, Blender, AI-инструменты.",
     aboutText:
       "Я Вадим, продуктовый дизайнер с опытом 8+ лет в финтехе, авиации и коммуникационном дизайне. Люблю визуальные системы, которые масштабируются, и интерфейсы, которые ощущаются лёгкими.",
     projectsTitle: "Проекты",
