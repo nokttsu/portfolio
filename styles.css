@@ -192,8 +192,11 @@ html {
 }
 
 .intro__lead {
-  font-size: 16px;
-  line-height: 24px;
+  font-family: "Inter Tight", "Inter", sans-serif;
+  font-weight: 600;
+  font-size: 44px;
+  line-height: 48px;
+  letter-spacing: -0.88px;
 }
 
 .intro__divider {
@@ -260,7 +263,7 @@ html {
   font-family: "Inter Tight", "Inter", sans-serif;
   font-size: 36px;
   line-height: 40px;
-  letter-spacing: -0.8px;
+  letter-spacing: -0.72px;
   white-space: nowrap;
   overflow-x: auto;
   scrollbar-width: none;
@@ -338,7 +341,7 @@ html {
   font-family: "Inter Tight", "Inter", sans-serif;
   font-size: 36px;
   line-height: 40px;
-  letter-spacing: -0.8px;
+  letter-spacing: -0.72px;
   font-weight: 400;
 }
 
