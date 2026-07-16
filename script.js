@@ -6,7 +6,7 @@ const $$ = (s, c = document) => [...c.querySelectorAll(s)];
 const I18N = {
   en: {
     name: "Vadim Prisyachev",
-    intro: "Leading visual systems and UI for digital products, aligning aesthetics with product and business goals",
+    intro: "Leading visual systems and UI for digital products",
     tabExperience: "Experience",
     tabSkills: "Skills",
     tabAbout: "About me",
@@ -32,7 +32,7 @@ const I18N = {
   },
   ru: {
     name: "Вадим Присячев",
-    intro: "Развиваю визуальные системы и интерфейсы цифровых продуктов, совмещая эстетику с целями продукта и бизнеса",
+    intro: "Развиваю визуальные системы и интерфейсы цифровых продуктов",
     tabExperience: "Опыт",
     tabSkills: "Навыки",
     tabAbout: "Обо мне",
@@ -98,12 +98,23 @@ function mergeContentIntoDicts() {
     C.projects.forEach((p, i) => {
       d["proj" + i + "name"] = g(p.name);
       d["proj" + i + "sub"] = g(p.subtitle);
-      (p.sections || []).forEach((s, j) => {
-        d["proj" + i + "s" + j + "t"] = g(s.title);
-        d["proj" + i + "s" + j + "x"] = g(s.text);
+      caseBlocks(p).forEach((b, k) => {
+        if (b.type !== "img") d["proj" + i + "b" + k] = g(b.text);
       });
     });
   }
+}
+
+// Case body is a flat list of Notion-style blocks; legacy `sections` are converted
+function caseBlocks(p) {
+  if (p.body) return p.body;
+  const blocks = [];
+  (p.sections || []).forEach((s) => {
+    if (s.title && (s.title.en || s.title.ru)) blocks.push({ type: "h2", text: s.title });
+    if (s.text && (s.text.en || s.text.ru)) blocks.push({ type: "p", text: s.text });
+    blocks.push({ type: "img", src: s.image || "" });
+  });
+  return blocks;
 }
 
 function renderContent() {
@@ -172,16 +183,23 @@ function renderContent() {
 
     const body = $(".project-body");
     const other = $(".other-projects");
-    $$(".overview", body).forEach((s) => s.remove());
-    (p.sections || []).forEach((s, j) => {
-      const sec = document.createElement("section");
-      sec.className = "overview";
-      sec.innerHTML = `
-        <h2 class="overview__title" data-i18n="proj${idx}s${j}t"></h2>
-        <div class="overview__text"><p data-i18n="proj${idx}s${j}x"></p></div>
-        ${s.image ? `<img class="overview__image" src="${esc(s.image)}" alt="" loading="lazy">` : '<div class="overview__image"></div>'}`;
-      body.insertBefore(sec, other);
-    });
+    $$(".overview, .case-body", body).forEach((s) => s.remove());
+    const blocks = caseBlocks(p);
+    if (blocks.length) {
+      const wrap = document.createElement("div");
+      wrap.className = "case-body";
+      wrap.innerHTML = blocks
+        .map((b, k) => {
+          if (b.type === "h2") return `<h2 class="case-h2" data-i18n="proj${idx}b${k}"></h2>`;
+          if (b.type === "img")
+            return b.src
+              ? `<img class="case-img" src="${esc(b.src)}" alt="" loading="lazy">`
+              : '<div class="case-img"></div>';
+          return `<div class="case-p"><p data-i18n="proj${idx}b${k}"></p></div>`;
+        })
+        .join("");
+      body.insertBefore(wrap, other);
+    }
 
     // Other projects: everything except the current one, first four
     const others = C.projects.map((_, i) => i).filter((i) => i !== idx).slice(0, 4);
@@ -436,22 +454,25 @@ function initPreloader(onDone) {
 // ---------- Case page table of contents ----------
 
 function initToc() {
-  const sections = $$(".overview, .other-projects");
-  if (!sections.length) return;
+  // Anchors: every case heading block + the "other projects" section
+  const anchors = [...$$(".case-h2"), ...$$(".other-projects .section-title")].map((titleEl) => ({
+    el: titleEl.closest(".other-projects") || titleEl,
+    titleEl,
+  }));
+  if (!anchors.length || !$(".project-hero")) return;
 
   const toc = document.createElement("nav");
   toc.className = "toc";
   toc.setAttribute("aria-label", "Page sections");
 
-  const items = sections.map((sec) => {
-    const title = sec.querySelector(".overview__title, .section-title");
+  const items = anchors.map(({ el: sec, titleEl }) => {
     const btn = document.createElement("button");
     btn.type = "button";
     btn.className = "toc__item";
     btn.innerHTML = '<span class="toc__label mono"></span><span class="toc__line"></span>';
     // Read the label lazily so it always matches the current language
     btn.addEventListener("mouseenter", () => {
-      btn.querySelector(".toc__label").textContent = title ? title.textContent : "";
+      btn.querySelector(".toc__label").textContent = titleEl.textContent;
     });
     btn.addEventListener("click", () => {
       const y = sec.getBoundingClientRect().top + window.scrollY - 72;
@@ -464,11 +485,13 @@ function initToc() {
   document.body.appendChild(toc);
 
   const setActive = (i) => items.forEach((b, j) => b.classList.toggle("is-active", i === j));
-  sections.forEach((sec, i) => {
+  anchors.forEach(({ el: sec }, i) => {
+    const next = anchors[i + 1];
     ScrollTrigger.create({
       trigger: sec,
       start: "top 55%",
-      end: "bottom 55%",
+      endTrigger: next ? next.el : document.documentElement,
+      end: next ? "top 55%" : "bottom bottom",
       onToggle: (self) => self.isActive && setActive(i),
     });
   });
@@ -521,15 +544,15 @@ function initLoadSequence(firstVisit) {
 }
 
 const SCROLL_FX_TARGETS =
-  ".projects .section-title, .other-projects .section-title, .overview__title, " +
-  ".overview__text, .overview__image, .card, .mini-card";
+  ".projects .section-title, .other-projects .section-title, .case-h2, " +
+  ".case-p, .case-img, .card, .mini-card";
 
 function initScrollEffects() {
   // Release the pre-hidden state; the from-tweens below take over per element
   gsap.set(SCROLL_FX_TARGETS, { clearProps: "opacity,visibility" });
 
   // Section titles slide up out of a line mask
-  $$(".projects .section-title, .other-projects .section-title, .overview__title").forEach((el) => {
+  $$(".projects .section-title, .other-projects .section-title, .case-h2").forEach((el) => {
     const split = SplitText.create(el, { type: "lines", mask: "lines" });
     gsap.from(split.lines, {
       yPercent: 110,
@@ -541,15 +564,14 @@ function initScrollEffects() {
     });
   });
 
-  // Overview blocks fade in
-  $$(".overview").forEach((sec) => {
-    gsap.from([sec.querySelector(".overview__text"), sec.querySelector(".overview__image")], {
+  // Case text and image blocks fade in
+  $$(".case-p, .case-img").forEach((elm) => {
+    gsap.from(elm, {
       y: 32,
       autoAlpha: 0,
       duration: 0.8,
       ease: "power3.out",
-      stagger: 0.15,
-      scrollTrigger: { trigger: sec, start: "top 80%", once: true },
+      scrollTrigger: { trigger: elm, start: "top 85%", once: true },
     });
   });
 

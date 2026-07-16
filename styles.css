@@ -258,7 +258,7 @@ html {
   display: flex;
   gap: 16px;
   font-family: "Inter Tight", "Inter", sans-serif;
-  font-size: 40px;
+  font-size: 36px;
   line-height: 40px;
   letter-spacing: -0.8px;
   white-space: nowrap;
@@ -336,7 +336,7 @@ html {
 
 .section-title {
   font-family: "Inter Tight", "Inter", sans-serif;
-  font-size: 40px;
+  font-size: 36px;
   line-height: 40px;
   letter-spacing: -0.8px;
   font-weight: 400;
@@ -560,6 +560,42 @@ html {
   gap: 32px;
 }
 
+/* ---------- Case body: flat Notion-style blocks ---------- */
+
+.case-body {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  padding: 32px 12px 0;
+}
+
+.case-h2 {
+  font-size: 24px;
+  line-height: 32px;
+  letter-spacing: -0.48px;
+  font-weight: 400;
+}
+
+.case-h2:not(:first-child) {
+  margin-top: 16px;
+}
+
+.case-p p {
+  font-size: 16px;
+  line-height: 24px;
+  white-space: pre-line;
+}
+
+.case-img {
+  display: block;
+  width: 100%;
+  aspect-ratio: 928 / 649.6;
+  background: var(--placeholder);
+  border: 0.5px solid var(--img-border);
+  border-radius: 4px;
+  object-fit: cover;
+}
+
 .other-projects__grid {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -586,6 +622,7 @@ html {
   .projects,
   .project-intro,
   .overview,
+  .case-body,
   .other-projects {
     padding-left: 0;
     padding-right: 0;
