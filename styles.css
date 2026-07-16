@@ -538,12 +538,19 @@ html {
   margin-top: 12px;
 }
 
+.overview__text p {
+  /* Content texts store paragraphs as blank lines */
+  white-space: pre-line;
+}
+
 .overview__image {
+  display: block;
   width: 100%;
   aspect-ratio: 928 / 649.6;
   background: var(--placeholder);
   border: 0.5px solid var(--img-border);
   border-radius: 4px;
+  object-fit: cover;
 }
 
 .other-projects {

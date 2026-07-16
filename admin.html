@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Админка — портфолио</title>
+  <meta name="robots" content="noindex, nofollow">
+  <link rel="icon" href="favicon.svg" type="image/svg+xml">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&family=IBM+Plex+Mono&display=swap" rel="stylesheet">
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { background: #000; color: #fff; font-family: "Inter", sans-serif; font-size: 14px; line-height: 1.5; padding: 24px 16px 120px; }
+    .wrap { max-width: 720px; margin: 0 auto; display: flex; flex-direction: column; gap: 32px; }
+    h1 { font-size: 24px; font-weight: 400; }
+    h2 { font-size: 16px; font-weight: 600; margin-bottom: 4px; }
+    .mono { font-family: "IBM Plex Mono", monospace; }
+    .hint { color: rgba(255,255,255,0.5); font-size: 12px; }
+    fieldset { border: 1px solid #1f1f1f; border-radius: 12px; padding: 16px; display: flex; flex-direction: column; gap: 12px; }
+    legend { padding: 0 8px; font-family: "IBM Plex Mono", monospace; font-size: 11px; text-transform: uppercase; color: rgba(255,255,255,0.6); }
+    label { display: flex; flex-direction: column; gap: 4px; font-size: 12px; color: rgba(255,255,255,0.6); }
+    input[type=text], input[type=password], textarea {
+      background: #111; border: 1px solid #1f1f1f; border-radius: 8px; color: #fff;
+      font: inherit; font-size: 14px; padding: 8px 10px; width: 100%;
+    }
+    textarea { min-height: 72px; resize: vertical; }
+    input:focus, textarea:focus { outline: none; border-color: #555; }
+    .row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+    @media (max-width: 560px) { .row { grid-template-columns: 1fr; } }
+    button { background: #1f1f1f; color: #fff; border: none; border-radius: 8px; padding: 8px 14px; font: inherit; cursor: pointer; }
+    button:hover { background: #2c2c2c; }
+    button.primary { background: #fff; color: #000; font-weight: 600; }
+    button.danger { background: none; color: rgba(255,80,80,0.9); padding: 4px 8px; }
+    button.small { padding: 4px 10px; font-size: 12px; }
+    .item { border: 1px solid #1f1f1f; border-radius: 10px; padding: 12px; display: flex; flex-direction: column; gap: 10px; }
+    .item-head { display: flex; align-items: center; gap: 8px; }
+    .item-head .title { flex: 1; font-weight: 600; }
+    .savebar { position: fixed; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.9); border-top: 1px solid #1f1f1f;
+      padding: 12px 16px; display: flex; gap: 12px; align-items: center; justify-content: center; }
+    #status { font-size: 12px; color: rgba(255,255,255,0.6); }
+    #status.ok { color: #7be07b; } #status.err { color: #ff7b7b; }
+    .imgctl { display: flex; align-items: center; gap: 8px; }
+    .imgctl img { width: 72px; height: 50px; object-fit: cover; border-radius: 6px; border: 1px solid #1f1f1f; background: #171717; }
+    a { color: #9db8ff; }
+  </style>
+</head>
+<body>
+<div class="wrap">
+  <h1>Админка портфолио</h1>
+
+  <fieldset>
+    <legend>Доступ</legend>
+    <label>GitHub token (fine-grained, права Contents: Read and write на репозиторий nokttsu/portfolio)
+      <input type="password" id="token" placeholder="github_pat_…" autocomplete="off">
+    </label>
+    <div class="hint">Токен хранится только в этом браузере (localStorage). Создать: github.com → Settings → Developer settings → Fine-grained tokens → выбрать только репозиторий portfolio → Repository permissions → Contents: Read and write.</div>
+    <div><button id="loadBtn" class="primary">Загрузить контент</button></div>
+  </fieldset>
+
+  <div id="editor" style="display:none; flex-direction:column; gap:32px;"></div>
+</div>
+
+<div class="savebar" id="savebar" style="display:none;">
+  <button class="primary" id="saveBtn">Сохранить и опубликовать</button>
+  <span id="status"></span>
+</div>
+
+<script>
+const REPO = "nokttsu/portfolio";
+const BRANCH = "main";
+let DATA = null, SHA = null;
+
+const $ = (s, c=document) => c.querySelector(s);
+const tokenInput = $("#token");
+tokenInput.value = localStorage.getItem("gh-token") || "";
+tokenInput.addEventListener("input", () => localStorage.setItem("gh-token", tokenInput.value.trim()));
+
+const b64encode = (str) => btoa(String.fromCharCode(...new TextEncoder().encode(str)));
+const b64decode = (b64) => new TextDecoder().decode(Uint8Array.from(atob(b64.replace(/\n/g,"")), c => c.charCodeAt(0)));
+
+async function api(path, opts = {}) {
+  const headers = { "Accept": "application/vnd.github+json", ...(opts.headers || {}) };
+  const t = tokenInput.value.trim();
+  if (t) headers["Authorization"] = "Bearer " + t;
+  const r = await fetch("https://api.github.com/repos/" + REPO + "/" + path, { ...opts, headers });
+  if (!r.ok) throw new Error((await r.json().catch(()=>({}))).message || r.status);
+  return r.json();
+}
+
+function setStatus(msg, cls) { const s = $("#status"); s.textContent = msg; s.className = cls || ""; }
+
+$("#loadBtn").addEventListener("click", async () => {
+  try {
+    setStatus("Загружаю…");
+    const f = await api("contents/content.json?ref=" + BRANCH);
+    SHA = f.sha;
+    DATA = JSON.parse(b64decode(f.content));
+    buildEditor();
+    $("#editor").style.display = "flex";
+    $("#savebar").style.display = "flex";
+    setStatus("Контент загружен", "ok");
+  } catch (e) { setStatus("Ошибка загрузки: " + e.message, "err"); }
+});
+
+$("#saveBtn") && document.addEventListener("click", async (e) => {
+  if (e.target.id !== "saveBtn") return;
+  try {
+    if (!tokenInput.value.trim()) { setStatus("Нужен токен для сохранения", "err"); return; }
+    setStatus("Сохраняю…");
+    const res = await api("contents/content.json", {
+      method: "PUT",
+      body: JSON.stringify({
+        message: "content: update via admin",
+        content: b64encode(JSON.stringify(DATA, null, 2) + "\n"),
+        sha: SHA, branch: BRANCH
+      })
+    });
+    SHA = res.content.sha;
+    setStatus("Сохранено! Сайт обновится через ~1 минуту", "ok");
+  } catch (e) { setStatus("Ошибка сохранения: " + e.message, "err"); }
+});
+
+async function uploadImage(file) {
+  const safe = file.name.toLowerCase().replace(/[^a-z0-9.]+/g, "-");
+  const path = "assets/uploads/" + Date.now() + "-" + safe;
+  const buf = await file.arrayBuffer();
+  let bin = ""; const bytes = new Uint8Array(buf);
+  for (let i = 0; i < bytes.length; i += 0x8000) bin += String.fromCharCode(...bytes.subarray(i, i + 0x8000));
+  await api("contents/" + path, {
+    method: "PUT",
+    body: JSON.stringify({ message: "content: upload " + safe, content: btoa(bin), branch: BRANCH })
+  });
+  return path;
+}
+
+// ---------- form builders ----------
+
+const el = (html) => { const d = document.createElement("div"); d.innerHTML = html.trim(); return d.firstChild; };
+
+function textField(label, obj, key, textarea) {
+  const node = el(`<label>${label}<${textarea ? "textarea" : 'input type="text"'}></${textarea ? "textarea" : "input"}></label>`);
+  const input = node.querySelector("input,textarea");
+  input.value = obj[key] ?? "";
+  input.addEventListener("input", () => (obj[key] = input.value));
+  return node;
+}
+
+function biField(label, obj, key, textarea) {
+  if (typeof obj[key] !== "object" || obj[key] === null) obj[key] = { en: obj[key] || "", ru: "" };
+  const wrap = el('<div class="row"></div>');
+  wrap.appendChild(textField(label + " (EN)", obj[key], "en", textarea));
+  wrap.appendChild(textField(label + " (RU)", obj[key], "ru", textarea));
+  return wrap;
+}
+
+function imageField(label, obj, key) {
+  const wrap = el(`<label>${label}<div class="imgctl"><img alt=""><input type="file" accept="image/*"><button type="button" class="small">Убрать</button></div></label>`);
+  const [img, file, clearBtn] = [wrap.querySelector("img"), wrap.querySelector("input"), wrap.querySelector("button")];
+  const refresh = () => (img.src = obj[key] || "");
+  refresh();
+  file.addEventListener("change", async () => {
+    if (!file.files[0]) return;
+    try { setStatus("Загружаю картинку…"); obj[key] = await uploadImage(file.files[0]); refresh(); setStatus("Картинка загружена (не забудь Сохранить)", "ok"); }
+    catch (e) { setStatus("Ошибка загрузки картинки: " + e.message, "err"); }
+  });
+  clearBtn.addEventListener("click", () => { obj[key] = ""; refresh(); });
+  return wrap;
+}
+
+function listEditor(title, arr, makeItem, makeNew) {
+  const fs = el(`<fieldset><legend>${title}</legend><div class="items" style="display:flex;flex-direction:column;gap:12px;"></div><div><button type="button" class="small">+ Добавить</button></div></fieldset>`);
+  const box = fs.querySelector(".items");
+  const render = () => {
+    box.innerHTML = "";
+    arr.forEach((item, i) => {
+      const card = el('<div class="item"></div>');
+      const head = el(`<div class="item-head"><span class="title mono">#${i + 1}</span></div>`);
+      const up = el('<button type="button" class="small">↑</button>');
+      const down = el('<button type="button" class="small">↓</button>');
+      const del = el('<button type="button" class="danger small">Удалить</button>');
+      up.addEventListener("click", () => { if (i > 0) { [arr[i-1], arr[i]] = [arr[i], arr[i-1]]; render(); } });
+      down.addEventListener("click", () => { if (i < arr.length - 1) { [arr[i+1], arr[i]] = [arr[i], arr[i+1]]; render(); } });
+      del.addEventListener("click", () => { if (confirm("Удалить элемент #" + (i + 1) + "?")) { arr.splice(i, 1); render(); } });
+      head.append(up, down, del);
+      card.appendChild(head);
+      makeItem(card, item, i);
+      box.appendChild(card);
+    });
+  };
+  fs.querySelector("button.small:last-child") ;
+  fs.lastElementChild.querySelector("button").addEventListener("click", () => { arr.push(makeNew()); render(); });
+  render();
+  return fs;
+}
+
+function buildEditor() {
+  const ed = $("#editor");
+  ed.innerHTML = "";
+
+  const site = el("<fieldset><legend>Сайт</legend></fieldset>");
+  site.appendChild(biField("Имя", DATA.site, "name"));
+  site.appendChild(biField("Вступительный текст", DATA.site, "intro", true));
+  const contacts = el('<div class="row"></div>');
+  contacts.appendChild(textField("Email", DATA.site, "email"));
+  contacts.appendChild(textField("Ссылка на CV (Google Drive)", DATA.site, "cvUrl"));
+  site.appendChild(contacts);
+  site.appendChild(textField("Ссылка Telegram", DATA.site, "telegram"));
+  site.appendChild(biField("Текст кнопки внизу", DATA.site, "cta"));
+  ed.appendChild(site);
+
+  const texts = el("<fieldset><legend>Табы</legend></fieldset>");
+  texts.appendChild(biField("Название таба «Опыт»", DATA.tabs, "experience"));
+  texts.appendChild(biField("Название таба «Навыки»", DATA.tabs, "skills"));
+  texts.appendChild(biField("Название таба «Обо мне»", DATA.tabs, "about"));
+  texts.appendChild(biField("Текст «Навыки»", DATA, "skillsText", true));
+  texts.appendChild(biField("Текст «Обо мне»", DATA, "aboutText", true));
+  ed.appendChild(texts);
+
+  ed.appendChild(listEditor("Опыт", DATA.experience, (card, e) => {
+    card.appendChild(textField("Компания", e, "company"));
+    card.appendChild(biField("Роль", e, "role"));
+    const r = el('<div class="row"></div>');
+    r.appendChild(textField("Период (пусто, если текущее место)", e, "period"));
+    const cur = el('<label>Текущее место<input type="text" placeholder="да / нет"></label>');
+    const ci = cur.querySelector("input");
+    ci.value = e.current ? "да" : "нет";
+    ci.addEventListener("input", () => (e.current = /^д|^y|^1/i.test(ci.value.trim())));
+    r.appendChild(cur);
+    card.appendChild(r);
+    card.appendChild(imageField("Логотип (40×40)", e, "logo"));
+  }, () => ({ company: "", role: { en: "", ru: "" }, period: "", logo: "", round: false, current: false })));
+
+  ed.appendChild(listEditor("Проекты", DATA.projects, (card, p, i) => {
+    card.appendChild(biField("Название", p, "name"));
+    card.appendChild(biField("Подзаголовок (на странице кейса)", p, "subtitle"));
+    const aw = textField("Награды/метрики (через запятую)", { v: (p.awards || []).join(", ") }, "v");
+    aw.querySelector("input").addEventListener("input", (ev) => (p.awards = ev.target.value.split(",").map(s => s.trim()).filter(Boolean)));
+    card.appendChild(aw);
+    card.appendChild(imageField("Обложка", p, "image"));
+    if (!p.sections) p.sections = [];
+    card.appendChild(listEditor("Секции кейса", p.sections, (sc, s) => {
+      sc.appendChild(biField("Заголовок", s, "title"));
+      sc.appendChild(biField("Текст (пустая строка = новый абзац)", s, "text", true));
+      sc.appendChild(imageField("Картинка секции", s, "image"));
+    }, () => ({ title: { en: "Overview", ru: "Обзор" }, text: { en: "", ru: "" }, image: "" })));
+  }, () => ({ name: { en: "New project", ru: "Новый проект" }, subtitle: { en: "", ru: "" }, awards: [], image: "", sections: [] })));
+}
+</script>
+</body>
+</html>

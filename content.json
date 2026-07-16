@@ -1,0 +1,141 @@
+{
+  "site": {
+    "name": { "en": "Vadim Prisyachev", "ru": "Вадим Присячев" },
+    "intro": {
+      "en": "Leading visual systems and UI for digital products, aligning aesthetics with product and business goals",
+      "ru": "Развиваю визуальные системы и интерфейсы цифровых продуктов, совмещая эстетику с целями продукта и бизнеса"
+    },
+    "email": "nokttsu@mail.ru",
+    "cvUrl": "https://drive.google.com/",
+    "telegram": "https://t.me/nokttsu",
+    "cta": { "en": "Contact via Telegram", "ru": "Написать в Telegram" }
+  },
+  "tabs": {
+    "experience": { "en": "Experience", "ru": "Опыт" },
+    "skills": { "en": "Skills", "ru": "Навыки" },
+    "about": { "en": "About me", "ru": "Обо мне" }
+  },
+  "skillsText": {
+    "en": "UX/UI, design systems, prototyping and user research. Art direction, identity, illustration, motion. Figma, Adobe CC, Blender, AI workflows.",
+    "ru": "UX/UI, дизайн-системы, прототипирование и исследования. Арт-дирекшн, айдентика, иллюстрация, моушн. Figma, Adobe CC, Blender, AI-инструменты."
+  },
+  "aboutText": {
+    "en": "I'm Vadim, a product designer with 8+ years across fintech, aviation and communication design. I care about visual systems that scale and interfaces that feel effortless.",
+    "ru": "Я Вадим, продуктовый дизайнер с опытом 8+ лет в финтехе, авиации и коммуникационном дизайне. Люблю визуальные системы, которые масштабируются, и интерфейсы, которые ощущаются лёгкими."
+  },
+  "ui": {
+    "currentlyIn": { "en": "Currently in", "ru": "Сейчас" },
+    "copied": { "en": "Copied", "ru": "Скопировано" },
+    "projectsTitle": { "en": "Projects", "ru": "Проекты" },
+    "otherProjects": { "en": "Other projects", "ru": "Другие проекты" }
+  },
+  "experience": [
+    {
+      "company": "Aeroflot",
+      "role": { "en": "Senior Product Designer", "ru": "Старший продуктовый дизайнер" },
+      "period": "",
+      "logo": "assets/logo-aeroflot.png",
+      "round": false,
+      "current": true
+    },
+    {
+      "company": "Plan9",
+      "role": { "en": "Art director", "ru": "Арт-директор" },
+      "period": "2023—2024",
+      "logo": "assets/logo-plan9.png",
+      "round": true,
+      "current": false
+    },
+    {
+      "company": "div.",
+      "role": { "en": "communications & UI", "ru": "Коммуникации и UI" },
+      "period": "2020—2023",
+      "logo": "assets/logo-div.png",
+      "round": false,
+      "current": false
+    },
+    {
+      "company": "Freelance",
+      "role": { "en": "", "ru": "" },
+      "period": "2017—2020",
+      "logo": "assets/logo-freelance.png",
+      "round": false,
+      "current": false
+    }
+  ],
+  "projects": [
+    {
+      "name": { "en": "Project name", "ru": "Название проекта" },
+      "subtitle": { "en": "Russia's largest airline with over 100 years of history", "ru": "Крупнейшая авиакомпания России с более чем 100-летней историей" },
+      "awards": ["Award", "+20% CTR", "+10% MAU"],
+      "image": "",
+      "sections": [
+        {
+          "title": { "en": "Overview", "ru": "Обзор" },
+          "text": {
+            "en": "Lead designer at Aeroflot — Russia's flag carrier and a member of the global SkyTeam alliance.\n\nI drive the redesign of the mobile app and the Aeroflot Bonus loyalty account, and act as art director for the product design team.",
+            "ru": "Ведущий дизайнер в Аэрофлоте — национальном авиаперевозчике России и участнике глобального альянса SkyTeam.\n\nРуковожу редизайном мобильного приложения и личного кабинета Аэрофлот Бонус, выступаю арт-директором продуктовой команды дизайна."
+          },
+          "image": ""
+        },
+        {
+          "title": { "en": "Overview", "ru": "Обзор" },
+          "text": {
+            "en": "Lead designer at Aeroflot — Russia's flag carrier and a member of the global SkyTeam alliance.",
+            "ru": "Ведущий дизайнер в Аэрофлоте — национальном авиаперевозчике России и участнике глобального альянса SkyTeam."
+          },
+          "image": ""
+        }
+      ]
+    },
+    {
+      "name": { "en": "Project name", "ru": "Название проекта" },
+      "subtitle": { "en": "", "ru": "" },
+      "awards": ["Award", "+20% CTR", "+10% MAU"],
+      "image": "",
+      "sections": []
+    },
+    {
+      "name": { "en": "Project name", "ru": "Название проекта" },
+      "subtitle": { "en": "", "ru": "" },
+      "awards": ["Award", "+20% CTR", "+10% MAU"],
+      "image": "",
+      "sections": []
+    },
+    {
+      "name": { "en": "Project name", "ru": "Название проекта" },
+      "subtitle": { "en": "", "ru": "" },
+      "awards": ["Award", "+20% CTR", "+10% MAU"],
+      "image": "",
+      "sections": []
+    },
+    {
+      "name": { "en": "Project name", "ru": "Название проекта" },
+      "subtitle": { "en": "", "ru": "" },
+      "awards": ["Award", "+20% CTR", "+10% MAU"],
+      "image": "",
+      "sections": []
+    },
+    {
+      "name": { "en": "Project name", "ru": "Название проекта" },
+      "subtitle": { "en": "", "ru": "" },
+      "awards": ["Award", "+20% CTR", "+10% MAU"],
+      "image": "",
+      "sections": []
+    },
+    {
+      "name": { "en": "Project name", "ru": "Название проекта" },
+      "subtitle": { "en": "", "ru": "" },
+      "awards": ["Award", "+20% CTR", "+10% MAU"],
+      "image": "",
+      "sections": []
+    },
+    {
+      "name": { "en": "Project name", "ru": "Название проекта" },
+      "subtitle": { "en": "", "ru": "" },
+      "awards": ["Award", "+20% CTR", "+10% MAU"],
+      "image": "",
+      "sections": []
+    }
+  ]
+}

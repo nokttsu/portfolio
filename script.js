@@ -60,6 +60,146 @@ const I18N = {
 
 let currentLang = localStorage.getItem("lang") || "en";
 
+// ---------- Content: single source of truth is content.json ----------
+
+let CONTENT = null;
+const esc = (s) => String(s ?? "").replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
+
+async function loadContent() {
+  try {
+    const r = await fetch("content.json?ts=" + Date.now());
+    if (!r.ok) return;
+    CONTENT = await r.json();
+    mergeContentIntoDicts();
+    renderContent();
+  } catch (_) {
+    /* embedded I18N defaults keep the site working */
+  }
+}
+
+function mergeContentIntoDicts() {
+  const C = CONTENT;
+  for (const L of ["en", "ru"]) {
+    const d = I18N[L];
+    const g = (v) => (v && typeof v === "object" ? (v[L] ?? v.en ?? "") : v ?? "");
+    d.name = g(C.site.name);
+    d.intro = g(C.site.intro);
+    d.cta = g(C.site.cta);
+    d.tabExperience = g(C.tabs.experience);
+    d.tabSkills = g(C.tabs.skills);
+    d.tabAbout = g(C.tabs.about);
+    d.skillsText = g(C.skillsText);
+    d.aboutText = g(C.aboutText);
+    d.currentlyIn = g(C.ui.currentlyIn);
+    d.copied = g(C.ui.copied);
+    d.projectsTitle = g(C.ui.projectsTitle);
+    d.otherProjects = g(C.ui.otherProjects);
+    C.experience.forEach((e, i) => (d["exp" + i] = g(e.role)));
+    C.projects.forEach((p, i) => {
+      d["proj" + i + "name"] = g(p.name);
+      d["proj" + i + "sub"] = g(p.subtitle);
+      (p.sections || []).forEach((s, j) => {
+        d["proj" + i + "s" + j + "t"] = g(s.title);
+        d["proj" + i + "s" + j + "x"] = g(s.text);
+      });
+    });
+  }
+}
+
+function renderContent() {
+  const C = CONTENT;
+
+  // Shared bits
+  $$(".contact-bar__btn").forEach((a) => (a.href = C.site.telegram));
+  const emailBtn = $("button.email__value");
+  if (emailBtn) {
+    emailBtn.dataset.copy = C.site.email;
+    emailBtn.querySelector("span").textContent = C.site.email;
+  }
+  const cvLink = $("a.email__value");
+  if (cvLink) cvLink.href = C.site.cvUrl;
+
+  // Home: experience cards
+  const panel = $('[data-panel="experience"]');
+  if (panel) {
+    panel.innerHTML = C.experience
+      .map(
+        (e, i) => `
+      <div class="exp-card${e.current ? " is-current" : ""}">
+        <img class="exp-card__logo${e.round ? " exp-card__logo--round" : ""}" src="${esc(e.logo)}" alt="${esc(e.company)}">
+        <div class="exp-card__info">
+          <span class="exp-card__company">${esc(e.company)}</span>
+          ${(e.role && (e.role.en || e.role.ru)) ? `<span class="exp-card__role mono" data-i18n="exp${i}"></span>` : ""}
+        </div>
+        <span class="exp-card__pill${e.current ? " exp-card__pill--current" : ""} mono"${e.current ? ' data-i18n="currentlyIn"' : ""}>${e.current ? "" : esc(e.period)}</span>
+      </div>`
+      )
+      .join("");
+  }
+
+  // Home: project cards — reuse existing nodes so view transitions stay stable
+  const list = $(".projects__list");
+  if (list) {
+    const tpl = list.children[0];
+    while (list.children.length < C.projects.length) list.appendChild(tpl.cloneNode(true));
+    while (list.children.length > C.projects.length) list.lastElementChild.remove();
+    [...list.children].forEach((card, i) => {
+      const p = C.projects[i];
+      card.setAttribute("href", "project.html?p=" + (i + 1));
+      card.querySelector(".card__media").innerHTML = p.image
+        ? `<img src="${esc(p.image)}" alt="${esc(p.name && p.name.en)}"${i ? ' loading="lazy"' : ""}>`
+        : "";
+      card.querySelector(".tag:not(.tag--award)").setAttribute("data-i18n", `proj${i}name`);
+      card.querySelector(".card__awards").innerHTML = (p.awards || [])
+        .map((a) => `<span class="tag tag--award">${esc(a)}</span>`)
+        .join("");
+    });
+  }
+
+  // Project page
+  const hero = $(".project-hero");
+  if (hero) {
+    const total = C.projects.length;
+    const idx = Math.min(Math.max(parseInt(new URLSearchParams(location.search).get("p"), 10) || 1, 1), total) - 1;
+    const p = C.projects[idx];
+    $(".project-intro .section-title").setAttribute("data-i18n", `proj${idx}name`);
+    $(".project-intro p").setAttribute("data-i18n", `proj${idx}sub`);
+    $(".project-intro__tags").innerHTML = (p.awards || [])
+      .map((a) => `<span class="tag tag--award">${esc(a)}</span>`)
+      .join("");
+    hero.innerHTML = p.image ? `<img src="${esc(p.image)}" alt="">` : "";
+    document.title = ((p.name && p.name.en) || "Project") + " — " + ((C.site.name && C.site.name.en) || "");
+
+    const body = $(".project-body");
+    const other = $(".other-projects");
+    $$(".overview", body).forEach((s) => s.remove());
+    (p.sections || []).forEach((s, j) => {
+      const sec = document.createElement("section");
+      sec.className = "overview";
+      sec.innerHTML = `
+        <h2 class="overview__title" data-i18n="proj${idx}s${j}t"></h2>
+        <div class="overview__text"><p data-i18n="proj${idx}s${j}x"></p></div>
+        ${s.image ? `<img class="overview__image" src="${esc(s.image)}" alt="" loading="lazy">` : '<div class="overview__image"></div>'}`;
+      body.insertBefore(sec, other);
+    });
+
+    // Other projects: everything except the current one, first four
+    const others = C.projects.map((_, i) => i).filter((i) => i !== idx).slice(0, 4);
+    $$(".mini-card").forEach((mc, k) => {
+      if (k >= others.length) {
+        mc.remove();
+        return;
+      }
+      const i = others[k];
+      mc.setAttribute("href", "project.html?p=" + (i + 1));
+      mc.querySelector(".card__media").innerHTML = C.projects[i].image
+        ? `<img src="${esc(C.projects[i].image)}" alt="" loading="lazy">`
+        : "";
+      mc.querySelector(".tag").setAttribute("data-i18n", `proj${i}name`);
+    });
+  }
+}
+
 function applyLang(lang) {
   const dict = I18N[lang];
   $$("[data-i18n]").forEach((el) => {
@@ -185,18 +325,18 @@ $$("[data-copy]").forEach((btn) => {
 
 // ---------- View Transitions: morph clicked card into project hero ----------
 
-const vtCards = $$(".card, .mini-card");
-vtCards.forEach((card, i) => {
-  card.addEventListener("click", () => {
-    // Only one element may carry the name on the outgoing page: when navigating
-    // case → case, strip it from the current hero so the clicked tile wins
-    const hero = $(".project-hero");
-    if (hero) hero.style.viewTransitionName = "none";
-    const media = card.querySelector(".card__media");
-    if (media) media.style.viewTransitionName = "project-hero";
-    // remember which card was clicked so back-navigation can morph in reverse
-    sessionStorage.setItem("vt-card", String(i));
-  });
+// Delegated so cards created from content.json get the behaviour too
+document.addEventListener("click", (e) => {
+  const card = e.target.closest(".card, .mini-card");
+  if (!card) return;
+  // Only one element may carry the name on the outgoing page: when navigating
+  // case → case, strip it from the current hero so the clicked tile wins
+  const hero = $(".project-hero");
+  if (hero) hero.style.viewTransitionName = "none";
+  const media = card.querySelector(".card__media");
+  if (media) media.style.viewTransitionName = "project-hero";
+  // remember which card was clicked so back-navigation can morph in reverse
+  sessionStorage.setItem("vt-card", String($$(".card, .mini-card").indexOf(card)));
 });
 
 // Did we arrive via a cross-document view transition?
@@ -208,7 +348,8 @@ window.addEventListener("pagereveal", (e) => {
   // On a case page the hero itself is the morph target, so nothing to do there.
   if (!$(".project-hero")) {
     const i = Number(sessionStorage.getItem("vt-card"));
-    const media = vtCards[i] && vtCards[i].querySelector(".card__media");
+    const cards = $$(".card, .mini-card");
+    const media = cards[i] && cards[i].querySelector(".card__media");
     if (media) {
       media.style.viewTransitionName = "project-hero";
       e.viewTransition.finished.then(() => (media.style.viewTransitionName = ""));
@@ -231,8 +372,9 @@ if (window.gsap) {
     gsap.ticker.lagSmoothing(0);
   }
 
-  // Split after fonts load so line breaks are correct
-  document.fonts.ready.then(() => {
+  // Content first (it builds the DOM), fonts second (SplitText needs final metrics)
+  Promise.all([loadContent(), document.fonts.ready]).then(() => {
+    applyLang(currentLang);
     moveLangIndicator(false);
     initHoverEffects();
     initTabs();
