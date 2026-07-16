@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Vadim Prisyachev — Product Designer</title>
+  <meta name="description" content="Product designer leading visual systems and UI for digital products — Aeroflot, Plan9, div.">
+  <meta property="og:title" content="Vadim Prisyachev — Product Designer">
+  <meta property="og:description" content="Leading visual systems and UI for digital products, aligning aesthetics with product and business goals">
+  <meta property="og:image" content="assets/project-1.jpg">
+  <meta property="og:type" content="website">
+  <meta name="theme-color" content="#000000">
+  <link rel="icon" href="favicon.svg" type="image/svg+xml">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&family=Inter+Tight&family=IBM+Plex+Mono&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css?v=7">
+</head>
+<body>
+
+  <div class="preloader">
+    <div class="preloader__counter mono">0</div>
+  </div>
+
+  <header class="header">
+    <img class="header__avatar" src="assets/avatar.png" alt="Vadim Prisyachev">
+    <p class="header__name" data-i18n="name">Vadim Prisyachev</p>
+    <div class="lang-toggle">
+      <span class="lang-toggle__indicator"></span>
+      <button class="lang-toggle__btn" type="button" data-lang="ru">RU</button>
+      <button class="lang-toggle__btn is-active" type="button" data-lang="en">EN</button>
+    </div>
+  </header>
+
+  <main class="page">
+
+    <section class="intro">
+      <p class="intro__lead" data-i18n="intro">Leading visual systems and UI for digital products, aligning aesthetics with product and business goals</p>
+      <hr class="intro__divider">
+      <div class="intro__links">
+        <button class="email__value" type="button" data-copy="nokttsu@mail.ru" title="Copy email">
+          <span>nokttsu@mail.ru</span>
+          <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M14 5V14H5V5H14ZM14 4H5C4.73478 4 4.48043 4.10536 4.29289 4.29289C4.10536 4.48043 4 4.73478 4 5V14C4 14.2652 4.10536 14.5196 4.29289 14.7071C4.48043 14.8946 4.73478 15 5 15H14C14.2652 15 14.5196 14.8946 14.7071 14.7071C14.8946 14.5196 15 14.2652 15 14V5C15 4.73478 14.8946 4.48043 14.7071 4.29289C14.5196 4.10536 14.2652 4 14 4Z" fill="white"/>
+            <path d="M2 9H1V2C1 1.73478 1.10536 1.48043 1.29289 1.29289C1.48043 1.10536 1.73478 1 2 1H9V2H2V9Z" fill="white"/>
+          </svg>
+        </button>
+        <a class="email__value" href="cv.pdf" download>
+          <span>CV</span>
+          <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M8 2V11M8 11L4.5 7.5M8 11L11.5 7.5" stroke="white" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/>
+            <path d="M2.5 13.5H13.5" stroke="white" stroke-width="1.2" stroke-linecap="round"/>
+          </svg>
+        </a>
+      </div>
+    </section>
+
+    <section class="about">
+      <nav class="tabs">
+        <button class="tabs__item is-active" type="button" data-tab="experience" data-i18n="tabExperience">Experience</button>
+        <button class="tabs__item" type="button" data-tab="skills" data-i18n="tabSkills">Skills</button>
+        <button class="tabs__item" type="button" data-tab="about" data-i18n="tabAbout">About me</button>
+      </nav>
+      <div class="tab-panel experience" data-panel="experience">
+        <div class="exp-card is-current">
+          <img class="exp-card__logo" src="assets/logo-aeroflot.png" alt="Aeroflot">
+          <div class="exp-card__info">
+            <span class="exp-card__company">Aeroflot</span>
+            <span class="exp-card__role mono" data-i18n="exp1">Senior Product Designer</span>
+          </div>
+          <span class="exp-card__pill exp-card__pill--current mono" data-i18n="currentlyIn">Currently in</span>
+        </div>
+        <div class="exp-card">
+          <img class="exp-card__logo exp-card__logo--round" src="assets/logo-plan9.png" alt="Plan9">
+          <div class="exp-card__info">
+            <span class="exp-card__company">Plan9</span>
+            <span class="exp-card__role mono" data-i18n="exp2">Art director</span>
+          </div>
+          <span class="exp-card__pill mono">2023—2024</span>
+        </div>
+        <div class="exp-card">
+          <img class="exp-card__logo" src="assets/logo-div.png" alt="div.">
+          <div class="exp-card__info">
+            <span class="exp-card__company">div.</span>
+            <span class="exp-card__role mono" data-i18n="exp3">communications &amp; UI</span>
+          </div>
+          <span class="exp-card__pill mono">2020—2023</span>
+        </div>
+        <div class="exp-card">
+          <img class="exp-card__logo" src="assets/logo-freelance.png" alt="">
+          <div class="exp-card__info">
+            <span class="exp-card__company" data-i18n="exp4">Freelance</span>
+          </div>
+          <span class="exp-card__pill mono">2017—2020</span>
+        </div>
+      </div>
+      <div class="tab-panel experience" data-panel="skills" hidden>
+        <div class="experience__item is-current">
+          <span class="experience__period mono" data-i18n="skillsProductLabel">Product</span>
+          <span class="experience__role" data-i18n="skillsProduct">UX/UI, design systems, prototyping, user research</span>
+        </div>
+        <div class="experience__item is-current">
+          <span class="experience__period mono" data-i18n="skillsVisualLabel">Visual</span>
+          <span class="experience__role" data-i18n="skillsVisual">Art direction, identity, illustration, motion</span>
+        </div>
+        <div class="experience__item is-current">
+          <span class="experience__period mono" data-i18n="skillsToolsLabel">Tools</span>
+          <span class="experience__role" data-i18n="skillsTools">Figma, Adobe CC, Blender, AI workflows</span>
+        </div>
+      </div>
+      <div class="tab-panel" data-panel="about" hidden>
+        <p class="about-text" data-i18n="aboutText">I'm Vadim, a product designer with 8+ years across fintech, aviation and communication design. I care about visual systems that scale and interfaces that feel effortless.</p>
+      </div>
+    </section>
+
+    <section class="projects">
+      <h2 class="section-title" data-i18n="projectsTitle">Projects</h2>
+      <div class="projects__list">
+
+        <a class="card" href="project.html?p=1">
+          <div class="card__media">
+            <!-- placeholder: image removed for now -->
+          </div>
+          <div class="card__meta">
+            <span class="tag">Project name</span>
+            <span class="card__awards">
+              <span class="tag tag--award">Award</span>
+              <span class="tag tag--award">+20% CTR</span>
+              <span class="tag tag--award">+10% MAU</span>
+            </span>
+          </div>
+        </a>
+
+        <a class="card" href="project.html?p=2">
+          <div class="card__media">
+            <!-- placeholder: image removed for now -->
+          </div>
+          <div class="card__meta">
+            <span class="tag">Project name</span>
+            <span class="card__awards">
+              <span class="tag tag--award">Award</span>
+              <span class="tag tag--award">+20% CTR</span>
+              <span class="tag tag--award">+10% MAU</span>
+            </span>
+          </div>
+        </a>
+
+        <a class="card" href="project.html?p=3">
+          <div class="card__media">
+            <!-- placeholder: image removed for now -->
+          </div>
+          <div class="card__meta">
+            <span class="tag">Project name</span>
+            <span class="card__awards">
+              <span class="tag tag--award">Award</span>
+              <span class="tag tag--award">+20% CTR</span>
+              <span class="tag tag--award">+10% MAU</span>
+            </span>
+          </div>
+        </a>
+
+        <a class="card" href="project.html?p=4">
+          <div class="card__media">
+            <!-- placeholder: image removed for now -->
+          </div>
+          <div class="card__meta">
+            <span class="tag">Project name</span>
+            <span class="card__awards">
+              <span class="tag tag--award">Award</span>
+              <span class="tag tag--award">+20% CTR</span>
+              <span class="tag tag--award">+10% MAU</span>
+            </span>
+          </div>
+        </a>
+
+        <a class="card" href="project.html?p=5">
+          <div class="card__media">
+            <!-- placeholder: image removed for now -->
+          </div>
+          <div class="card__meta">
+            <span class="tag">Project name</span>
+            <span class="card__awards">
+              <span class="tag tag--award">Award</span>
+              <span class="tag tag--award">+20% CTR</span>
+              <span class="tag tag--award">+10% MAU</span>
+            </span>
+          </div>
+        </a>
+
+        <a class="card" href="project.html?p=6">
+          <div class="card__media">
+            <!-- placeholder: image removed for now -->
+          </div>
+          <div class="card__meta">
+            <span class="tag">Project name</span>
+            <span class="card__awards">
+              <span class="tag tag--award">Award</span>
+              <span class="tag tag--award">+20% CTR</span>
+              <span class="tag tag--award">+10% MAU</span>
+            </span>
+          </div>
+        </a>
+
+        <a class="card" href="project.html?p=7">
+          <div class="card__media">
+            <!-- placeholder: image removed for now -->
+          </div>
+          <div class="card__meta">
+            <span class="tag">Project name</span>
+            <span class="card__awards">
+              <span class="tag tag--award">Award</span>
+              <span class="tag tag--award">+20% CTR</span>
+              <span class="tag tag--award">+10% MAU</span>
+            </span>
+          </div>
+        </a>
+
+        <a class="card" href="project.html?p=8">
+          <div class="card__media">
+            <!-- placeholder: image removed for now -->
+          </div>
+          <div class="card__meta">
+            <span class="tag">Project name</span>
+            <span class="card__awards">
+              <span class="tag tag--award">Award</span>
+              <span class="tag tag--award">+20% CTR</span>
+              <span class="tag tag--award">+10% MAU</span>
+            </span>
+          </div>
+        </a>
+
+      </div>
+    </section>
+
+  </main>
+
+  <div class="contact-bar">
+    <a class="contact-bar__btn" href="https://t.me/nokttsu" target="_blank" rel="noopener" data-i18n="cta">Contact via Telegram</a>
+  </div>
+
+  <script src="assets/vendor/lenis.min.js"></script>
+  <script src="assets/vendor/gsap.min.js"></script>
+  <script src="assets/vendor/ScrollTrigger.min.js"></script>
+  <script src="assets/vendor/SplitText.min.js"></script>
+  <script src="script.js?v=7"></script>
+</body>
+</html>
