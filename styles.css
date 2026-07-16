@@ -20,6 +20,11 @@
 
 /* Native smooth scroll is off — Lenis drives the scroll */
 
+::selection {
+  background: #fff;
+  color: #000;
+}
+
 body {
   background: var(--bg);
   color: var(--text);
