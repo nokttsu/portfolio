@@ -337,7 +337,7 @@ function initLoadSequence(firstVisit) {
   // Whatever races happen mid-load (language switch, tab clicks), the intro
   // must never end with elements stuck invisible — clear all inline props at the end.
   const INTRO_TARGETS =
-    ".header, .intro__divider, .intro__links > *, .tabs__item, " +
+    ".header, .intro__divider, .intro__links, .tabs__item, " +
     '[data-panel="experience"] .exp-card, .project-intro p, ' +
     ".project-intro__tags .tag, .project-hero, .contact-bar__btn";
   const tl = gsap.timeline({
@@ -359,7 +359,9 @@ function initLoadSequence(firstVisit) {
     const split = SplitText.create(lead, { type: "lines", mask: "lines" });
     tl.from(split.lines, { yPercent: 110, stagger: 0.08, onComplete: () => split.revert() }, "-=0.3");
     tl.from(".intro__divider", { scaleX: 0, transformOrigin: "left center", duration: 0.5, ease: "power2.inOut" }, "-=0.1");
-    tl.from(".intro__links > *", { y: 16, autoAlpha: 0, stagger: 0.08, duration: 0.5 }, "-=0.1");
+    // Tween the wrapper, not the links themselves: the links carry a CSS
+    // opacity transition (hover) that corrupts GSAP's from() value capture
+    tl.from(".intro__links", { y: 16, autoAlpha: 0, duration: 0.5 }, "-=0.1");
     tl.from(".tabs__item", { y: 28, autoAlpha: 0, stagger: 0.07, duration: 0.6 }, "-=0.1");
     tl.from('[data-panel="experience"] .exp-card', { y: 16, autoAlpha: 0, stagger: 0.06, duration: 0.5 }, "-=0.15");
   }
