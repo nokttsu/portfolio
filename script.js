@@ -105,8 +105,9 @@ function mergeContentIntoDicts() {
   }
 }
 
-// Image trail: while the cursor moves inside the first viewport of a case page,
-// the images uploaded to the case pop up along the cursor path and melt away
+// Sliding mouse trail (after madewithgsap effect 020): a fixed pool of the
+// case's images; each step of the cursor grabs the next image and slides it
+// from where the cursor came from to where it is now, then fades it out
 function buildImageTrail(p) {
   const srcs = [];
   if (p.image) srcs.push(p.image);
@@ -117,49 +118,52 @@ function buildImageTrail(p) {
   if (!uniq.length || !window.gsap) return;
   if (!window.matchMedia("(hover: hover) and (pointer: fine)").matches) return;
 
-  // Warm the cache so the first spawns don't flicker
-  uniq.forEach((s) => {
-    const i = new Image();
-    i.src = s;
-  });
-
   const layer = document.createElement("div");
   layer.className = "img-trail";
   document.body.appendChild(layer);
 
-  const SPAWN_DISTANCE = 110;
-  let last = { x: -1e4, y: -1e4 };
-  let idx = 0;
-
-  const spawn = (x, y) => {
+  // Reusable pool — the images live in the DOM once, like the tutorial's .medias
+  const pool = uniq.map((src) => {
     const img = document.createElement("img");
     img.className = "img-trail__item";
-    img.src = uniq[idx++ % uniq.length];
+    img.src = src;
     img.alt = "";
     layer.appendChild(img);
-    gsap.set(img, {
-      x,
-      y,
-      xPercent: -50,
-      yPercent: -50,
-      rotation: gsap.utils.random(-9, 9),
-      scale: 0.5,
-      autoAlpha: 0,
-    });
-    gsap
-      .timeline({ onComplete: () => img.remove() })
-      .to(img, { scale: 1, autoAlpha: 1, duration: 0.25, ease: "power2.out" })
-      .to(img, { autoAlpha: 0, scale: 0.9, duration: 0.45, ease: "power1.in" }, "+=0.3");
-  };
+    gsap.set(img, { xPercent: -50, yPercent: -50, autoAlpha: 0 });
+    return img;
+  });
+
+  const SPAWN_DISTANCE = 130;
+  let last = null;
+  let idx = 0;
+  let stack = 0;
 
   window.addEventListener(
     "mousemove",
     (e) => {
       // The trail lives only in the first viewport of the page
-      if (window.scrollY > innerHeight * 0.8) return;
-      if (Math.hypot(e.clientX - last.x, e.clientY - last.y) < SPAWN_DISTANCE) return;
-      last = { x: e.clientX, y: e.clientY };
-      spawn(e.clientX, e.clientY);
+      if (window.scrollY > innerHeight * 0.8) {
+        last = null;
+        return;
+      }
+      const cur = { x: e.clientX, y: e.clientY };
+      if (last && Math.hypot(cur.x - last.x, cur.y - last.y) < SPAWN_DISTANCE) return;
+      const from = last || cur;
+
+      const img = pool[idx++ % pool.length];
+      gsap.killTweensOf(img);
+      img.style.zIndex = ++stack; // the freshest image rides on top
+
+      gsap
+        .timeline()
+        .fromTo(
+          img,
+          { x: from.x, y: from.y, scale: 0.9, autoAlpha: 1 },
+          { x: cur.x, y: cur.y, scale: 1, duration: 0.85, ease: "power3.out" }
+        )
+        .to(img, { autoAlpha: 0, duration: 0.4, ease: "power1.in" }, 0.45);
+
+      last = cur;
     },
     { passive: true }
   );
