@@ -105,6 +105,76 @@ function mergeContentIntoDicts() {
   }
 }
 
+// Hero scatter: every image uploaded to the case floats in the first viewport
+// and follows the cursor at its own depth (mouse-move parallax)
+function buildHeroScatter(p, hero) {
+  const srcs = [];
+  caseBlocks(p).forEach((b) => {
+    if (b.type === "img" && b.src) srcs.push(b.src);
+  });
+  // The cover already fills the hero itself — float it only if it's the sole image
+  if (!srcs.length && p.image) srcs.push(p.image);
+  const uniq = [...new Set(srcs)];
+  if (!uniq.length || !window.gsap) return;
+
+  const slots = [
+    { x: 6, y: 12, w: 30, r: -7, d: 0.055 },
+    { x: 64, y: 8, w: 26, r: 5, d: 0.04 },
+    { x: 12, y: 54, w: 24, r: 6, d: 0.075 },
+    { x: 66, y: 50, w: 30, r: -5, d: 0.05 },
+    { x: 38, y: 28, w: 27, r: 3, d: 0.09 },
+    { x: 38, y: 64, w: 22, r: -8, d: 0.065 },
+  ];
+
+  const layer = document.createElement("div");
+  layer.className = "hero-scatter";
+  uniq.slice(0, slots.length).forEach((src, i) => {
+    const s = slots[i];
+    const img = document.createElement("img");
+    img.className = "hero-scatter__img";
+    img.src = src;
+    img.alt = "";
+    img.style.left = s.x + "%";
+    img.style.top = s.y + "%";
+    img.style.width = s.w + "%";
+    gsap.set(img, { rotation: s.r });
+    layer.appendChild(img);
+  });
+  hero.appendChild(layer);
+
+  const movers = [...layer.children].map((img, i) => ({
+    x: gsap.quickTo(img, "x", { duration: 0.55 + i * 0.09, ease: "power3.out" }),
+    y: gsap.quickTo(img, "y", { duration: 0.55 + i * 0.09, ease: "power3.out" }),
+    d: slots[i].d,
+  }));
+
+  let parked = false;
+  window.addEventListener(
+    "mousemove",
+    (e) => {
+      // Active only while the first viewport is on screen
+      if (window.scrollY > innerHeight * 0.9) {
+        if (!parked) {
+          parked = true;
+          movers.forEach((m) => {
+            m.x(0);
+            m.y(0);
+          });
+        }
+        return;
+      }
+      parked = false;
+      const dx = e.clientX - innerWidth / 2;
+      const dy = e.clientY - innerHeight / 2;
+      movers.forEach((m) => {
+        m.x(dx * m.d);
+        m.y(dy * m.d);
+      });
+    },
+    { passive: true }
+  );
+}
+
 // Case body is a flat list of Notion-style blocks; legacy `sections` are converted
 function caseBlocks(p) {
   if (p.body) return p.body;
@@ -180,6 +250,8 @@ function renderContent() {
       .join("");
     hero.innerHTML = p.image ? `<img src="${esc(p.image)}" alt="">` : "";
     document.title = ((p.name && p.name.en) || "Project") + " — " + ((C.site.name && C.site.name.en) || "");
+
+    buildHeroScatter(p, hero);
 
     const body = $(".project-body");
     const other = $(".other-projects");
