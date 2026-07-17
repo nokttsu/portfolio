@@ -135,6 +135,84 @@ html {
   line-height: 24px;
 }
 
+/* ---------- Kebab menu button (mobile) ---------- */
+
+.menu-btn {
+  display: none;
+  width: 32px;
+  height: 32px;
+  flex-shrink: 0;
+  align-items: center;
+  justify-content: center;
+  border: none;
+  border-radius: 8px;
+  background: none;
+  color: #fff;
+  cursor: pointer;
+}
+
+.menu-btn svg[hidden] {
+  display: none;
+}
+
+/* ---------- Mobile menu overlay ---------- */
+
+.menu {
+  position: fixed;
+  inset: 0;
+  z-index: 20;
+  background: rgba(0, 0, 0, 0.35);
+  -webkit-backdrop-filter: blur(18px);
+  backdrop-filter: blur(18px);
+}
+
+.menu[hidden] {
+  display: none;
+}
+
+.menu__panel {
+  position: absolute;
+  top: 52px;
+  right: 12px;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 12px;
+  transform-origin: top right;
+  will-change: transform, opacity, filter;
+}
+
+.menu__lang {
+  font-size: 10px;
+  line-height: 12px;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  background: none;
+  border: none;
+  cursor: pointer;
+  transition: color 0.2s ease;
+}
+
+.menu__lang:hover {
+  color: #fff;
+}
+
+@media (max-width: 599px) {
+  .header .lang-toggle {
+    display: none;
+  }
+
+  .menu-btn {
+    display: flex;
+  }
+}
+
+@media (min-width: 600px) {
+  .menu {
+    display: none !important;
+  }
+}
+
 .lang-toggle {
   position: relative;
   display: flex;
@@ -184,32 +262,59 @@ html {
 
 /* ---------- Intro (home) ---------- */
 
-.intro {
-  padding: 12px 12px 0;
+/* ---------- Hero (home first viewport) ---------- */
+
+.hero {
+  position: relative;
+  min-height: 100svh;
+  padding: 76px 12px 24px;
   display: flex;
   flex-direction: column;
-  gap: 16px;
+  align-items: center;
+  justify-content: center;
+  gap: 24px;
+  text-align: center;
+  box-sizing: border-box;
+}
+
+.hero__signature {
+  width: clamp(145px, 40vw, 220px);
+  height: auto;
 }
 
 .intro__lead {
   font-family: "Inter Tight", "Inter", sans-serif;
   font-weight: 600;
-  font-size: 44px;
-  line-height: 48px;
-  letter-spacing: -0.88px;
+  font-size: clamp(30px, 8.5vw, 44px);
+  line-height: 1.09;
+  letter-spacing: -0.02em;
+  max-width: 560px;
 }
 
-.intro__divider {
-  border: none;
-  border-top: 1px solid var(--divider);
-  width: 100%;
-  margin: 0;
+.hero__cta {
+  margin-top: 8px;
 }
 
 .intro__links {
   display: flex;
   align-items: center;
+  justify-content: center;
   gap: 32px;
+}
+
+/* Desktop: email/CV become a footer row at the bottom of the hero */
+@media (min-width: 600px) {
+  .hero {
+    padding: 76px 0 24px;
+  }
+
+  .hero .intro__links {
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 16px;
+    justify-content: space-between;
+  }
 }
 
 .email__value {

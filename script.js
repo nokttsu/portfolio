@@ -164,7 +164,7 @@ function buildImageTrail(projects) {
           { x: from.x, y: from.y, scale: 0.9, autoAlpha: 1 },
           { x: cur.x, y: cur.y, scale: 1, duration: 0.85, ease: "power3.out" }
         )
-        .to(img, { scale: 0.4, autoAlpha: 0, duration: 0.5, ease: "power2.in" }, 0.45);
+        .to(img, { scale: 0.05, autoAlpha: 0, duration: 0.35, ease: "power2.in" }, 0.4);
 
       last = cur;
     },
@@ -303,6 +303,9 @@ function applyLang(lang) {
   });
   document.documentElement.lang = lang;
   $$(".lang-toggle__btn").forEach((b) => b.classList.toggle("is-active", b.dataset.lang === lang));
+  // Menu language row shows the language you'd switch TO
+  const ml = $("[data-menu-lang]");
+  if (ml) ml.textContent = lang === "en" ? "Русский язык" : "English";
 }
 
 function moveLangIndicator(animate) {
@@ -474,6 +477,7 @@ if (window.gsap) {
     initHoverEffects();
     initTabs();
     initToc();
+    initMenu();
     if (vtArrival) {
       // Seamless page transition: content must stand still, no intro replay
       const pre = $(".preloader");
@@ -485,6 +489,74 @@ if (window.gsap) {
       initPreloader(initLoadSequence);
     }
   });
+}
+
+// ---------- Mobile menu: drops from the kebab, closes into iOS-style blur ----------
+
+function initMenu() {
+  const btn = $(".menu-btn");
+  const menu = $(".menu");
+  if (!btn || !menu) return;
+
+  const panel = $(".menu__panel", menu);
+  const iconOpen = $(".menu-btn__open", btn);
+  const iconClose = $(".menu-btn__close", btn);
+  let open = false;
+  let anim;
+
+  const openMenu = () => {
+    open = true;
+    btn.setAttribute("aria-expanded", "true");
+    iconOpen.hidden = true;
+    iconClose.hidden = false;
+    menu.hidden = false;
+    anim && anim.kill();
+    // Drop out of the button: scale + fade from the top-right origin
+    gsap.fromTo(menu, { autoAlpha: 0 }, { autoAlpha: 1, duration: 0.25, ease: "power2.out" });
+    anim = gsap.fromTo(
+      panel,
+      { autoAlpha: 0, scale: 0.7, y: -10, filter: "blur(4px)" },
+      { autoAlpha: 1, scale: 1, y: 0, filter: "blur(0px)", duration: 0.5, ease: "back.out(1.7)" }
+    );
+  };
+
+  const closeMenu = () => {
+    open = false;
+    btn.setAttribute("aria-expanded", "false");
+    iconOpen.hidden = false;
+    iconClose.hidden = true;
+    anim && anim.kill();
+    // Melt into blur, iOS-style
+    gsap.to(menu, { autoAlpha: 0, duration: 0.35, ease: "power2.in" });
+    anim = gsap.to(panel, {
+      autoAlpha: 0,
+      scale: 1.06,
+      filter: "blur(14px)",
+      duration: 0.35,
+      ease: "power2.in",
+      onComplete: () => {
+        menu.hidden = true;
+        gsap.set(panel, { clearProps: "filter" });
+      },
+    });
+  };
+
+  btn.addEventListener("click", () => (open ? closeMenu() : openMenu()));
+  // Click on the blurred backdrop (not the panel) closes it
+  menu.addEventListener("click", (e) => {
+    if (!e.target.closest(".menu__panel")) closeMenu();
+  });
+  document.addEventListener("keydown", (e) => {
+    if (e.key === "Escape" && open) closeMenu();
+  });
+  // Language row inside the menu
+  const langBtn = $("[data-menu-lang]", menu);
+  if (langBtn) {
+    langBtn.addEventListener("click", () => {
+      switchLang(currentLang === "en" ? "ru" : "en");
+      closeMenu();
+    });
+  }
 }
 
 // ---------- Preloader (home page only) ----------
@@ -583,7 +655,7 @@ function initLoadSequence(firstVisit) {
   // Whatever races happen mid-load (language switch, tab clicks), the intro
   // must never end with elements stuck invisible — clear all inline props at the end.
   const INTRO_TARGETS =
-    ".header, .intro__divider, .intro__links, .tabs__item, " +
+    ".header, .hero__signature, .intro__links, .hero__cta, .tabs__item, " +
     '[data-panel="experience"] .exp-card, .project-intro p, ' +
     ".project-intro__tags .tag, .project-hero, .contact-bar__btn";
   const tl = gsap.timeline({
@@ -601,16 +673,16 @@ function initLoadSequence(firstVisit) {
   // The header animates only on the very first load of the site
   if (firstVisit) tl.from(".header", { y: -20, autoAlpha: 0, duration: 0.6 });
 
-  // Home page
-  // Strict top-down order: lead text → divider line → email/CV → tabs → experience
-  const lead = $(".intro__lead");
+  // Home hero — signature → heading → CTA → email/CV → tabs → experience
+  const lead = $(".hero .intro__lead");
   if (lead) {
+    tl.from(".hero__signature", { y: 12, scale: 0.96, autoAlpha: 0, duration: 0.6 });
     const split = SplitText.create(lead, { type: "lines", mask: "lines" });
-    tl.from(split.lines, { yPercent: 110, stagger: 0.08, onComplete: () => split.revert() }, "-=0.3");
-    tl.from(".intro__divider", { scaleX: 0, transformOrigin: "left center", duration: 0.5, ease: "power2.inOut" }, "-=0.1");
+    tl.from(split.lines, { yPercent: 110, stagger: 0.08, onComplete: () => split.revert() }, "-=0.25");
+    tl.from(".hero__cta", { y: 16, scale: 0.9, autoAlpha: 0, duration: 0.55, ease: "back.out(1.6)" }, "-=0.1");
     // Tween the wrapper, not the links themselves: the links carry a CSS
     // opacity transition (hover) that corrupts GSAP's from() value capture
-    tl.from(".intro__links", { y: 16, autoAlpha: 0, duration: 0.5 }, "-=0.1");
+    tl.from(".intro__links", { y: 16, autoAlpha: 0, duration: 0.5 }, "-=0.15");
     tl.from(".tabs__item", { y: 28, autoAlpha: 0, stagger: 0.07, duration: 0.6 }, "-=0.1");
     tl.from('[data-panel="experience"] .exp-card', { y: 16, autoAlpha: 0, stagger: 0.06, duration: 0.5 }, "-=0.15");
   }
@@ -697,10 +769,9 @@ function initHoverEffects() {
     });
   });
 
-  // Magnetic CTA button (soft)
+  // Magnetic CTA button (soft) — works whether the button is in the hero or the fixed bar
   const ctaBtn = $(".contact-bar__btn");
-  const ctaBar = $(".contact-bar");
-  if (ctaBtn && ctaBar) {
+  if (ctaBtn) {
     const moveX = gsap.quickTo(ctaBtn, "x", { duration: 0.5, ease: "power3.out" });
     const moveY = gsap.quickTo(ctaBtn, "y", { duration: 0.5, ease: "power3.out" });
     const scale = gsap.quickTo(ctaBtn, "scale", { duration: 0.5, ease: "power3.out" });
