@@ -20,8 +20,8 @@
     "ru": "UX/UI, дизайн-системы, прототипирование и исследования. Арт-дирекшн, айдентика, иллюстрация, моушн. Figma, Adobe CC, Blender, AI-инструменты."
   },
   "aboutText": {
-    "en": "I'm Vadim, a product designer with 8+ years across fintech, aviation and communication design. I care about visual systems that scale and interfaces that feel effortless.",
-    "ru": "Я Вадим, продуктовый дизайнер с опытом 8+ лет в финтехе, авиации и коммуникационном дизайне. Люблю визуальные системы, которые масштабируются, и интерфейсы, которые ощущаются лёгкими."
+    "en": "I'm Vadim, a product designer and art director with experience across fintech, aviation, sports and media — from Aeroflot and Yandex to experimental products of my own. I care about visual systems that scale and interfaces that feel effortless.\n\nOutside of work I enjoy analog photography, film cameras, and slow creative processes. I spend a lot of time traveling and being outdoors, usually choosing quiet nature escapes over noisy city nightlife.",
+    "ru": "Я Вадим, продуктовый дизайнер и арт-директор с опытом в финтехе, авиации, спорте и медиа — от Аэрофлота и Яндекса до собственных экспериментальных продуктов. Люблю визуальные системы, которые масштабируются, и интерфейсы, которые ощущаются лёгкими.\n\nВне работы увлекаюсь плёночной фотографией, старыми камерами и медленными творческими процессами. Много путешествую и провожу время на природе, чаще выбирая тихие вылазки за город, чем шумную городскую ночную жизнь."
   },
   "ui": {
     "currentlyIn": { "en": "Currently in", "ru": "Сейчас" },
@@ -65,77 +65,174 @@
   ],
   "projects": [
     {
-      "name": { "en": "Project name", "ru": "Название проекта" },
-      "subtitle": { "en": "Russia's largest airline with over 100 years of history", "ru": "Крупнейшая авиакомпания России с более чем 100-летней историей" },
-      "awards": ["Award", "+20% CTR", "+10% MAU"],
+      "name": { "en": "Colozeo", "ru": "Colozeo" },
+      "subtitle": {
+        "en": "Football talent platform connecting players, clubs, and scouts",
+        "ru": "Футбольная платформа, соединяющая игроков, клубы и скаутов"
+      },
+      "awards": ["Art Direction", "Design System", "Multi-platform"],
       "image": "",
-      "sections": [
-        {
-          "title": { "en": "Overview", "ru": "Обзор" },
-          "text": {
-            "en": "Lead designer at Aeroflot — Russia's flag carrier and a member of the global SkyTeam alliance.\n\nI drive the redesign of the mobile app and the Aeroflot Bonus loyalty account, and act as art director for the product design team.",
-            "ru": "Ведущий дизайнер в Аэрофлоте — национальном авиаперевозчике России и участнике глобального альянса SkyTeam.\n\nРуковожу редизайном мобильного приложения и личного кабинета Аэрофлот Бонус, выступаю арт-директором продуктовой команды дизайна."
-          },
-          "image": ""
-        },
-        {
-          "title": { "en": "Overview", "ru": "Обзор" },
-          "text": {
-            "en": "Lead designer at Aeroflot — Russia's flag carrier and a member of the global SkyTeam alliance.",
-            "ru": "Ведущий дизайнер в Аэрофлоте — национальном авиаперевозчике России и участнике глобального альянса SkyTeam."
-          },
-          "image": ""
-        }
+      "body": [
+        { "type": "h2", "text": { "en": "Overview", "ru": "Обзор" } },
+        { "type": "p", "text": {
+          "en": "Colozeo is a multi-platform football product — a connected ecosystem for players, clubs, and scouts. I led UI design and visual direction across three products: a mobile app for players, a web app for clubs, and a scouting platform, tying them together with a single design system and a set of scalable interface patterns.",
+          "ru": "Colozeo — мультиплатформенный футбольный продукт, единая экосистема для игроков, клубов и скаутов. Я вёл UI-дизайн и визуальное направление трёх продуктов: мобильного приложения для игроков, веб-приложения для клубов и скаутинговой платформы, связав их одной дизайн-системой и набором масштабируемых интерфейсных паттернов."
+        } },
+        { "type": "img", "src": "" },
+        { "type": "h2", "text": { "en": "Context", "ru": "Контекст" } },
+        { "type": "p", "text": {
+          "en": "Colozeo was conceived as one ecosystem rather than three separate apps. Players present and grow themselves, clubs discover and manage talent, and scouts evaluate prospects — all inside a single connected product spanning mobile and web.",
+          "ru": "Colozeo задумывался как единая экосистема, а не три отдельных приложения. Игроки презентуют себя и растут, клубы находят и ведут таланты, скауты оценивают перспективных — всё внутри одного связанного продукта на мобайле и вебе."
+        } },
+        { "type": "h2", "text": { "en": "Role", "ru": "Роль" } },
+        { "type": "p", "text": {
+          "en": "As Art Director, I owned the visual language and led UI design across the entire ecosystem. I set the direction, defined the component library, and kept every surface coherent, scalable, and consistent from screen to screen.",
+          "ru": "Как арт-директор я отвечал за визуальный язык и вёл UI-дизайн всей экосистемы. Задавал направление, собирал библиотеку компонентов и держал каждый экран цельным, масштабируемым и консистентным."
+        } },
+        { "type": "h2", "text": { "en": "Challenge", "ru": "Задача" } },
+        { "type": "p", "text": {
+          "en": "The hard part was designing one interface system for three distinct audiences with different interaction models and priorities — without letting the product fragment into three unrelated tools. It had to stay recognisably Colozeo everywhere.",
+          "ru": "Сложность была в том, чтобы спроектировать единую интерфейсную систему для трёх разных аудиторий с разными сценариями и приоритетами — и при этом не дать продукту распасться на три несвязанных инструмента. Везде он должен был узнаваться как Colozeo."
+        } },
+        { "type": "h2", "text": { "en": "Approach", "ru": "Подход" } },
+        { "type": "p", "text": {
+          "en": "I built a shared design system — type, colour, spacing, and components — and adapted it to each platform's context. Patterns were designed once and reused across player, club, and scout surfaces, so the ecosystem could grow without redrawing the basics.",
+          "ru": "Я собрал общую дизайн-систему — типографику, цвет, отступы, компоненты — и адаптировал её под контекст каждой платформы. Паттерны проектировались один раз и переиспользовались на экранах игроков, клубов и скаутов, чтобы экосистема росла без переизобретения базы."
+        } },
+        { "type": "img", "src": "" },
+        { "type": "h2", "text": { "en": "Outcome", "ru": "Результат" } },
+        { "type": "p", "text": {
+          "en": "The result is a cohesive visual direction and a scalable UI foundation ready to support future product growth and iteration across all three platforms.",
+          "ru": "Итог — цельное визуальное направление и масштабируемая UI-основа, готовая поддерживать дальнейший рост и развитие продукта на всех трёх платформах."
+        } }
       ]
     },
     {
-      "name": { "en": "Project name", "ru": "Название проекта" },
-      "subtitle": { "en": "", "ru": "" },
-      "awards": ["Award", "+20% CTR", "+10% MAU"],
+      "name": { "en": "Aeroflot", "ru": "Аэрофлот" },
+      "subtitle": {
+        "en": "Redesign of digital products for Russia's largest airline with over 100 years of history",
+        "ru": "Редизайн цифровых продуктов крупнейшей авиакомпании России с более чем 100-летней историей"
+      },
+      "awards": ["UI Redesign", "Design System", "Mobile & Web"],
       "image": "",
-      "sections": []
+      "body": [
+        { "type": "h2", "text": { "en": "Overview", "ru": "Обзор" } },
+        { "type": "p", "text": {
+          "en": "Aeroflot is Russia's flag carrier and a member of the global SkyTeam alliance. I led the UI redesign of its large-scale digital products, defining the visual direction and the interface patterns that hold complex flows together.",
+          "ru": "Аэрофлот — национальный авиаперевозчик России и участник глобального альянса SkyTeam. Я вёл UI-редизайн его масштабных цифровых продуктов, задавая визуальное направление и интерфейсные паттерны, которые держат сложные сценарии вместе."
+        } },
+        { "type": "img", "src": "" },
+        { "type": "h2", "text": { "en": "Context", "ru": "Контекст" } },
+        { "type": "p", "text": {
+          "en": "The products span booking, loyalty, and account management — long, branching flows used by millions of passengers. Consistency across them mattered as much as any single screen.",
+          "ru": "Продукты охватывают бронирование, лояльность и личный кабинет — длинные ветвящиеся сценарии, которыми пользуются миллионы пассажиров. Консистентность между ними была важна не меньше, чем отдельный экран."
+        } },
+        { "type": "h2", "text": { "en": "Role", "ru": "Роль" } },
+        { "type": "p", "text": {
+          "en": "As senior product designer, I drove the redesign of the mobile app and the Aeroflot Bonus loyalty account, and acted as art director for the product design team.",
+          "ru": "Как старший продуктовый дизайнер я вёл редизайн мобильного приложения и личного кабинета Аэрофлот Бонус, а также выступал арт-директором продуктовой команды дизайна."
+        } },
+        { "type": "h2", "text": { "en": "Challenge", "ru": "Задача" } },
+        { "type": "p", "text": {
+          "en": "Bring a fragmented set of surfaces to one visual language and one set of patterns — while respecting a heritage brand and the operational complexity of an airline.",
+          "ru": "Привести разрозненный набор экранов к единому визуальному языку и общим паттернам — с уважением к бренду с историей и к операционной сложности авиакомпании."
+        } },
+        { "type": "h2", "text": { "en": "Approach", "ru": "Подход" } },
+        { "type": "p", "text": {
+          "en": "I defined the visual direction and a reusable pattern library, then applied it consistently across the product's most complex flows, so the experience felt like one product rather than many.",
+          "ru": "Я задал визуальное направление и переиспользуемую библиотеку паттернов, а затем последовательно применил её в самых сложных сценариях — чтобы опыт ощущался как один продукт, а не набор разных."
+        } },
+        { "type": "img", "src": "" },
+        { "type": "h2", "text": { "en": "Outcome", "ru": "Результат" } },
+        { "type": "p", "text": {
+          "en": "A more consistent, scalable interface system across Aeroflot's core digital products, with patterns the team can keep extending.",
+          "ru": "Более консистентная и масштабируемая интерфейсная система в ключевых цифровых продуктах Аэрофлота, с паттернами, которые команда может развивать дальше."
+        } }
+      ]
     },
     {
-      "name": { "en": "Project name", "ru": "Название проекта" },
-      "subtitle": { "en": "", "ru": "" },
-      "awards": ["Award", "+20% CTR", "+10% MAU"],
+      "name": { "en": "Siren", "ru": "Siren" },
+      "subtitle": {
+        "en": "Experimental iOS app for sharing voice messages on a map",
+        "ru": "Экспериментальное iOS-приложение для голосовых сообщений на карте"
+      },
+      "awards": ["iOS", "Interaction Design", "Concept"],
       "image": "",
-      "sections": []
+      "body": [
+        { "type": "h2", "text": { "en": "Overview", "ru": "Обзор" } },
+        { "type": "p", "text": {
+          "en": "Siren is an experimental iOS product for dropping and sharing voice messages on a map. I designed the UI and interaction concepts, exploring voice-based communication and map-driven interfaces built around viral, expressive mechanics.",
+          "ru": "Siren — экспериментальный iOS-продукт, где голосовые сообщения оставляют и слушают прямо на карте. Я проектировал UI и концепции взаимодействия, исследуя голосовую коммуникацию и интерфейсы поверх карты, построенные на вирусных, выразительных механиках."
+        } },
+        { "type": "img", "src": "" },
+        { "type": "h2", "text": { "en": "Context", "ru": "Контекст" } },
+        { "type": "p", "text": {
+          "en": "Instead of a feed, the map is the interface. People leave voice messages tied to places, and discovery happens by moving through space rather than scrolling.",
+          "ru": "Вместо ленты интерфейсом становится карта. Люди оставляют голосовые сообщения, привязанные к местам, а находят их, перемещаясь в пространстве, а не листая."
+        } },
+        { "type": "h2", "text": { "en": "Role", "ru": "Роль" } },
+        { "type": "p", "text": {
+          "en": "I designed the interface and the core interaction concepts end to end — from the map canvas to the record-and-playback moments.",
+          "ru": "Я спроектировал интерфейс и ключевые механики взаимодействия целиком — от карты-холста до моментов записи и прослушивания."
+        } },
+        { "type": "h2", "text": { "en": "Challenge", "ru": "Задача" } },
+        { "type": "p", "text": {
+          "en": "Make an unfamiliar interaction — voice pinned to a place — feel immediate and playful, and design mechanics that invite sharing.",
+          "ru": "Сделать непривычное взаимодействие — голос, привязанный к месту — понятным, живым и лёгким, и заложить механики, которые подталкивают делиться."
+        } },
+        { "type": "h2", "text": { "en": "Approach", "ru": "Подход" } },
+        { "type": "p", "text": {
+          "en": "I focused on expressive, tactile interactions and a map-first layout, prototyping the record-drop-listen loop and the viral touchpoints that spread it.",
+          "ru": "Я сделал ставку на выразительные тактильные взаимодействия и компоновку вокруг карты, прототипируя цикл «записал — оставил — послушал» и вирусные точки, которые его распространяют."
+        } },
+        { "type": "h2", "text": { "en": "Outcome", "ru": "Результат" } },
+        { "type": "p", "text": {
+          "en": "A distinctive interaction concept and UI for a voice-and-map product — a fresh alternative to feed-based social apps.",
+          "ru": "Самобытная концепция взаимодействия и UI для продукта «голос и карта» — свежая альтернатива соцприложениям на основе ленты."
+        } }
+      ]
     },
     {
-      "name": { "en": "Project name", "ru": "Название проекта" },
-      "subtitle": { "en": "", "ru": "" },
-      "awards": ["Award", "+20% CTR", "+10% MAU"],
+      "name": { "en": "Yandex Mediaservices", "ru": "Яндекс Медиасервисы" },
+      "subtitle": {
+        "en": "Communication design for Yandex Plus, Music, Kinopoisk, Afisha, and other media services",
+        "ru": "Коммуникационный дизайн для Яндекс Плюс, Музыки, Кинопоиска, Афиши и других медиасервисов"
+      },
+      "awards": ["Communication Design", "Email & Promo", "Yandex"],
       "image": "",
-      "sections": []
-    },
-    {
-      "name": { "en": "Project name", "ru": "Название проекта" },
-      "subtitle": { "en": "", "ru": "" },
-      "awards": ["Award", "+20% CTR", "+10% MAU"],
-      "image": "",
-      "sections": []
-    },
-    {
-      "name": { "en": "Project name", "ru": "Название проекта" },
-      "subtitle": { "en": "", "ru": "" },
-      "awards": ["Award", "+20% CTR", "+10% MAU"],
-      "image": "",
-      "sections": []
-    },
-    {
-      "name": { "en": "Project name", "ru": "Название проекта" },
-      "subtitle": { "en": "", "ru": "" },
-      "awards": ["Award", "+20% CTR", "+10% MAU"],
-      "image": "",
-      "sections": []
-    },
-    {
-      "name": { "en": "Project name", "ru": "Название проекта" },
-      "subtitle": { "en": "", "ru": "" },
-      "awards": ["Award", "+20% CTR", "+10% MAU"],
-      "image": "",
-      "sections": []
+      "body": [
+        { "type": "h2", "text": { "en": "Overview", "ru": "Обзор" } },
+        { "type": "p", "text": {
+          "en": "I worked on communication design across Yandex's media ecosystem — Plus, Music, Kinopoisk, Afisha and more — designing email campaigns, promo landings, and special projects while keeping a consistent visual language across services.",
+          "ru": "Я занимался коммуникационным дизайном в медиаэкосистеме Яндекса — Плюс, Музыка, Кинопоиск, Афиша и другие — делал email-кампании, промо-лендинги и спецпроекты, удерживая единый визуальный язык между сервисами."
+        } },
+        { "type": "img", "src": "" },
+        { "type": "h2", "text": { "en": "Context", "ru": "Контекст" } },
+        { "type": "p", "text": {
+          "en": "The media services share users but each has its own tone. Communication design had to feel native to every product yet unmistakably part of one ecosystem.",
+          "ru": "Медиасервисы делят аудиторию, но у каждого свой тон. Коммуникация должна была ощущаться родной для каждого продукта и при этом безошибочно частью одной экосистемы."
+        } },
+        { "type": "h2", "text": { "en": "Role", "ru": "Роль" } },
+        { "type": "p", "text": {
+          "en": "I designed email campaigns, promo landing pages, and special projects, and maintained visual consistency across multiple Yandex media products.",
+          "ru": "Я делал email-кампании, промо-лендинги и спецпроекты и поддерживал визуальную консистентность между несколькими медиапродуктами Яндекса."
+        } },
+        { "type": "h2", "text": { "en": "Challenge", "ru": "Задача" } },
+        { "type": "p", "text": {
+          "en": "Move fast across many services and formats without letting the visual language drift apart.",
+          "ru": "Двигаться быстро на множестве сервисов и форматов, не давая визуальному языку расползтись."
+        } },
+        { "type": "h2", "text": { "en": "Approach", "ru": "Подход" } },
+        { "type": "p", "text": {
+          "en": "I built flexible communication templates and reusable layouts, adapting one system to each service's voice and campaign goals.",
+          "ru": "Я собрал гибкие коммуникационные шаблоны и переиспользуемые макеты, адаптируя одну систему под тон и задачи каждого сервиса."
+        } },
+        { "type": "h2", "text": { "en": "Outcome", "ru": "Результат" } },
+        { "type": "p", "text": {
+          "en": "Cohesive communication UI across a large media ecosystem, delivered at the pace and volume the services required.",
+          "ru": "Цельный коммуникационный дизайн в большой медиаэкосистеме, поставляемый в том темпе и объёме, которого требовали сервисы."
+        } }
+      ]
     }
   ]
 }
