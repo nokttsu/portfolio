@@ -105,71 +105,61 @@ function mergeContentIntoDicts() {
   }
 }
 
-// Hero scatter: every image uploaded to the case floats in the first viewport
-// and follows the cursor at its own depth (mouse-move parallax)
-function buildHeroScatter(p, hero) {
+// Image trail: while the cursor moves inside the first viewport of a case page,
+// the images uploaded to the case pop up along the cursor path and melt away
+function buildImageTrail(p) {
   const srcs = [];
+  if (p.image) srcs.push(p.image);
   caseBlocks(p).forEach((b) => {
     if (b.type === "img" && b.src) srcs.push(b.src);
   });
-  // The cover already fills the hero itself — float it only if it's the sole image
-  if (!srcs.length && p.image) srcs.push(p.image);
   const uniq = [...new Set(srcs)];
   if (!uniq.length || !window.gsap) return;
+  if (!window.matchMedia("(hover: hover) and (pointer: fine)").matches) return;
 
-  const slots = [
-    { x: 6, y: 12, w: 30, r: -7, d: 0.055 },
-    { x: 64, y: 8, w: 26, r: 5, d: 0.04 },
-    { x: 12, y: 54, w: 24, r: 6, d: 0.075 },
-    { x: 66, y: 50, w: 30, r: -5, d: 0.05 },
-    { x: 38, y: 28, w: 27, r: 3, d: 0.09 },
-    { x: 38, y: 64, w: 22, r: -8, d: 0.065 },
-  ];
+  // Warm the cache so the first spawns don't flicker
+  uniq.forEach((s) => {
+    const i = new Image();
+    i.src = s;
+  });
 
   const layer = document.createElement("div");
-  layer.className = "hero-scatter";
-  uniq.slice(0, slots.length).forEach((src, i) => {
-    const s = slots[i];
+  layer.className = "img-trail";
+  document.body.appendChild(layer);
+
+  const SPAWN_DISTANCE = 110;
+  let last = { x: -1e4, y: -1e4 };
+  let idx = 0;
+
+  const spawn = (x, y) => {
     const img = document.createElement("img");
-    img.className = "hero-scatter__img";
-    img.src = src;
+    img.className = "img-trail__item";
+    img.src = uniq[idx++ % uniq.length];
     img.alt = "";
-    img.style.left = s.x + "%";
-    img.style.top = s.y + "%";
-    img.style.width = s.w + "%";
-    gsap.set(img, { rotation: s.r });
     layer.appendChild(img);
-  });
-  hero.appendChild(layer);
+    gsap.set(img, {
+      x,
+      y,
+      xPercent: -50,
+      yPercent: -50,
+      rotation: gsap.utils.random(-9, 9),
+      scale: 0.5,
+      autoAlpha: 0,
+    });
+    gsap
+      .timeline({ onComplete: () => img.remove() })
+      .to(img, { scale: 1, autoAlpha: 1, duration: 0.25, ease: "power2.out" })
+      .to(img, { autoAlpha: 0, scale: 0.9, duration: 0.45, ease: "power1.in" }, "+=0.3");
+  };
 
-  const movers = [...layer.children].map((img, i) => ({
-    x: gsap.quickTo(img, "x", { duration: 0.55 + i * 0.09, ease: "power3.out" }),
-    y: gsap.quickTo(img, "y", { duration: 0.55 + i * 0.09, ease: "power3.out" }),
-    d: slots[i].d,
-  }));
-
-  let parked = false;
   window.addEventListener(
     "mousemove",
     (e) => {
-      // Active only while the first viewport is on screen
-      if (window.scrollY > innerHeight * 0.9) {
-        if (!parked) {
-          parked = true;
-          movers.forEach((m) => {
-            m.x(0);
-            m.y(0);
-          });
-        }
-        return;
-      }
-      parked = false;
-      const dx = e.clientX - innerWidth / 2;
-      const dy = e.clientY - innerHeight / 2;
-      movers.forEach((m) => {
-        m.x(dx * m.d);
-        m.y(dy * m.d);
-      });
+      // The trail lives only in the first viewport of the page
+      if (window.scrollY > innerHeight * 0.8) return;
+      if (Math.hypot(e.clientX - last.x, e.clientY - last.y) < SPAWN_DISTANCE) return;
+      last = { x: e.clientX, y: e.clientY };
+      spawn(e.clientX, e.clientY);
     },
     { passive: true }
   );
@@ -251,7 +241,7 @@ function renderContent() {
     hero.innerHTML = p.image ? `<img src="${esc(p.image)}" alt="">` : "";
     document.title = ((p.name && p.name.en) || "Project") + " — " + ((C.site.name && C.site.name.en) || "");
 
-    buildHeroScatter(p, hero);
+    buildImageTrail(p);
 
     const body = $(".project-body");
     const other = $(".other-projects");
