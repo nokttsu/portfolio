@@ -164,7 +164,7 @@ function buildImageTrail(projects) {
           { x: from.x, y: from.y, scale: 0.9, autoAlpha: 1 },
           { x: cur.x, y: cur.y, scale: 1, duration: 0.85, ease: "power3.out" }
         )
-        .to(img, { autoAlpha: 0, duration: 0.4, ease: "power1.in" }, 0.45);
+        .to(img, { scale: 0.4, autoAlpha: 0, duration: 0.5, ease: "power2.in" }, 0.45);
 
       last = cur;
     },
