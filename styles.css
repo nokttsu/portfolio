@@ -135,7 +135,7 @@ html {
   line-height: 24px;
 }
 
-/* ---------- Kebab menu button (mobile) ---------- */
+/* ---------- Kebab menu button (mobile): 32px circle, 10% white ---------- */
 
 .menu-btn {
   display: none;
@@ -145,34 +145,56 @@ html {
   align-items: center;
   justify-content: center;
   border: none;
-  border-radius: 8px;
-  background: none;
+  border-radius: 9999px;
+  background: rgba(255, 255, 255, 0.1);
   color: #fff;
   cursor: pointer;
+  transition: background-color 0.25s ease;
 }
 
-.menu-btn svg[hidden] {
-  display: none;
+.menu-btn:hover {
+  background: rgba(255, 255, 255, 0.16);
 }
 
-/* ---------- Mobile menu overlay ---------- */
+/* ---------- Mobile menu overlay: rgba(0,0,0,.8) + 12px blur ---------- */
 
 .menu {
   position: fixed;
   inset: 0;
   z-index: 20;
-  background: rgba(0, 0, 0, 0.35);
-  -webkit-backdrop-filter: blur(18px);
-  backdrop-filter: blur(18px);
+  background: rgba(0, 0, 0, 0.8);
+  -webkit-backdrop-filter: blur(12px);
+  backdrop-filter: blur(12px);
 }
 
 .menu[hidden] {
   display: none;
 }
 
+.menu__close {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: none;
+  border-radius: 9999px;
+  background: rgba(255, 255, 255, 0.2);
+  color: #fff;
+  cursor: pointer;
+  transition: background-color 0.25s ease;
+}
+
+.menu__close:hover {
+  background: rgba(255, 255, 255, 0.3);
+}
+
 .menu__panel {
   position: absolute;
-  top: 52px;
+  top: 60px;
   right: 12px;
   display: flex;
   flex-direction: column;
@@ -180,21 +202,6 @@ html {
   gap: 12px;
   transform-origin: top right;
   will-change: transform, opacity, filter;
-}
-
-.menu__lang {
-  font-size: 10px;
-  line-height: 12px;
-  text-transform: uppercase;
-  color: var(--text-muted);
-  background: none;
-  border: none;
-  cursor: pointer;
-  transition: color 0.2s ease;
-}
-
-.menu__lang:hover {
-  color: #fff;
 }
 
 @media (max-width: 599px) {
@@ -262,57 +269,123 @@ html {
 
 /* ---------- Intro (home) ---------- */
 
-/* ---------- Hero (home first viewport) ---------- */
+/* ---------- Hero (home first viewport), 1:1 with the Figma frames ---------- */
 
 .hero {
   position: relative;
   min-height: 100svh;
-  padding: 76px 12px 24px;
+  padding: 76px 12px 96px;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  gap: 24px;
   text-align: center;
   box-sizing: border-box;
 }
 
-.hero__signature {
-  width: clamp(145px, 40vw, 220px);
-  height: auto;
+.hero__head {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
 }
 
-.intro__lead {
+.hero__signature {
+  width: 145px;
+  height: 69px;
+  object-fit: contain;
+}
+
+.hero__title {
   font-family: "Inter Tight", "Inter", sans-serif;
   font-weight: 600;
-  font-size: clamp(30px, 8.5vw, 44px);
-  line-height: 1.09;
-  letter-spacing: -0.02em;
+  font-size: 40px;
+  line-height: 44px;
+  letter-spacing: -0.8px;
   max-width: 560px;
 }
 
-.hero__cta {
-  margin-top: 8px;
-}
-
-.intro__links {
+.hero__chips {
   display: flex;
   align-items: center;
-  justify-content: center;
-  gap: 32px;
+  gap: 2px;
+  margin-top: 32px;
 }
 
-/* Desktop: email/CV become a footer row at the bottom of the hero */
+/* Desktop hero CTA (white pill, 18/24 semibold) */
+.hero__cta {
+  display: none;
+  align-items: center;
+  justify-content: center;
+  padding: 12px 24px;
+  border-radius: 9999px;
+  background: #fff;
+  color: #000;
+  font-size: 18px;
+  line-height: 24px;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+/* Mono chip (email / CV / language) — same DNA as project tags */
+.chip {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 4px 6px;
+  border: none;
+  border-radius: 4px;
+  background: var(--tag-bg);
+  color: var(--tag-text);
+  font-family: "IBM Plex Mono", monospace;
+  font-size: 10px;
+  line-height: 12px;
+  text-transform: uppercase;
+  white-space: nowrap;
+  cursor: pointer;
+  transition: background-color 0.25s ease, color 0.25s ease;
+}
+
+.chip:hover {
+  background: rgba(255, 255, 255, 0.16);
+  color: rgba(255, 255, 255, 0.9);
+}
+
+.chip svg {
+  flex-shrink: 0;
+}
+
 @media (min-width: 600px) {
-  .hero {
-    padding: 76px 0 24px;
+  .hero__head {
+    gap: 32px;
   }
 
-  .hero .intro__links {
-    position: absolute;
+  .hero__signature {
+    width: 220px;
+    height: 106px;
+  }
+
+  .hero__title {
+    font-size: 60px;
+    line-height: 60px;
+    letter-spacing: -1.2px;
+  }
+
+  .hero__cta {
+    display: inline-flex;
+    margin-top: 56px;
+  }
+
+  /* Email / CV chips pin to the viewport bottom corners and stay on scroll */
+  .hero__chips {
+    position: fixed;
     left: 0;
     right: 0;
-    bottom: 16px;
+    bottom: 0;
+    z-index: 10;
+    margin: 0;
+    padding: 12px;
     justify-content: space-between;
   }
 }
@@ -811,6 +884,13 @@ html {
   line-height: 24px;
   font-weight: 600;
   white-space: nowrap;
+}
+
+/* Mobile mockup uses the 14px pill in the fixed bar */
+@media (max-width: 599px) {
+  .contact-bar__btn {
+    font-size: 14px;
+  }
 }
 
 /* ---------- Case page table of contents (desktop only) ---------- */

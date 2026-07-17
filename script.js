@@ -188,14 +188,12 @@ function renderContent() {
   const C = CONTENT;
 
   // Shared bits
-  $$(".contact-bar__btn").forEach((a) => (a.href = C.site.telegram));
-  const emailBtn = $("button.email__value");
-  if (emailBtn) {
-    emailBtn.dataset.copy = C.site.email;
-    emailBtn.querySelector("span").textContent = C.site.email;
-  }
-  const cvLink = $("a.email__value");
-  if (cvLink) cvLink.href = C.site.cvUrl;
+  $$(".contact-bar__btn, .hero__cta").forEach((a) => (a.href = C.site.telegram));
+  $$("[data-copy]").forEach((b) => {
+    b.dataset.copy = C.site.email;
+    b.querySelector("span").textContent = C.site.email;
+  });
+  $$("[data-cv]").forEach((a) => (a.href = C.site.cvUrl));
 
   // Home: sliding mouse trail from every image of every case
   if (!$(".project-hero")) buildImageTrail(C.projects);
@@ -303,8 +301,8 @@ function applyLang(lang) {
   });
   document.documentElement.lang = lang;
   $$(".lang-toggle__btn").forEach((b) => b.classList.toggle("is-active", b.dataset.lang === lang));
-  // Menu language row shows the language you'd switch TO
-  const ml = $("[data-menu-lang]");
+  // Menu language chip shows the language you'd switch TO
+  const ml = $("[data-menu-lang] span");
   if (ml) ml.textContent = lang === "en" ? "Русский язык" : "English";
 }
 
@@ -478,6 +476,7 @@ if (window.gsap) {
     initTabs();
     initToc();
     initMenu();
+    initCtaOnScroll();
     if (vtArrival) {
       // Seamless page transition: content must stand still, no intro replay
       const pre = $(".preloader");
@@ -499,32 +498,28 @@ function initMenu() {
   if (!btn || !menu) return;
 
   const panel = $(".menu__panel", menu);
-  const iconOpen = $(".menu-btn__open", btn);
-  const iconClose = $(".menu-btn__close", btn);
+  const closeBtn = $(".menu__close", menu);
   let open = false;
   let anim;
 
   const openMenu = () => {
     open = true;
     btn.setAttribute("aria-expanded", "true");
-    iconOpen.hidden = true;
-    iconClose.hidden = false;
     menu.hidden = false;
     anim && anim.kill();
-    // Drop out of the button: scale + fade from the top-right origin
+    // Backdrop fades in, chips drop out of the kebab from the top-right origin
     gsap.fromTo(menu, { autoAlpha: 0 }, { autoAlpha: 1, duration: 0.25, ease: "power2.out" });
+    gsap.fromTo(closeBtn, { autoAlpha: 0, rotation: -90 }, { autoAlpha: 1, rotation: 0, duration: 0.4, ease: "power3.out" });
     anim = gsap.fromTo(
-      panel,
-      { autoAlpha: 0, scale: 0.7, y: -10, filter: "blur(4px)" },
-      { autoAlpha: 1, scale: 1, y: 0, filter: "blur(0px)", duration: 0.5, ease: "back.out(1.7)" }
+      $$(".chip", panel),
+      { autoAlpha: 0, y: -14, scale: 0.8 },
+      { autoAlpha: 1, y: 0, scale: 1, duration: 0.45, stagger: 0.06, ease: "back.out(1.7)" }
     );
   };
 
   const closeMenu = () => {
     open = false;
     btn.setAttribute("aria-expanded", "false");
-    iconOpen.hidden = false;
-    iconClose.hidden = true;
     anim && anim.kill();
     // Melt into blur, iOS-style
     gsap.to(menu, { autoAlpha: 0, duration: 0.35, ease: "power2.in" });
@@ -536,20 +531,22 @@ function initMenu() {
       ease: "power2.in",
       onComplete: () => {
         menu.hidden = true;
-        gsap.set(panel, { clearProps: "filter" });
+        gsap.set(panel, { clearProps: "all" });
+        gsap.set($$(".chip", panel), { clearProps: "all" });
       },
     });
   };
 
-  btn.addEventListener("click", () => (open ? closeMenu() : openMenu()));
-  // Click on the blurred backdrop (not the panel) closes it
+  btn.addEventListener("click", openMenu);
+  closeBtn.addEventListener("click", closeMenu);
+  // Tap on the blurred backdrop (not the chips) closes it
   menu.addEventListener("click", (e) => {
-    if (!e.target.closest(".menu__panel")) closeMenu();
+    if (!e.target.closest(".menu__panel") && !e.target.closest(".menu__close")) closeMenu();
   });
   document.addEventListener("keydown", (e) => {
     if (e.key === "Escape" && open) closeMenu();
   });
-  // Language row inside the menu
+  // Language chip inside the menu
   const langBtn = $("[data-menu-lang]", menu);
   if (langBtn) {
     langBtn.addEventListener("click", () => {
@@ -557,6 +554,27 @@ function initMenu() {
       closeMenu();
     });
   }
+}
+
+// Desktop, home page: the fixed Telegram bar slides in only after
+// the first viewport has been scrolled past. gsap.matchMedia reverts the
+// hidden state automatically if the viewport crosses back to mobile.
+function initCtaOnScroll() {
+  const bar = $(".contact-bar");
+  if (!bar || !$(".hero")) return;
+  gsap.matchMedia().add("(min-width: 600px)", () => {
+    gsap.set(bar, { autoAlpha: 0, y: 24 });
+    const st = ScrollTrigger.create({
+      trigger: ".hero",
+      start: "bottom 80%",
+      onEnter: () => gsap.to(bar, { autoAlpha: 1, y: 0, duration: 0.5, ease: "power3.out" }),
+      onLeaveBack: () => gsap.to(bar, { autoAlpha: 0, y: 24, duration: 0.35, ease: "power2.in" }),
+    });
+    return () => {
+      st.kill();
+      gsap.set(bar, { clearProps: "opacity,visibility,transform" });
+    };
+  });
 }
 
 // ---------- Preloader (home page only) ----------
@@ -655,7 +673,7 @@ function initLoadSequence(firstVisit) {
   // Whatever races happen mid-load (language switch, tab clicks), the intro
   // must never end with elements stuck invisible — clear all inline props at the end.
   const INTRO_TARGETS =
-    ".header, .hero__signature, .intro__links, .hero__cta, .tabs__item, " +
+    ".header, .hero__signature, .hero__chips, .hero__cta, .tabs__item, " +
     '[data-panel="experience"] .exp-card, .project-intro p, ' +
     ".project-intro__tags .tag, .project-hero, .contact-bar__btn";
   const tl = gsap.timeline({
@@ -673,16 +691,16 @@ function initLoadSequence(firstVisit) {
   // The header animates only on the very first load of the site
   if (firstVisit) tl.from(".header", { y: -20, autoAlpha: 0, duration: 0.6 });
 
-  // Home hero — signature → heading → CTA → email/CV → tabs → experience
-  const lead = $(".hero .intro__lead");
+  // Home hero — signature → heading → chips → CTA → tabs → experience
+  const lead = $(".hero__title");
   if (lead) {
     tl.from(".hero__signature", { y: 12, scale: 0.96, autoAlpha: 0, duration: 0.6 });
     const split = SplitText.create(lead, { type: "lines", mask: "lines" });
     tl.from(split.lines, { yPercent: 110, stagger: 0.08, onComplete: () => split.revert() }, "-=0.25");
-    tl.from(".hero__cta", { y: 16, scale: 0.9, autoAlpha: 0, duration: 0.55, ease: "back.out(1.6)" }, "-=0.1");
-    // Tween the wrapper, not the links themselves: the links carry a CSS
-    // opacity transition (hover) that corrupts GSAP's from() value capture
-    tl.from(".intro__links", { y: 16, autoAlpha: 0, duration: 0.5 }, "-=0.15");
+    // Tween the wrapper, not the chips: they carry CSS hover transitions
+    // that corrupt GSAP's from() value capture
+    tl.from(".hero__chips", { y: 14, autoAlpha: 0, duration: 0.5 }, "-=0.15");
+    tl.from(".hero__cta", { y: 16, scale: 0.9, autoAlpha: 0, duration: 0.55, ease: "back.out(1.6)" }, "-=0.25");
     tl.from(".tabs__item", { y: 28, autoAlpha: 0, stagger: 0.07, duration: 0.6 }, "-=0.1");
     tl.from('[data-panel="experience"] .exp-card', { y: 16, autoAlpha: 0, stagger: 0.06, duration: 0.5 }, "-=0.15");
   }
@@ -769,9 +787,8 @@ function initHoverEffects() {
     });
   });
 
-  // Magnetic CTA button (soft) — works whether the button is in the hero or the fixed bar
-  const ctaBtn = $(".contact-bar__btn");
-  if (ctaBtn) {
+  // Magnetic CTA buttons (soft) — the hero pill and the fixed-bar pill alike
+  $$(".contact-bar__btn, .hero__cta").forEach((ctaBtn) => {
     const moveX = gsap.quickTo(ctaBtn, "x", { duration: 0.5, ease: "power3.out" });
     const moveY = gsap.quickTo(ctaBtn, "y", { duration: 0.5, ease: "power3.out" });
     const scale = gsap.quickTo(ctaBtn, "scale", { duration: 0.5, ease: "power3.out" });
@@ -798,5 +815,5 @@ function initHoverEffects() {
       },
       { passive: true }
     );
-  }
+  });
 }
