@@ -218,6 +218,13 @@ function renderContent() {
   }
 }
 
+// Re-stamp one element's text after SplitText.revert(), which restores the
+// HTML snapshot taken at split time and may resurrect a stale language
+function stampI18n(el) {
+  const t = el && el.dataset.i18n && I18N[currentLang][el.dataset.i18n];
+  if (t) el.textContent = t;
+}
+
 function applyLang(lang) {
   const dict = I18N[lang];
   $$("[data-i18n]").forEach((el) => {
@@ -459,7 +466,8 @@ function initToc() {
     el: titleEl.closest(".other-projects") || titleEl,
     titleEl,
   }));
-  if (!anchors.length || !$(".project-hero")) return;
+  // A single lonely dash is noise — show the toc only when there is a real outline
+  if (anchors.length < 2 || !$(".project-hero")) return;
 
   const toc = document.createElement("nav");
   toc.className = "toc";
@@ -485,17 +493,20 @@ function initToc() {
   document.body.appendChild(toc);
 
   const setActive = (i) => items.forEach((b, j) => b.classList.toggle("is-active", i === j));
-  anchors.forEach(({ el: sec }, i) => {
-    const next = anchors[i + 1];
-    ScrollTrigger.create({
-      trigger: sec,
-      start: "top 55%",
-      endTrigger: next ? next.el : document.documentElement,
-      end: next ? "top 55%" : "bottom bottom",
-      onToggle: (self) => self.isActive && setActive(i),
+  // Active anchor = the last one above the 55% viewport line;
+  // at the very bottom of the page the last anchor always wins
+  const track = () => {
+    const line = innerHeight * 0.55;
+    let act = 0;
+    anchors.forEach((a, i) => {
+      if (a.el.getBoundingClientRect().top <= line) act = i;
     });
-  });
-  setActive(0);
+    if (Math.ceil(scrollY + innerHeight) >= document.documentElement.scrollHeight - 2) act = anchors.length - 1;
+    setActive(act);
+  };
+  if (lenis) lenis.on("scroll", track);
+  else window.addEventListener("scroll", track, { passive: true });
+  track();
 }
 
 function initLoadSequence(firstVisit) {
@@ -509,6 +520,9 @@ function initLoadSequence(firstVisit) {
     defaults: { ease: "power3.out", duration: 0.8 },
     onComplete: () => {
       gsap.set(INTRO_TARGETS, { clearProps: "transform,opacity,visibility" });
+      // A language switch mid-intro may have been undone by split.revert() —
+      // re-stamp every translated node to the current language
+      applyLang(currentLang);
       // Now the sections below may enter, in viewport order
       initScrollEffects();
     },
@@ -559,7 +573,10 @@ function initScrollEffects() {
       duration: 0.8,
       ease: "power3.out",
       stagger: 0.08,
-      onComplete: () => split.revert(),
+      onComplete: () => {
+        split.revert();
+        stampI18n(el);
+      },
       scrollTrigger: { trigger: el, start: "top 88%", once: true },
     });
   });
