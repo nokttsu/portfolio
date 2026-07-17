@@ -105,14 +105,17 @@ function mergeContentIntoDicts() {
   }
 }
 
-// Sliding mouse trail (after madewithgsap effect 020): a fixed pool of the
-// case's images; each step of the cursor grabs the next image and slides it
-// from where the cursor came from to where it is now, then fades it out
-function buildImageTrail(p) {
+// Sliding mouse trail (after madewithgsap effect 020): a fixed pool of images
+// gathered from all cases — covers and in-body images alike; each step of the
+// cursor grabs the next image and slides it from where the cursor came from
+// to where it is now, then fades it out
+function buildImageTrail(projects) {
   const srcs = [];
-  if (p.image) srcs.push(p.image);
-  caseBlocks(p).forEach((b) => {
-    if (b.type === "img" && b.src) srcs.push(b.src);
+  projects.forEach((p) => {
+    if (p.image) srcs.push(p.image);
+    caseBlocks(p).forEach((b) => {
+      if (b.type === "img" && b.src) srcs.push(b.src);
+    });
   });
   const uniq = [...new Set(srcs)];
   if (!uniq.length || !window.gsap) return;
@@ -194,6 +197,9 @@ function renderContent() {
   const cvLink = $("a.email__value");
   if (cvLink) cvLink.href = C.site.cvUrl;
 
+  // Home: sliding mouse trail from every image of every case
+  if (!$(".project-hero")) buildImageTrail(C.projects);
+
   // Home: experience cards
   const panel = $('[data-panel="experience"]');
   if (panel) {
@@ -244,8 +250,6 @@ function renderContent() {
       .join("");
     hero.innerHTML = p.image ? `<img src="${esc(p.image)}" alt="">` : "";
     document.title = ((p.name && p.name.en) || "Project") + " — " + ((C.site.name && C.site.name.en) || "");
-
-    buildImageTrail(p);
 
     const body = $(".project-body");
     const other = $(".other-projects");
