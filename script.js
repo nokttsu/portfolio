@@ -105,11 +105,10 @@ function mergeContentIntoDicts() {
   }
 }
 
-// Sliding mouse trail (after madewithgsap effect 020): a fixed pool of images
-// gathered from all cases — covers and in-body images alike; each step of the
-// cursor grabs the next image and slides it from where the cursor came from
-// to where it is now, then fades it out
-function buildImageTrail(projects) {
+// Images drifting around the center (after madewithgsap folio 26): case images
+// fill the hero viewport and glide left → right on endless conveyor loops;
+// each one smoothly detours above or below the hero copy instead of crossing it
+function buildHeroDrift(projects) {
   const srcs = [];
   projects.forEach((p) => {
     if (p.image) srcs.push(p.image);
@@ -118,58 +117,94 @@ function buildImageTrail(projects) {
     });
   });
   const uniq = [...new Set(srcs)];
-  if (!uniq.length || !window.gsap) return;
-  if (!window.matchMedia("(hover: hover) and (pointer: fine)").matches) return;
+  const hero = $(".hero");
+  if (!uniq.length || !hero || !window.gsap) return;
+  if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
 
   const layer = document.createElement("div");
-  layer.className = "img-trail";
-  document.body.appendChild(layer);
+  layer.className = "hero-drift";
+  hero.prepend(layer);
 
-  // Reusable pool — the images live in the DOM once, like the tutorial's .medias
-  const pool = uniq.map((src) => {
+  // Enough copies to keep the whole screen populated, capped for performance
+  const pool = [];
+  while (pool.length < 10) pool.push(...uniq);
+  pool.length = Math.min(pool.length, 14);
+
+  // The no-fly zone: hero copy + buttons, padded with breathing room.
+  // Refreshed on every respawn so it survives resizes and language switches.
+  let avoid = null;
+  const updateAvoid = () => {
+    const lr = layer.getBoundingClientRect();
+    const els = [$(".hero__head"), $(".hero__chips"), $(".hero__cta")].filter(
+      (el) => el && el.offsetParent // drops display:none and position:fixed ones
+    );
+    if (!els.length) return;
+    const pad = 24;
+    let t = Infinity, b = -Infinity, l = Infinity, r = -Infinity;
+    els.forEach((el) => {
+      const er = el.getBoundingClientRect();
+      t = Math.min(t, er.top);
+      b = Math.max(b, er.bottom);
+      l = Math.min(l, er.left);
+      r = Math.max(r, er.right);
+    });
+    avoid = {
+      top: t - lr.top - pad,
+      bottom: b - lr.top + pad,
+      left: l - lr.left - pad,
+      right: r - lr.left + pad,
+    };
+  };
+
+  const spawn = (img, first) => {
+    updateAvoid();
+    const W = layer.clientWidth;
+    const H = layer.clientHeight;
+    const w = gsap.utils.random(0.6, 1) * Math.min(220, Math.max(120, W * 0.18));
+    const h = w * 0.7; // the cards' 928:649.6 aspect
+    img.style.width = w + "px";
+    const baseY = gsap.utils.random(8, Math.max(9, H - h - 8));
+    const speed = gsap.utils.random(45, 85); // px/s, each image keeps its own pace
+    // First wave spawns mid-screen so the hero is populated instantly;
+    // respawns re-enter from beyond the left edge, staggered
+    const startX = first ? gsap.utils.random(-w, W) : -w - gsap.utils.random(0, W * 0.4);
+    const pos = { x: startX };
+
+    const render = () => {
+      let y = baseY;
+      if (avoid && baseY + h > avoid.top && baseY < avoid.bottom) {
+        const cx = pos.x + w / 2;
+        const ramp = 220; // the detour eases in/out over this approach distance
+        const dx = cx < avoid.left ? avoid.left - cx : cx > avoid.right ? cx - avoid.right : 0;
+        let f = 1 - Math.min(dx / ramp, 1);
+        if (f > 0) {
+          f = f * f * (3 - 2 * f); // smoothstep — no kinks in the flight path
+          const above = baseY + h / 2 <= (avoid.top + avoid.bottom) / 2;
+          const clearY = above ? avoid.top - h : avoid.bottom;
+          y = baseY + (clearY - baseY) * f;
+        }
+      }
+      gsap.set(img, { x: pos.x, y });
+    };
+
+    render();
+    gsap.to(pos, {
+      x: W + w,
+      duration: (W + w - startX) / speed,
+      ease: "none",
+      onUpdate: render,
+      onComplete: () => spawn(img),
+    });
+  };
+
+  pool.forEach((src) => {
     const img = document.createElement("img");
-    img.className = "img-trail__item";
+    img.className = "hero-drift__item";
     img.src = src;
     img.alt = "";
     layer.appendChild(img);
-    gsap.set(img, { xPercent: -50, yPercent: -50, autoAlpha: 0 });
-    return img;
+    spawn(img, true);
   });
-
-  const SPAWN_DISTANCE = 130;
-  let last = null;
-  let idx = 0;
-  let stack = 0;
-
-  window.addEventListener(
-    "mousemove",
-    (e) => {
-      // The trail lives only in the first viewport of the page
-      if (window.scrollY > innerHeight * 0.8) {
-        last = null;
-        return;
-      }
-      const cur = { x: e.clientX, y: e.clientY };
-      if (last && Math.hypot(cur.x - last.x, cur.y - last.y) < SPAWN_DISTANCE) return;
-      const from = last || cur;
-
-      const img = pool[idx++ % pool.length];
-      gsap.killTweensOf(img);
-      img.style.zIndex = ++stack; // the freshest image rides on top
-
-      gsap
-        .timeline()
-        .fromTo(
-          img,
-          { x: from.x, y: from.y, scale: 0.9, autoAlpha: 1 },
-          { x: cur.x, y: cur.y, scale: 1, duration: 0.85, ease: "power3.out" }
-        )
-        .to(img, { scale: 0.05, autoAlpha: 0, duration: 0.35, ease: "power2.in" }, 0.4);
-
-      last = cur;
-    },
-    { passive: true }
-  );
 }
 
 // Case body is a flat list of Notion-style blocks; legacy `sections` are converted
@@ -195,8 +230,8 @@ function renderContent() {
   });
   $$("[data-cv]").forEach((a) => (a.href = C.site.cvUrl));
 
-  // Home: sliding mouse trail from every image of every case
-  if (!$(".project-hero")) buildImageTrail(C.projects);
+  // Home: drifting case-image carousel across the hero viewport
+  if (!$(".project-hero")) buildHeroDrift(C.projects);
 
   // Home: experience cards
   const panel = $('[data-panel="experience"]');
@@ -345,6 +380,20 @@ function switchLang(lang) {
     },
   });
 }
+
+// Progressive blur under the header and contact-bar gradients: five stacked
+// backdrop-filter bands (styles in .pblur) injected on every page that has them
+function initProgressiveBlur() {
+  $$(".header, .contact-bar").forEach((el) => {
+    if ($(".pblur", el)) return;
+    const wrap = document.createElement("div");
+    wrap.className = "pblur";
+    wrap.setAttribute("aria-hidden", "true");
+    wrap.innerHTML = "<i></i><i></i><i></i><i></i><i></i>";
+    el.prepend(wrap);
+  });
+}
+initProgressiveBlur();
 
 // Apply saved language synchronously, before first paint and SplitText
 applyLang(currentLang);
@@ -581,6 +630,16 @@ function initHeroScroll() {
   gsap.matchMedia().add("(max-width: 599px)", () => {
     fade(".hero__chips");
   });
+
+  // The drifting images dissolve too — opacity only, a scrubbed blur over a
+  // full-viewport layer of moving images would be too costly
+  if ($(".hero-drift")) {
+    gsap.to(".hero-drift", {
+      autoAlpha: 0,
+      ease: "none",
+      scrollTrigger: { trigger: ".page", start: "top bottom", end: "top 25%", scrub: true },
+    });
+  }
 }
 
 // Desktop, home page: the fixed Telegram bar slides in only after

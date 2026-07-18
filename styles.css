@@ -290,6 +290,14 @@ html {
   box-sizing: border-box;
 }
 
+/* Copy and buttons ride above the drifting images */
+.hero__head,
+.hero__chips,
+.hero__cta {
+  position: relative;
+  z-index: 1;
+}
+
 .hero__head {
   display: flex;
   flex-direction: column;
@@ -708,25 +716,23 @@ html {
   padding-bottom: 64px;
 }
 
-/* ---------- Image trail: case images pop along the cursor path ---------- */
+/* ---------- Hero drift: case images glide left → right around the copy ---------- */
 
-.img-trail {
-  position: fixed;
+.hero-drift {
+  position: absolute;
   inset: 0;
-  z-index: 9; /* above content, below the header and contact bar */
-  pointer-events: none;
   overflow: hidden;
+  pointer-events: none;
 }
 
-.img-trail__item {
+.hero-drift__item {
   position: absolute;
   top: 0;
   left: 0;
-  width: clamp(140px, 18vw, 220px);
   border-radius: 4px;
   border: 1px solid var(--divider);
   box-shadow: 0 16px 48px rgba(0, 0, 0, 0.45);
-  will-change: transform, opacity;
+  will-change: transform;
 }
 
 .overview {
@@ -898,6 +904,71 @@ html {
   .contact-bar__btn {
     font-size: 14px;
   }
+}
+
+/* ---------- Progressive blur under the header / contact bar gradients ----------
+   Stacked backdrop-filter layers, each masked to its own band: every layer blurs
+   the output of the previous one, so sharpness ramps up smoothly with distance
+   from the screen edge instead of cutting off at a line */
+
+.pblur {
+  position: absolute;
+  left: 0;
+  right: 0;
+  z-index: -1; /* above the bar's gradient, below its content */
+  pointer-events: none;
+}
+
+.header .pblur {
+  top: 0;
+  height: calc(100% + 24px);
+  --pb-dir: to bottom;
+}
+
+.contact-bar .pblur {
+  bottom: 0;
+  height: calc(100% + 24px);
+  --pb-dir: to top;
+}
+
+.pblur i {
+  position: absolute;
+  inset: 0;
+}
+
+.pblur i:nth-child(1) {
+  -webkit-backdrop-filter: blur(0.5px);
+  backdrop-filter: blur(0.5px);
+  -webkit-mask-image: linear-gradient(var(--pb-dir), #000 55%, transparent 85%);
+  mask-image: linear-gradient(var(--pb-dir), #000 55%, transparent 85%);
+}
+
+.pblur i:nth-child(2) {
+  -webkit-backdrop-filter: blur(1px);
+  backdrop-filter: blur(1px);
+  -webkit-mask-image: linear-gradient(var(--pb-dir), #000 40%, transparent 70%);
+  mask-image: linear-gradient(var(--pb-dir), #000 40%, transparent 70%);
+}
+
+.pblur i:nth-child(3) {
+  -webkit-backdrop-filter: blur(2px);
+  backdrop-filter: blur(2px);
+  -webkit-mask-image: linear-gradient(var(--pb-dir), #000 25%, transparent 55%);
+  mask-image: linear-gradient(var(--pb-dir), #000 25%, transparent 55%);
+}
+
+.pblur i:nth-child(4) {
+  -webkit-backdrop-filter: blur(4px);
+  backdrop-filter: blur(4px);
+  -webkit-mask-image: linear-gradient(var(--pb-dir), #000 10%, transparent 40%);
+  mask-image: linear-gradient(var(--pb-dir), #000 10%, transparent 40%);
+}
+
+.pblur i:nth-child(5) {
+  -webkit-backdrop-filter: blur(8px);
+  backdrop-filter: blur(8px);
+  -webkit-mask-image: linear-gradient(var(--pb-dir), #000 0%, transparent 25%);
+  mask-image: linear-gradient(var(--pb-dir), #000 0%, transparent 25%);
 }
 
 /* ---------- Case page table of contents (desktop only) ---------- */
