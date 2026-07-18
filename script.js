@@ -106,8 +106,8 @@ function mergeContentIntoDicts() {
   }
 }
 
-// Sliding mouse trail (after madewithgsap effect 020), case pages only: a pool
-// of images from all cases; each step of the cursor grabs the next image and
+// Sliding mouse trail (after madewithgsap effect 020): a pool of images from
+// all cases; each step of the cursor grabs the next image and
 // slides it from where the cursor came from to where it is now, then it
 // shrinks away — pure scale, no opacity fade
 function buildImageTrail(projects) {
@@ -172,129 +172,6 @@ function buildImageTrail(projects) {
   );
 }
 
-// ASCII donut behind the hero — an homage to a1k0n's donut.c: a giant 3D
-// torus tumbling in glyphs, z-buffered, lit with the classic luminance ramp
-// ".,-~:;=!*#$@". Scrolling spins it up. One GSAP ticker at ~30fps, a single
-// static frame under reduced motion.
-function buildHeroAscii() {
-  const hero = $(".hero");
-  if (!hero || !window.gsap) return;
-
-  const cvs = document.createElement("canvas");
-  cvs.className = "hero-ascii";
-  cvs.setAttribute("aria-hidden", "true");
-  hero.prepend(cvs);
-  const ctx = cvs.getContext("2d");
-
-  const RAMP = ".,-~:;=!*#$@"; // donut.c's luminance ramp, dark → bright
-  const CELL = 14;
-  const R1 = 1; // tube radius
-  const R2 = 2; // ring radius
-  const K2 = 5; // camera distance
-  // Pre-sampled torus angles: the per-frame loop is pure arithmetic
-  const TH = [], PH = [];
-  for (let t = 0; t < Math.PI * 2; t += 0.07) TH.push([Math.cos(t), Math.sin(t)]);
-  for (let p = 0; p < Math.PI * 2; p += 0.02) PH.push([Math.cos(p), Math.sin(p)]);
-
-  let cols = 0, rows = 0, w = 0, h = 0, K1 = 0;
-  let zbuf = null, grid = null;
-
-  const resize = () => {
-    const dpr = Math.min(2, devicePixelRatio || 1);
-    w = hero.clientWidth;
-    h = hero.clientHeight;
-    cvs.width = w * dpr;
-    cvs.height = h * dpr;
-    // CSS size must be set explicitly — otherwise the canvas renders at its
-    // retina buffer size and blows the layout apart on DPR > 1 screens
-    cvs.style.width = w + "px";
-    cvs.style.height = h + "px";
-    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-    ctx.font = '12px "IBM Plex Mono", monospace';
-    ctx.textBaseline = "top";
-    cols = Math.ceil(w / CELL);
-    rows = Math.ceil(h / CELL);
-    K1 = Math.min(cols, rows) * 0.72; // the donut dominates the frame
-    zbuf = new Float32Array(cols * rows);
-    grid = new Int8Array(cols * rows);
-  };
-  resize();
-  window.addEventListener("resize", resize);
-  // The webfont may land after the first frames — re-grab it for crisp glyphs
-  document.fonts.ready.then(resize);
-
-  let A = gsap.utils.random(0, 6.28); // tumble phase differs on every visit
-  let B = gsap.utils.random(0, 6.28);
-  let lastY = window.scrollY;
-  let boost = 0;
-
-  const draw = () => {
-    zbuf.fill(0);
-    grid.fill(-1);
-    const cA = Math.cos(A), sA = Math.sin(A);
-    const cB = Math.cos(B), sB = Math.sin(B);
-    const ccx = cols / 2, ccy = rows / 2;
-
-    for (let i = 0; i < TH.length; i++) {
-      const ct = TH[i][0], st = TH[i][1];
-      const circx = R2 + R1 * ct;
-      const circy = R1 * st;
-      for (let j = 0; j < PH.length; j++) {
-        const cp = PH[j][0], sp = PH[j][1];
-        const x = circx * (cB * cp + sA * sB * sp) - circy * cA * sB;
-        const y = circx * (sB * cp - sA * cB * sp) + circy * cA * cB;
-        const ooz = 1 / (K2 + cA * circx * sp + circy * sA);
-        const xp = (ccx + K1 * ooz * x) | 0;
-        const yp = (ccy - K1 * ooz * y) | 0;
-        if (xp < 0 || xp >= cols || yp < 0 || yp >= rows) continue;
-        const idx = yp * cols + xp;
-        if (ooz <= zbuf[idx]) continue;
-        const L = cp * ct * sB - cA * ct * sp - sA * st + cB * (cA * st - ct * sA * sp);
-        if (L <= 0) continue;
-        zbuf[idx] = ooz;
-        grid[idx] = Math.min(RAMP.length - 1, (L * 8) | 0);
-      }
-    }
-
-    ctx.clearRect(0, 0, w, h);
-    ctx.fillStyle = "rgba(255, 255, 255, 0.18)";
-    for (let r = 0; r < rows; r++) {
-      for (let c = 0; c < cols; c++) {
-        let ci = grid[r * cols + c];
-        if (ci < 0) continue;
-        // calm the middle so the copy floats over a fainter donut
-        const dx = c / cols - 0.5;
-        const dy = r / rows - 0.5;
-        const damp = Math.min(1, (dx * dx + dy * dy) * 5 + 0.3);
-        ci = (ci * damp) | 0;
-        ctx.fillText(RAMP[ci], c * CELL, r * CELL);
-      }
-    }
-  };
-
-  if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
-    draw(); // a frozen donut, no motion
-    return;
-  }
-
-  let frame = 0;
-  gsap.ticker.add(() => {
-    // Past the first viewport the layer is faded out — skip the work
-    if (window.scrollY > innerHeight) {
-      lastY = window.scrollY;
-      return;
-    }
-    if (++frame % 2) return; // ~30fps is plenty for a donut
-    const dt = gsap.ticker.deltaRatio(30) / 30;
-    // Scroll velocity spins the donut up, then it settles back down
-    const v = Math.abs(window.scrollY - lastY) / Math.max(dt, 1 / 120);
-    lastY = window.scrollY;
-    boost += (Math.min(v / 1500, 2.5) - boost) * Math.min(1, dt * 5);
-    A += (0.45 + boost * 1.4) * dt;
-    B += (0.23 + boost * 0.8) * dt;
-    draw();
-  });
-}
 
 // Case body is a flat list of Notion-style blocks; legacy `sections` are converted
 function caseBlocks(p) {
@@ -319,9 +196,8 @@ function renderContent() {
   });
   $$("[data-cv]").forEach((a) => (a.href = C.site.cvUrl));
 
-  // Home: ASCII plasma behind the hero; case pages: cursor trail in the first viewport
-  if (!$(".project-hero")) buildHeroAscii();
-  else buildImageTrail(C.projects);
+  // Cursor image trail in the first viewport — home and case pages alike
+  buildImageTrail(C.projects);
 
   // Home: experience cards
   const panel = $('[data-panel="experience"]');
@@ -788,7 +664,6 @@ let applyHeroFade = () => {};
 function initHeroScroll() {
   if (!$(".hero") || !$(".page")) return;
 
-  const ascii = $(".hero-ascii");
   const mobile = window.matchMedia("(max-width: 599px)");
   applyHeroFade = () => apply();
   // Back on desktop, the chips are viewport-fixed and must not stay faded
@@ -807,8 +682,6 @@ function initHeroScroll() {
     gsap.set([".hero__head", ".hero__cta"], state);
     // Mobile chips sit inside the hero flow and dissolve with it
     if (mobile.matches) gsap.set(".hero__chips", state);
-    // ASCII field: opacity only — blurring a full-viewport canvas is too costly
-    if (ascii) gsap.set(ascii, { opacity: state.opacity, visibility: state.visibility });
   };
 
   window.addEventListener("scroll", apply, { passive: true });
