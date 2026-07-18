@@ -290,7 +290,18 @@ html {
   box-sizing: border-box;
 }
 
-/* Copy and buttons ride above the drifting images */
+/* Full-bleed background video, covering the whole first viewport */
+.hero__video {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  z-index: 0;
+  pointer-events: none;
+}
+
+/* Copy and buttons ride above the background video */
 .hero__head,
 .hero__chips,
 .hero__cta {
