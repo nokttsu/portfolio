@@ -100,6 +100,7 @@ function mergeContentIntoDicts() {
       d["proj" + i + "sub"] = g(p.subtitle);
       caseBlocks(p).forEach((b, k) => {
         if (b.text) d["proj" + i + "b" + k] = g(b.text);
+        if (b.author) d["proj" + i + "b" + k + "a"] = g(b.author);
       });
     });
   }
@@ -365,6 +366,22 @@ function renderContent() {
           if (b.type === "h3") return `<h3 class="case-h3" ${i18n}></h3>`;
           if (b.type === "quote") return `<blockquote class="case-quote" ${i18n}></blockquote>`;
           if (b.type === "ul") return `<ul class="case-ul" ${i18n} data-i18n-list></ul>`;
+          if (b.type === "facts") return `<dl class="case-facts" ${i18n} data-i18n-facts></dl>`;
+          if (b.type === "stats") return `<div class="case-stats" ${i18n} data-i18n-stats></div>`;
+          if (b.type === "testimonial")
+            return `<figure class="case-testimonial"><blockquote ${i18n}></blockquote><figcaption data-i18n="proj${idx}b${k}a"></figcaption></figure>`;
+          if (b.type === "compare")
+            return `<div class="case-compare" data-compare tabindex="0" role="slider" aria-label="Before and after comparison" aria-valuemin="0" aria-valuemax="100" aria-valuenow="50">
+              ${b.after ? `<img src="${esc(b.after)}" alt="">` : ""}
+              <div class="case-compare__top">${b.before ? `<img src="${esc(b.before)}" alt="">` : ""}</div>
+              <div class="case-compare__handle"></div>
+              <span class="case-compare__tag case-compare__tag--a mono">Before</span>
+              <span class="case-compare__tag case-compare__tag--b mono">After</span>
+            </div>`;
+          if (b.type === "grid")
+            return `<div class="case-grid">${(b.images || [])
+              .map((s) => (s ? `<img class="case-img" src="${esc(s)}" alt="" loading="lazy">` : '<div class="case-img"></div>'))
+              .join("")}</div>`;
           if (b.type === "callout")
             return `<div class="case-callout"><span class="case-callout__icon">${esc(b.icon || "💡")}</span><p ${i18n}></p></div>`;
           if (b.type === "divider") return '<hr class="case-divider">';
@@ -376,6 +393,7 @@ function renderContent() {
         })
         .join("");
       body.insertBefore(wrap, other);
+      initCompares(wrap);
     }
 
     // Other projects: everything except the current one, first four
@@ -395,6 +413,36 @@ function renderContent() {
   }
 }
 
+// Before/after sliders: drag or arrow keys move the split, GSAP glides it
+function initCompares(scope) {
+  $$("[data-compare]", scope).forEach((box) => {
+    const top = $(".case-compare__top", box);
+    const handle = $(".case-compare__handle", box);
+    const pos = { p: 50 };
+    const apply = () => {
+      top.style.clipPath = `inset(0 ${100 - pos.p}% 0 0)`;
+      handle.style.left = pos.p + "%";
+      box.setAttribute("aria-valuenow", Math.round(pos.p));
+    };
+    apply();
+    const glide = (v) => {
+      v = Math.max(0, Math.min(100, v));
+      if (window.gsap) gsap.to(pos, { p: v, duration: 0.3, ease: "power2.out", overwrite: true, onUpdate: apply });
+      else { pos.p = v; apply(); }
+    };
+    const fromEvent = (e) => {
+      const r = box.getBoundingClientRect();
+      glide(((e.clientX - r.left) / r.width) * 100);
+    };
+    box.addEventListener("pointerdown", (e) => { box.setPointerCapture(e.pointerId); fromEvent(e); });
+    box.addEventListener("pointermove", (e) => { if (e.buttons) fromEvent(e); });
+    box.addEventListener("keydown", (e) => {
+      if (e.key === "ArrowLeft") { e.preventDefault(); glide(pos.p - 8); }
+      if (e.key === "ArrowRight") { e.preventDefault(); glide(pos.p + 8); }
+    });
+  });
+}
+
 // Re-stamp one element's text after SplitText.revert(), which restores the
 // HTML snapshot taken at split time and may resurrect a stale language
 function stampI18n(el) {
@@ -407,13 +455,29 @@ function applyLang(lang) {
   $$("[data-i18n]").forEach((el) => {
     const t = dict[el.dataset.i18n];
     if (!t) return;
+    const lines = () => t.split("\n").map((s) => s.trim()).filter(Boolean);
     // List blocks store one item per line — rebuild the <li> set
     if (el.hasAttribute("data-i18n-list")) {
-      el.innerHTML = t
-        .split("\n")
-        .map((s) => s.trim())
-        .filter(Boolean)
-        .map((s) => `<li>${esc(s)}</li>`)
+      el.innerHTML = lines().map((s) => `<li>${esc(s)}</li>`).join("");
+    } else if (el.hasAttribute("data-i18n-facts")) {
+      // "Label: value" per line
+      el.innerHTML = lines()
+        .map((line) => {
+          const m = line.indexOf(":");
+          const label = m > -1 ? line.slice(0, m).trim() : "";
+          const val = (m > -1 ? line.slice(m + 1) : line).trim();
+          return `<div class="case-facts__item"><dt>${esc(label)}</dt><dd>${esc(val)}</dd></div>`;
+        })
+        .join("");
+    } else if (el.hasAttribute("data-i18n-stats")) {
+      // "Value | label" per line
+      el.innerHTML = lines()
+        .map((line) => {
+          const m = line.indexOf("|");
+          const val = (m > -1 ? line.slice(0, m) : line).trim();
+          const label = m > -1 ? line.slice(m + 1).trim() : "";
+          return `<div class="case-stats__item"><span class="case-stats__value">${esc(val)}</span><span class="case-stats__label">${esc(label)}</span></div>`;
+        })
         .join("");
     } else {
       el.textContent = t;
@@ -890,7 +954,8 @@ function initLoadSequence(firstVisit) {
 
 const SCROLL_FX_TARGETS =
   ".projects .section-title, .other-projects .section-title, .case-h2, .case-h3, " +
-  ".case-p, .case-img, .case-quote, .case-ul, .case-callout, .case-divider, .card, .mini-card";
+  ".case-p, .case-img, .case-quote, .case-ul, .case-callout, .case-divider, " +
+  ".case-facts, .case-stats, .case-testimonial, .case-compare, .case-grid, .card, .mini-card";
 
 function initScrollEffects() {
   // Release the pre-hidden state; the from-tweens below take over per element
@@ -913,7 +978,10 @@ function initScrollEffects() {
   });
 
   // Case text and image blocks fade in
-  $$(".case-p, .case-img, .case-quote, .case-ul, .case-callout, .case-divider").forEach((elm) => {
+  $$(
+    ".case-p, .case-img, .case-quote, .case-ul, .case-callout, .case-divider, " +
+      ".case-facts, .case-stats, .case-testimonial, .case-compare, .case-grid"
+  ).forEach((elm) => {
     gsap.from(elm, {
       y: 32,
       autoAlpha: 0,
