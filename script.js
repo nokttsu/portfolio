@@ -477,6 +477,7 @@ if (window.gsap) {
     initToc();
     initMenu();
     initCtaOnScroll();
+    initHeroScroll();
     if (vtArrival) {
       // Seamless page transition: content must stand still, no intro replay
       const pre = $(".preloader");
@@ -554,6 +555,32 @@ function initMenu() {
       closeMenu();
     });
   }
+}
+
+// Home page: the hero is pinned (CSS sticky) while the page scrolls over it;
+// as the blocks cover it, the hero content melts into transparency and blur
+function initHeroScroll() {
+  if (!$(".hero") || !$(".page")) return;
+
+  const fade = (targets) =>
+    gsap.to(targets, {
+      autoAlpha: 0,
+      filter: "blur(12px)",
+      ease: "none",
+      scrollTrigger: {
+        trigger: ".page",
+        start: "top bottom",
+        end: "top 25%",
+        scrub: true,
+      },
+    });
+
+  fade([".hero__head", ".hero__cta"]);
+  // On mobile the chips sit inside the hero flow and dissolve with it;
+  // on desktop they are fixed to the viewport bottom and must stay visible
+  gsap.matchMedia().add("(max-width: 599px)", () => {
+    fade(".hero__chips");
+  });
 }
 
 // Desktop, home page: the fixed Telegram bar slides in only after
