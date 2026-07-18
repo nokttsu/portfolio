@@ -234,9 +234,13 @@ function buildHeroDrift(projects) {
     const rowH = baseW * 0.7; // the cards' 928:649.6 aspect
     const count = Math.max(2, Math.round(H / (rowH + gap)));
     const step = H / count; // rows spread evenly over the full height
+    // The arc lifts cards by up to A mid-screen: shift the whole grid down by A
+    // so the top row crests exactly at the viewport edge instead of being cut
+    const A = Math.min(44, H * 0.05);
+    lanes.A = A;
 
     for (let li = 0; li < count; li++) {
-      const lane = { cy: step * (li + 0.5), speed: gsap.utils.random(20, 34), items: [] };
+      const lane = { cy: A + step * (li + 0.5), speed: gsap.utils.random(20, 34), items: [] };
       // Stagger each row's seam so the wall doesn't read as strict columns
       let x = -gsap.utils.random(0, baseW);
       while (x < W + baseW) {
@@ -256,9 +260,6 @@ function buildHeroDrift(projects) {
 
     lanes.gap = gap;
     lanes.W = W;
-    // The wall bows along a gentle arc: cards ride higher mid-screen and tilt
-    // with the tangent of the curve
-    lanes.A = Math.min(64, H * 0.07);
   };
 
   const tick = () => {
