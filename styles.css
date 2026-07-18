@@ -742,24 +742,12 @@ html {
   will-change: transform;
 }
 
-/* ---------- Hero drift: case images glide left → right around the copy ---------- */
+/* ---------- Hero ASCII plasma: canvas glyph field behind the copy ---------- */
 
-.hero-drift {
+.hero-ascii {
   position: absolute;
   inset: 0;
-  overflow: hidden;
   pointer-events: none;
-}
-
-.hero-drift__item {
-  position: absolute;
-  top: 0;
-  left: 0;
-  object-fit: cover;
-  border-radius: 4px;
-  border: 1px solid var(--divider);
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.35);
-  will-change: transform, opacity;
 }
 
 .overview {

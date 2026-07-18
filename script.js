@@ -172,160 +172,81 @@ function buildImageTrail(projects) {
   );
 }
 
-// Depth tunnel: case images are born tiny in the distance behind the hero copy
-// and fly past the viewer along the screen edges — pure perspective math
-// (screen = center + world/Z · focal) on a single GSAP ticker. Scrolling spins
-// the tunnel up; cards passing behind the copy ghost out so the text stays
-// readable. Elements are recycled — a card that exits respawns in the deep.
-function buildHeroDrift(projects) {
-  const srcs = [];
-  projects.forEach((p) => {
-    if (p.image) srcs.push(p.image);
-    caseBlocks(p).forEach((b) => {
-      if (b.type === "img" && b.src) srcs.push(b.src);
-    });
-  });
-  const uniq = [...new Set(srcs)];
+// ASCII plasma background for the hero: a canvas grid of monospace glyphs
+// driven by layered sine fields — slow, organic waves of character density.
+// The middle of the field is damped so the copy floats on quiet water.
+// One GSAP ticker at ~30fps; a single static frame under reduced motion.
+function buildHeroAscii() {
   const hero = $(".hero");
-  if (!uniq.length || !hero || !window.gsap) return;
-  if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+  if (!hero || !window.gsap) return;
 
-  const layer = document.createElement("div");
-  layer.className = "hero-drift";
-  hero.prepend(layer);
+  const cvs = document.createElement("canvas");
+  cvs.className = "hero-ascii";
+  cvs.setAttribute("aria-hidden", "true");
+  hero.prepend(cvs);
+  const ctx = cvs.getContext("2d");
 
-  // The suction zone: hero copy + buttons, padded with breathing room.
-  let avoid = null;
-  const updateAvoid = () => {
-    const lr = layer.getBoundingClientRect();
-    const els = [$(".hero__head"), $(".hero__chips"), $(".hero__cta")].filter(
-      (el) => el && el.offsetParent // drops display:none and position:fixed ones
-    );
-    if (!els.length) return;
-    const pad = 24;
-    let t = Infinity, b = -Infinity, l = Infinity, r = -Infinity;
-    els.forEach((el) => {
-      const er = el.getBoundingClientRect();
-      t = Math.min(t, er.top);
-      b = Math.max(b, er.bottom);
-      l = Math.min(l, er.left);
-      r = Math.max(r, er.right);
-    });
-    avoid = {
-      top: t - lr.top - pad,
-      bottom: b - lr.top + pad,
-      left: l - lr.left - pad,
-      right: r - lr.left + pad,
-    };
+  const CHARS = " .·:;=+*xX#"; // density ramp, dark → bright
+  const CELL = 16;
+  let cols = 0;
+  let rows = 0;
+  let w = 0;
+  let h = 0;
+
+  const resize = () => {
+    const dpr = Math.min(2, devicePixelRatio || 1);
+    w = hero.clientWidth;
+    h = hero.clientHeight;
+    cvs.width = w * dpr;
+    cvs.height = h * dpr;
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    ctx.font = '12px "IBM Plex Mono", monospace';
+    ctx.textBaseline = "top";
+    cols = Math.ceil(w / CELL);
+    rows = Math.ceil(h / CELL);
+  };
+  resize();
+  window.addEventListener("resize", resize);
+  // The webfont may land after the first frames — re-grab it for crisp glyphs
+  document.fonts.ready.then(resize);
+
+  let t = gsap.utils.random(0, 20); // a different sea on every visit
+  const draw = () => {
+    ctx.clearRect(0, 0, w, h);
+    ctx.fillStyle = "rgba(255, 255, 255, 0.16)";
+    for (let y = 0; y < rows; y++) {
+      const vv = (y / rows) * 4;
+      for (let x = 0; x < cols; x++) {
+        const u = (x / cols) * 4;
+        const v =
+          Math.sin(u * 1.7 + t) +
+          Math.sin(vv * 1.3 - t * 0.8) +
+          Math.sin((u + vv) * 1.1 + t * 0.6) +
+          Math.sin(Math.hypot(u - 2, vv - 2) * 1.9 - t * 1.2);
+        let b = (v + 4) / 8; // -4..4 → 0..1
+        // radial damping: calm centre, lively edges
+        const dx = x / cols - 0.5;
+        const dy = y / rows - 0.5;
+        b *= Math.min(1, (dx * dx + dy * dy) * 5.5 + 0.12);
+        const ci = Math.min(CHARS.length - 1, Math.floor(b * CHARS.length));
+        if (ci > 0) ctx.fillText(CHARS[ci], x * CELL, y * CELL);
+      }
+    }
   };
 
-  const COUNT = 32;
-  const ZFAR = 9; // spawn depth
-  const ZNEAR = 0.22; // fly-past depth
-  const BASE = 300; // px card box; real size comes from transform scale
-  const items = [];
-  let srcIdx = 0;
-  let frame = 0;
-  let lastY = window.scrollY;
-  let boost = 0;
-  const nextSrc = () => uniq[srcIdx++ % uniq.length];
-
-  // (Re)launch a card at depth z with a fresh trajectory and image
-  const spawn = (it, z) => {
-    it.w = gsap.utils.random(0.3, 0.52); // world-space width
-    // Trajectory radius is tied to the card's size: big cards keep further
-    // from the center line, so nothing large ever crosses the copy
-    const r = it.w * gsap.utils.random(2.4, 5.5);
-    const a = Math.random() * Math.PI * 2;
-    it.X = Math.cos(a) * r;
-    // Portrait screens spread the flight paths vertically, landscape squashes them
-    it.Y = Math.sin(a) * r * (layer.clientWidth >= layer.clientHeight ? 0.72 : 1.3);
-    it.Z = z;
-    it.spd = gsap.utils.random(0.85, 1.25);
-    it.rot = gsap.utils.random(-10, 10);
-    it.rotV = gsap.utils.random(-2, 2); // lazy roll, deg/s
-    it.el.src = nextSrc();
-  };
-
-  for (let i = 0; i < COUNT; i++) {
-    const img = document.createElement("img");
-    img.className = "hero-drift__item";
-    img.alt = "";
-    img.style.width = BASE + "px";
-    img.style.height = BASE * 0.7 + "px";
-    layer.appendChild(img);
-    const it = { el: img };
-    items.push(it);
-    // The launch fleet is spread through the whole depth so the tunnel is
-    // already flowing when the preloader lifts
-    spawn(it, gsap.utils.random(ZNEAR + 0.4, ZFAR));
+  if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+    draw(); // a still ASCII field, no motion
+    return;
   }
 
-  const tick = () => {
+  let frame = 0;
+  gsap.ticker.add(() => {
     // Past the first viewport the layer is faded out — skip the work
-    if (window.scrollY > innerHeight) {
-      lastY = window.scrollY;
-      return;
-    }
-    const dt = gsap.ticker.deltaRatio(60) / 60; // seconds since last frame
-    if (++frame % 60 === 0) updateAvoid(); // survives lang switches / font loads
-    const W = layer.clientWidth;
-    const H = layer.clientHeight;
-    const f = Math.min(W, H) * 0.9; // focal length
-    const cx = W / 2;
-    const cy = H / 2;
-
-    // Scroll velocity spins the tunnel up, then it winds back down
-    const v = Math.abs(window.scrollY - lastY) / Math.max(dt, 1 / 240);
-    lastY = window.scrollY;
-    boost += (Math.min(v / 1200, 3) - boost) * Math.min(1, dt * 6);
-    const dz = (0.55 + boost * 1.6) * dt;
-
-    items.forEach((it) => {
-      it.Z -= dz * it.spd;
-      it.rot += it.rotV * dt;
-      if (it.Z <= ZNEAR) spawn(it, ZFAR);
-
-      const s = f / it.Z;
-      const px = cx + it.X * s;
-      const py = cy + it.Y * s;
-      const scale = (it.w * s) / BASE;
-      const hw = (BASE * scale) / 2;
-      const hh = hw * 0.7;
-      // Fully out of frame → back into the deep
-      if (px + hw < -40 || px - hw > W + 40 || py + hh < -40 || py - hh > H + 40) {
-        spawn(it, ZFAR);
-        return;
-      }
-
-      // Fade in from the darkness of the far end…
-      let op = gsap.utils.clamp(0, 1, (ZFAR - it.Z) / (ZFAR * 0.28));
-      // …and ghost out while passing behind the copy so the text stays readable.
-      // Coverage counts against the smaller of the two areas, so a big card
-      // parked over the copy dims just as hard as a small one fully inside it
-      if (avoid) {
-        const ox = Math.max(0, Math.min(px + hw, avoid.right) - Math.max(px - hw, avoid.left));
-        const oy = Math.max(0, Math.min(py + hh, avoid.bottom) - Math.max(py - hh, avoid.top));
-        const zoneArea = (avoid.right - avoid.left) * (avoid.bottom - avoid.top);
-        const frac = (ox * oy) / (Math.min(4 * hw * hh, zoneArea) || 1);
-        // sqrt makes even a corner graze count, so a clearing forms around the copy
-        op *= 1 - 0.95 * Math.min(1, Math.sqrt(frac));
-      }
-
-      gsap.set(it.el, {
-        x: px - BASE / 2,
-        y: py - BASE * 0.35,
-        scale,
-        rotation: it.rot,
-        opacity: op,
-        zIndex: Math.round((ZFAR - it.Z) * 100),
-        transformOrigin: "50% 50%",
-      });
-    });
-  };
-
-  gsap.ticker.add(tick);
-  window.addEventListener("resize", updateAvoid);
+    if (window.scrollY > innerHeight) return;
+    if (++frame % 2) return; // ~30fps is plenty for a slow sea
+    t += (gsap.ticker.deltaRatio(60) / 60) * 1.1;
+    draw();
+  });
 }
 
 // Case body is a flat list of Notion-style blocks; legacy `sections` are converted
@@ -351,8 +272,8 @@ function renderContent() {
   });
   $$("[data-cv]").forEach((a) => (a.href = C.site.cvUrl));
 
-  // Home: drifting case-image carousel; case pages: cursor trail in the first viewport
-  if (!$(".project-hero")) buildHeroDrift(C.projects);
+  // Home: ASCII plasma behind the hero; case pages: cursor trail in the first viewport
+  if (!$(".project-hero")) buildHeroAscii();
   else buildImageTrail(C.projects);
 
   // Home: experience cards
@@ -820,7 +741,7 @@ let applyHeroFade = () => {};
 function initHeroScroll() {
   if (!$(".hero") || !$(".page")) return;
 
-  const drift = $(".hero-drift");
+  const ascii = $(".hero-ascii");
   const mobile = window.matchMedia("(max-width: 599px)");
   applyHeroFade = () => apply();
   // Back on desktop, the chips are viewport-fixed and must not stay faded
@@ -839,9 +760,8 @@ function initHeroScroll() {
     gsap.set([".hero__head", ".hero__cta"], state);
     // Mobile chips sit inside the hero flow and dissolve with it
     if (mobile.matches) gsap.set(".hero__chips", state);
-    // Drifting wall: opacity only — blurring a full-viewport layer of moving
-    // images every frame would be too costly
-    if (drift) gsap.set(drift, { opacity: state.opacity, visibility: state.visibility });
+    // ASCII field: opacity only — blurring a full-viewport canvas is too costly
+    if (ascii) gsap.set(ascii, { opacity: state.opacity, visibility: state.visibility });
   };
 
   window.addEventListener("scroll", apply, { passive: true });
