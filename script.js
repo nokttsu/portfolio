@@ -172,10 +172,11 @@ function buildImageTrail(projects) {
   );
 }
 
-// Hero conveyor wall (after the "hero desktop" mock): rows of case images tile
-// the whole first viewport and crawl left → right on endless loops. Rows that
-// cross the copy zone get a suction field — approaching cards shrink and get
-// pulled into the middle of the text, then grow back out on the far side.
+// Depth tunnel: case images are born tiny in the distance behind the hero copy
+// and fly past the viewer along the screen edges — pure perspective math
+// (screen = center + world/Z · focal) on a single GSAP ticker. Scrolling spins
+// the tunnel up; cards passing behind the copy ghost out so the text stays
+// readable. Elements are recycled — a card that exits respawns in the deep.
 function buildHeroDrift(projects) {
   const srcs = [];
   projects.forEach((p) => {
@@ -218,108 +219,113 @@ function buildHeroDrift(projects) {
     };
   };
 
-  let lanes = [];
+  const COUNT = 32;
+  const ZFAR = 9; // spawn depth
+  const ZNEAR = 0.22; // fly-past depth
+  const BASE = 300; // px card box; real size comes from transform scale
+  const items = [];
   let srcIdx = 0;
   let frame = 0;
+  let lastY = window.scrollY;
+  let boost = 0;
   const nextSrc = () => uniq[srcIdx++ % uniq.length];
 
-  const build = () => {
-    layer.innerHTML = "";
-    lanes = [];
-    updateAvoid();
-    const W = layer.clientWidth;
-    const H = layer.clientHeight;
-    const gap = W < 600 ? 12 : 24;
-    const baseW = W < 600 ? W * 0.34 : Math.min(W * 0.2, 260);
-    const rowH = baseW * 0.7; // the cards' 928:649.6 aspect
-    const count = Math.max(2, Math.round(H / (rowH + gap)));
-    const step = H / count; // rows spread evenly over the full height
-    // The arc lifts cards by up to A mid-screen: shift the whole grid down by A
-    // so the top row crests exactly at the viewport edge instead of being cut
-    const A = Math.min(44, H * 0.05);
-    lanes.A = A;
-
-    for (let li = 0; li < count; li++) {
-      const lane = { cy: A + step * (li + 0.5), speed: gsap.utils.random(20, 34), items: [] };
-      // Stagger each row's seam so the wall doesn't read as strict columns
-      let x = -gsap.utils.random(0, baseW);
-      while (x < W + baseW) {
-        const w = baseW * gsap.utils.random(0.8, 1.2);
-        const img = document.createElement("img");
-        img.className = "hero-drift__item";
-        img.src = nextSrc();
-        img.alt = "";
-        img.style.width = w + "px";
-        img.style.height = rowH + "px";
-        layer.appendChild(img);
-        lane.items.push({ el: img, x, w, h: rowH });
-        x += w + gap;
-      }
-      lanes.push(lane);
-    }
-
-    lanes.gap = gap;
-    lanes.W = W;
+  // (Re)launch a card at depth z with a fresh trajectory and image
+  const spawn = (it, z) => {
+    it.w = gsap.utils.random(0.3, 0.52); // world-space width
+    // Trajectory radius is tied to the card's size: big cards keep further
+    // from the center line, so nothing large ever crosses the copy
+    const r = it.w * gsap.utils.random(2.4, 5.5);
+    const a = Math.random() * Math.PI * 2;
+    it.X = Math.cos(a) * r;
+    // Portrait screens spread the flight paths vertically, landscape squashes them
+    it.Y = Math.sin(a) * r * (layer.clientWidth >= layer.clientHeight ? 0.72 : 1.3);
+    it.Z = z;
+    it.spd = gsap.utils.random(0.85, 1.25);
+    it.rot = gsap.utils.random(-10, 10);
+    it.rotV = gsap.utils.random(-2, 2); // lazy roll, deg/s
+    it.el.src = nextSrc();
   };
+
+  for (let i = 0; i < COUNT; i++) {
+    const img = document.createElement("img");
+    img.className = "hero-drift__item";
+    img.alt = "";
+    img.style.width = BASE + "px";
+    img.style.height = BASE * 0.7 + "px";
+    layer.appendChild(img);
+    const it = { el: img };
+    items.push(it);
+    // The launch fleet is spread through the whole depth so the tunnel is
+    // already flowing when the preloader lifts
+    spawn(it, gsap.utils.random(ZNEAR + 0.4, ZFAR));
+  }
 
   const tick = () => {
     // Past the first viewport the layer is faded out — skip the work
-    if (window.scrollY > innerHeight) return;
+    if (window.scrollY > innerHeight) {
+      lastY = window.scrollY;
+      return;
+    }
     const dt = gsap.ticker.deltaRatio(60) / 60; // seconds since last frame
-    if (++frame % 60 === 0) updateAvoid(); // survives resizes of the copy (lang switch)
-    const { W, gap, A } = lanes;
-    const mid = avoid ? { x: (avoid.left + avoid.right) / 2, y: (avoid.top + avoid.bottom) / 2 } : null;
+    if (++frame % 60 === 0) updateAvoid(); // survives lang switches / font loads
+    const W = layer.clientWidth;
+    const H = layer.clientHeight;
+    const f = Math.min(W, H) * 0.9; // focal length
+    const cx = W / 2;
+    const cy = H / 2;
 
-    lanes.forEach((lane) => {
-      lane.items.forEach((it) => {
-        it.x += lane.speed * dt;
-        if (it.x > W) {
-          // Recycle to the tail of the row with a fresh image
-          const tail = Math.min(...lane.items.map((o) => o.x));
-          it.x = tail - gap - it.w;
-          it.el.src = nextSrc();
-        }
+    // Scroll velocity spins the tunnel up, then it winds back down
+    const v = Math.abs(window.scrollY - lastY) / Math.max(dt, 1 / 240);
+    lastY = window.scrollY;
+    boost += (Math.min(v / 1200, 3) - boost) * Math.min(1, dt * 6);
+    const dz = (0.55 + boost * 1.6) * dt;
 
-        const cx = it.x + it.w / 2;
-        // Arc path: highest mid-screen, tilted along the curve's tangent
-        const arcY = -A * Math.sin((Math.PI * cx) / W);
-        const rot = (Math.atan((-A * Math.PI * Math.cos((Math.PI * cx) / W)) / W) * 180) / Math.PI;
-        const cyEff = lane.cy + arcY; // where the card actually is on the arc
+    items.forEach((it) => {
+      it.Z -= dz * it.spd;
+      it.rot += it.rotV * dt;
+      if (it.Z <= ZNEAR) spawn(it, ZFAR);
 
-        let scale = 1;
-        let px = it.x;
-        let py = cyEff - it.h / 2;
-        if (avoid && cyEff + it.h / 2 > avoid.top && cyEff - it.h / 2 < avoid.bottom) {
-          const R = Math.max(200, it.w); // suction ramp distance
-          const d = cx < avoid.left ? (avoid.left - cx) / R : cx > avoid.right ? (cx - avoid.right) / R : 0;
-          const c = Math.min(d, 1);
-          const s = c * c * (3 - 2 * c); // smoothstep: 1 far away → 0 at the zone
-          scale = s;
-          if (s < 1) {
-            // Sucked towards the NEAR edge of the copy zone: the card hits
-            // scale 0 exactly at the boundary, so it never crosses the text
-            const pull = Math.pow(1 - s, 1.5);
-            const ex = cx < mid.x ? avoid.left : avoid.right;
-            px += (ex - it.w / 2 - px) * pull;
-            py += (mid.y - it.h / 2 - py) * pull;
-          }
-        }
-        gsap.set(it.el, { x: px, y: py, scale, rotation: rot, transformOrigin: "50% 50%" });
+      const s = f / it.Z;
+      const px = cx + it.X * s;
+      const py = cy + it.Y * s;
+      const scale = (it.w * s) / BASE;
+      const hw = (BASE * scale) / 2;
+      const hh = hw * 0.7;
+      // Fully out of frame → back into the deep
+      if (px + hw < -40 || px - hw > W + 40 || py + hh < -40 || py - hh > H + 40) {
+        spawn(it, ZFAR);
+        return;
+      }
+
+      // Fade in from the darkness of the far end…
+      let op = gsap.utils.clamp(0, 1, (ZFAR - it.Z) / (ZFAR * 0.28));
+      // …and ghost out while passing behind the copy so the text stays readable.
+      // Coverage counts against the smaller of the two areas, so a big card
+      // parked over the copy dims just as hard as a small one fully inside it
+      if (avoid) {
+        const ox = Math.max(0, Math.min(px + hw, avoid.right) - Math.max(px - hw, avoid.left));
+        const oy = Math.max(0, Math.min(py + hh, avoid.bottom) - Math.max(py - hh, avoid.top));
+        const zoneArea = (avoid.right - avoid.left) * (avoid.bottom - avoid.top);
+        const frac = (ox * oy) / (Math.min(4 * hw * hh, zoneArea) || 1);
+        // sqrt makes even a corner graze count, so a clearing forms around the copy
+        op *= 1 - 0.95 * Math.min(1, Math.sqrt(frac));
+      }
+
+      gsap.set(it.el, {
+        x: px - BASE / 2,
+        y: py - BASE * 0.35,
+        scale,
+        rotation: it.rot,
+        opacity: op,
+        zIndex: Math.round((ZFAR - it.Z) * 100),
+        transformOrigin: "50% 50%",
       });
     });
   };
 
-  build();
   gsap.ticker.add(tick);
-
-  // Rebuild the wall when the viewport actually changes size
-  let rw = innerWidth, rh = innerHeight, rt;
-  window.addEventListener("resize", () => {
-    if (innerWidth === rw && innerHeight === rh) return;
-    rw = innerWidth; rh = innerHeight;
-    clearTimeout(rt);
-    rt = setTimeout(build, 250);
-  });
+  window.addEventListener("resize", updateAvoid);
 }
 
 // Case body is a flat list of Notion-style blocks; legacy `sections` are converted
