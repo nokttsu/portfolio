@@ -665,6 +665,7 @@ function initHeroScroll() {
   if (!$(".hero") || !$(".page")) return;
 
   const mobile = window.matchMedia("(max-width: 599px)");
+  const video = $(".hero__video");
   applyHeroFade = () => apply();
   // Back on desktop, the chips are viewport-fixed and must not stay faded
   mobile.addEventListener("change", (e) => {
@@ -682,6 +683,8 @@ function initHeroScroll() {
     gsap.set([".hero__head", ".hero__cta"], state);
     // Mobile chips sit inside the hero flow and dissolve with it
     if (mobile.matches) gsap.set(".hero__chips", state);
+    // Background video dissolves too — opacity only, no per-frame blur cost
+    if (video) gsap.set(video, { opacity: 1 - p, visibility: state.visibility });
   };
 
   window.addEventListener("scroll", apply, { passive: true });
