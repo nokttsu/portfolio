@@ -796,40 +796,44 @@ function initMenu() {
   }
 }
 
+// Re-applied after the intro timeline finishes: its clearProps wipes the fade's
+// inline styles, and with no further scroll events nothing would restore them
+let applyHeroFade = () => {};
+
 // Home page: the hero is pinned (CSS sticky) while the page scrolls over it;
-// as the blocks cover it, the hero content melts into transparency and blur
+// as the blocks cover it, the hero content melts into transparency and blur.
+// Applied directly on every scroll event — a scrubbed tween here loses a race
+// with the intro timeline's clearProps and can freeze the CTA fully visible.
 function initHeroScroll() {
   if (!$(".hero") || !$(".page")) return;
 
-  const fade = (targets) =>
-    gsap.to(targets, {
-      autoAlpha: 0,
-      filter: "blur(12px)",
-      ease: "none",
-      scrollTrigger: {
-        trigger: ".page",
-        start: "top bottom",
-        end: "top 25%",
-        scrub: true,
-      },
-    });
-
-  fade([".hero__head", ".hero__cta"]);
-  // On mobile the chips sit inside the hero flow and dissolve with it;
-  // on desktop they are fixed to the viewport bottom and must stay visible
-  gsap.matchMedia().add("(max-width: 599px)", () => {
-    fade(".hero__chips");
+  const drift = $(".hero-drift");
+  const mobile = window.matchMedia("(max-width: 599px)");
+  applyHeroFade = () => apply();
+  // Back on desktop, the chips are viewport-fixed and must not stay faded
+  mobile.addEventListener("change", (e) => {
+    if (!e.matches) gsap.set(".hero__chips", { clearProps: "opacity,visibility,filter" });
   });
 
-  // The drifting images dissolve too — opacity only, a scrubbed blur over a
-  // full-viewport layer of moving images would be too costly
-  if ($(".hero-drift")) {
-    gsap.to(".hero-drift", {
-      autoAlpha: 0,
-      ease: "none",
-      scrollTrigger: { trigger: ".page", start: "top bottom", end: "top 25%", scrub: true },
-    });
-  }
+  const apply = () => {
+    // 0 at the top → 1 when the page content has covered 75% of the viewport
+    const p = Math.min(1, Math.max(0, window.scrollY / (innerHeight * 0.75)));
+    const state = {
+      opacity: 1 - p,
+      visibility: p >= 1 ? "hidden" : "visible",
+      filter: "blur(" + (12 * p).toFixed(2) + "px)",
+    };
+    gsap.set([".hero__head", ".hero__cta"], state);
+    // Mobile chips sit inside the hero flow and dissolve with it
+    if (mobile.matches) gsap.set(".hero__chips", state);
+    // Drifting wall: opacity only — blurring a full-viewport layer of moving
+    // images every frame would be too costly
+    if (drift) gsap.set(drift, { opacity: state.opacity, visibility: state.visibility });
+  };
+
+  window.addEventListener("scroll", apply, { passive: true });
+  window.addEventListener("resize", apply);
+  apply();
 }
 
 // Desktop, home page: the fixed Telegram bar slides in only after
@@ -959,6 +963,9 @@ function initLoadSequence(firstVisit) {
       // A language switch mid-intro may have been undone by split.revert() —
       // re-stamp every translated node to the current language
       applyLang(currentLang);
+      // The user may have scrolled during the intro: clearProps just wiped the
+      // hero fade state, and no new scroll event will come to restore it
+      applyHeroFade();
       // Now the sections below may enter, in viewport order
       initScrollEffects();
     },
