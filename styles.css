@@ -737,8 +737,6 @@ html {
   top: 0;
   left: 0;
   width: clamp(140px, 18vw, 220px);
-  border-radius: 4px;
-  box-shadow: 0 16px 48px rgba(0, 0, 0, 0.45);
   will-change: transform;
 }
 
