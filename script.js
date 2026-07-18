@@ -436,7 +436,7 @@ function initProgressiveBlur() {
     const wrap = document.createElement("div");
     wrap.className = "pblur";
     wrap.setAttribute("aria-hidden", "true");
-    wrap.innerHTML = "<i></i><i></i><i></i><i></i><i></i>";
+    wrap.innerHTML = "<i></i><i></i><i></i><i></i><i></i><i></i>";
     el.prepend(wrap);
   });
 }

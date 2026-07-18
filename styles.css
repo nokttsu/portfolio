@@ -1154,13 +1154,13 @@ html {
 
 .header .pblur {
   top: 0;
-  height: calc(100% + 24px);
+  height: calc(100% + 72px);
   --pb-dir: to bottom;
 }
 
 .contact-bar .pblur {
   bottom: 0;
-  height: calc(100% + 24px);
+  height: calc(100% + 72px);
   --pb-dir: to top;
 }
 
@@ -1169,39 +1169,49 @@ html {
   inset: 0;
 }
 
+/* Six stacked layers: blur climbs 1 → 24px toward the bar edge, each masked to
+   a band that reaches progressively less far into the content, so the total
+   blur ramps up smoothly instead of stepping */
 .pblur i:nth-child(1) {
-  -webkit-backdrop-filter: blur(0.5px);
-  backdrop-filter: blur(0.5px);
-  -webkit-mask-image: linear-gradient(var(--pb-dir), #000 55%, transparent 85%);
-  mask-image: linear-gradient(var(--pb-dir), #000 55%, transparent 85%);
+  -webkit-backdrop-filter: blur(1px);
+  backdrop-filter: blur(1px);
+  -webkit-mask-image: linear-gradient(var(--pb-dir), #000 60%, transparent 100%);
+  mask-image: linear-gradient(var(--pb-dir), #000 60%, transparent 100%);
 }
 
 .pblur i:nth-child(2) {
-  -webkit-backdrop-filter: blur(1px);
-  backdrop-filter: blur(1px);
-  -webkit-mask-image: linear-gradient(var(--pb-dir), #000 40%, transparent 70%);
-  mask-image: linear-gradient(var(--pb-dir), #000 40%, transparent 70%);
+  -webkit-backdrop-filter: blur(2px);
+  backdrop-filter: blur(2px);
+  -webkit-mask-image: linear-gradient(var(--pb-dir), #000 45%, transparent 80%);
+  mask-image: linear-gradient(var(--pb-dir), #000 45%, transparent 80%);
 }
 
 .pblur i:nth-child(3) {
-  -webkit-backdrop-filter: blur(2px);
-  backdrop-filter: blur(2px);
-  -webkit-mask-image: linear-gradient(var(--pb-dir), #000 25%, transparent 55%);
-  mask-image: linear-gradient(var(--pb-dir), #000 25%, transparent 55%);
+  -webkit-backdrop-filter: blur(4px);
+  backdrop-filter: blur(4px);
+  -webkit-mask-image: linear-gradient(var(--pb-dir), #000 32%, transparent 62%);
+  mask-image: linear-gradient(var(--pb-dir), #000 32%, transparent 62%);
 }
 
 .pblur i:nth-child(4) {
-  -webkit-backdrop-filter: blur(4px);
-  backdrop-filter: blur(4px);
-  -webkit-mask-image: linear-gradient(var(--pb-dir), #000 10%, transparent 40%);
-  mask-image: linear-gradient(var(--pb-dir), #000 10%, transparent 40%);
+  -webkit-backdrop-filter: blur(8px);
+  backdrop-filter: blur(8px);
+  -webkit-mask-image: linear-gradient(var(--pb-dir), #000 20%, transparent 46%);
+  mask-image: linear-gradient(var(--pb-dir), #000 20%, transparent 46%);
 }
 
 .pblur i:nth-child(5) {
-  -webkit-backdrop-filter: blur(8px);
-  backdrop-filter: blur(8px);
-  -webkit-mask-image: linear-gradient(var(--pb-dir), #000 0%, transparent 25%);
-  mask-image: linear-gradient(var(--pb-dir), #000 0%, transparent 25%);
+  -webkit-backdrop-filter: blur(14px);
+  backdrop-filter: blur(14px);
+  -webkit-mask-image: linear-gradient(var(--pb-dir), #000 8%, transparent 32%);
+  mask-image: linear-gradient(var(--pb-dir), #000 8%, transparent 32%);
+}
+
+.pblur i:nth-child(6) {
+  -webkit-backdrop-filter: blur(24px);
+  backdrop-filter: blur(24px);
+  -webkit-mask-image: linear-gradient(var(--pb-dir), #000 0%, transparent 20%);
+  mask-image: linear-gradient(var(--pb-dir), #000 0%, transparent 20%);
 }
 
 /* ---------- Case page table of contents (desktop only) ---------- */
