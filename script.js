@@ -574,7 +574,6 @@ if (window.gsap) {
     initMenu();
     initCtaOnScroll();
     initHeroScroll();
-    initHeroDither();
     if (vtArrival) {
       // Seamless page transition: content must stand still, no intro replay
       const pre = $(".preloader");
@@ -658,89 +657,6 @@ function initMenu() {
 // inline styles, and with no further scroll events nothing would restore them
 let applyHeroFade = () => {};
 
-// Ordered-dither filter over the hero video (after the "into these" reference):
-// each frame is downscaled, run through an 8×8 Bayer matrix and mapped to two
-// tones, so continuous tone becomes a field of dots whose density tracks
-// brightness. Chunky pixelated upscale keeps the dots crisp. Kept dark-friendly
-// (light dots on near-black) so the white hero copy stays readable.
-function initHeroDither() {
-  const video = $(".hero__video");
-  const cvs = $(".hero__dither");
-  const bg = $(".hero__bg");
-  if (!video || !cvs || !bg) return;
-  if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return; // plain video
-
-  const ctx = cvs.getContext("2d", { alpha: false });
-  const off = document.createElement("canvas");
-  const octx = off.getContext("2d", { willReadFrequently: true });
-
-  // 8×8 Bayer threshold matrix, normalised to 0..1
-  const BAYER = [
-    0, 48, 12, 60, 3, 51, 15, 63, 32, 16, 44, 28, 35, 19, 47, 31,
-    8, 56, 4, 52, 11, 59, 7, 55, 40, 24, 36, 20, 43, 27, 39, 23,
-    2, 50, 14, 62, 1, 49, 13, 61, 34, 18, 46, 30, 33, 17, 45, 29,
-    10, 58, 6, 54, 9, 57, 5, 53, 42, 26, 38, 22, 41, 25, 37, 21,
-  ].map((v) => (v + 0.5) / 64);
-
-  // Two-tone palette: near-black ground, muted warm dots. Density is capped
-  // below 1 so even bright areas keep dark gaps — it never floods to a solid
-  // light field, so the white hero copy stays readable.
-  const DARK = [10, 10, 12];
-  const LIGHT = [178, 172, 160];
-  const CONTRAST = 1.3;
-  const DMIN = 0.04, DMAX = 0.62; // dot-density range
-
-  let w = 0, h = 0;
-  const resize = () => {
-    // Buffer resolution drives dot size; fixed-ish regardless of DPR for a
-    // consistent chunky grain. CSS size is pinned to 100% in the stylesheet.
-    const rect = bg.getBoundingClientRect();
-    const aspect = rect.height / rect.width || 1;
-    w = Math.min(260, Math.round(rect.width / 4));
-    h = Math.round(w * aspect);
-    off.width = w; off.height = h;
-    cvs.width = w; cvs.height = h;
-  };
-  resize();
-  window.addEventListener("resize", resize);
-
-  const cover = () => {
-    // draw the video onto the small buffer with object-fit: cover math
-    const vw = video.videoWidth, vh = video.videoHeight;
-    if (!vw || !vh) return false;
-    const s = Math.max(w / vw, h / vh);
-    const dw = vw * s, dh = vh * s;
-    octx.drawImage(video, (w - dw) / 2, (h - dh) / 2, dw, dh);
-    return true;
-  };
-
-  let on = false;
-  let frame = 0;
-  const draw = () => {
-    if (!cover()) return;
-    const img = octx.getImageData(0, 0, w, h);
-    const d = img.data;
-    for (let y = 0; y < h; y++) {
-      for (let x = 0; x < w; x++) {
-        const i = (y * w + x) * 4;
-        let lum = (0.299 * d[i] + 0.587 * d[i + 1] + 0.114 * d[i + 2]) / 255;
-        lum = (lum - 0.5) * CONTRAST + 0.5;
-        lum = DMIN + Math.max(0, Math.min(1, lum)) * (DMAX - DMIN);
-        const lit = lum > BAYER[(y & 7) * 8 + (x & 7)];
-        const c = lit ? LIGHT : DARK;
-        d[i] = c[0]; d[i + 1] = c[1]; d[i + 2] = c[2];
-      }
-    }
-    ctx.putImageData(img, 0, 0);
-    if (!on) { on = true; cvs.classList.add("is-on"); }
-  };
-
-  gsap.ticker.add(() => {
-    if (window.scrollY > innerHeight) return; // hidden past the first viewport
-    if (++frame % 2) return; // ~30fps
-    draw();
-  });
-}
 
 // Home page: the hero is pinned (CSS sticky) while the page scrolls over it;
 // as the blocks cover it, the hero content melts into transparency and blur.
@@ -750,7 +666,6 @@ function initHeroScroll() {
   if (!$(".hero") || !$(".page")) return;
 
   const mobile = window.matchMedia("(max-width: 599px)");
-  const bg = $(".hero__bg");
   applyHeroFade = () => apply();
   // Back on desktop, the chips are viewport-fixed and must not stay faded
   mobile.addEventListener("change", (e) => {
@@ -768,8 +683,6 @@ function initHeroScroll() {
     gsap.set([".hero__head", ".hero__cta"], state);
     // Mobile chips sit inside the hero flow and dissolve with it
     if (mobile.matches) gsap.set(".hero__chips", state);
-    // Background layer dissolves too — opacity only, no per-frame blur cost
-    if (bg) gsap.set(bg, { opacity: 1 - p, visibility: state.visibility });
   };
 
   window.addEventListener("scroll", apply, { passive: true });
