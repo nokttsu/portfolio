@@ -172,9 +172,10 @@ function buildImageTrail(projects) {
   );
 }
 
-// Images drifting around the center (after madewithgsap folio 26): case images
-// fill the hero viewport and glide left → right on endless conveyor loops;
-// each one smoothly detours above or below the hero copy instead of crossing it
+// Hero conveyor wall (after the "hero desktop" mock): rows of case images tile
+// the whole first viewport and crawl left → right on endless loops. Rows that
+// cross the copy zone get a suction field — approaching cards shrink and get
+// pulled into the middle of the text, then grow back out on the far side.
 function buildHeroDrift(projects) {
   const srcs = [];
   projects.forEach((p) => {
@@ -192,13 +193,7 @@ function buildHeroDrift(projects) {
   layer.className = "hero-drift";
   hero.prepend(layer);
 
-  // Enough copies to keep the whole screen populated, capped for performance
-  const pool = [];
-  while (pool.length < 10) pool.push(...uniq);
-  pool.length = Math.min(pool.length, 14);
-
-  // The no-fly zone: hero copy + buttons, padded with breathing room.
-  // Refreshed on every respawn so it survives resizes and language switches.
+  // The suction zone: hero copy + buttons, padded with breathing room.
   let avoid = null;
   const updateAvoid = () => {
     const lr = layer.getBoundingClientRect();
@@ -223,54 +218,106 @@ function buildHeroDrift(projects) {
     };
   };
 
-  const spawn = (img, first) => {
+  let lanes = [];
+  let srcIdx = 0;
+  let frame = 0;
+  const nextSrc = () => uniq[srcIdx++ % uniq.length];
+
+  const build = () => {
+    layer.innerHTML = "";
+    lanes = [];
     updateAvoid();
     const W = layer.clientWidth;
     const H = layer.clientHeight;
-    const w = gsap.utils.random(0.6, 1) * Math.min(220, Math.max(120, W * 0.18));
-    const h = w * 0.7; // the cards' 928:649.6 aspect
-    img.style.width = w + "px";
-    const baseY = gsap.utils.random(8, Math.max(9, H - h - 8));
-    const speed = gsap.utils.random(45, 85); // px/s, each image keeps its own pace
-    // First wave spawns mid-screen so the hero is populated instantly;
-    // respawns re-enter from beyond the left edge, staggered
-    const startX = first ? gsap.utils.random(-w, W) : -w - gsap.utils.random(0, W * 0.4);
-    const pos = { x: startX };
+    const gap = W < 600 ? 12 : 24;
+    const baseW = W < 600 ? W * 0.34 : Math.min(W * 0.2, 260);
+    const rowH = baseW * 0.7; // the cards' 928:649.6 aspect
+    const count = Math.max(2, Math.round(H / (rowH + gap)));
+    const step = H / count; // rows spread evenly over the full height
 
-    const render = () => {
-      let y = baseY;
-      if (avoid && baseY + h > avoid.top && baseY < avoid.bottom) {
-        const cx = pos.x + w / 2;
-        const ramp = 220; // the detour eases in/out over this approach distance
-        const dx = cx < avoid.left ? avoid.left - cx : cx > avoid.right ? cx - avoid.right : 0;
-        let f = 1 - Math.min(dx / ramp, 1);
-        if (f > 0) {
-          f = f * f * (3 - 2 * f); // smoothstep — no kinks in the flight path
-          const above = baseY + h / 2 <= (avoid.top + avoid.bottom) / 2;
-          const clearY = above ? avoid.top - h : avoid.bottom;
-          y = baseY + (clearY - baseY) * f;
-        }
+    for (let li = 0; li < count; li++) {
+      const lane = { cy: step * (li + 0.5), speed: gsap.utils.random(20, 34), items: [] };
+      // Stagger each row's seam so the wall doesn't read as strict columns
+      let x = -gsap.utils.random(0, baseW);
+      while (x < W + baseW) {
+        const w = baseW * gsap.utils.random(0.8, 1.2);
+        const img = document.createElement("img");
+        img.className = "hero-drift__item";
+        img.src = nextSrc();
+        img.alt = "";
+        img.style.width = w + "px";
+        img.style.height = rowH + "px";
+        layer.appendChild(img);
+        lane.items.push({ el: img, x, w, h: rowH });
+        x += w + gap;
       }
-      gsap.set(img, { x: pos.x, y });
-    };
+      lanes.push(lane);
+    }
 
-    render();
-    gsap.to(pos, {
-      x: W + w,
-      duration: (W + w - startX) / speed,
-      ease: "none",
-      onUpdate: render,
-      onComplete: () => spawn(img),
+    lanes.gap = gap;
+    lanes.W = W;
+    // The wall bows along a gentle arc: cards ride higher mid-screen and tilt
+    // with the tangent of the curve
+    lanes.A = Math.min(64, H * 0.07);
+  };
+
+  const tick = () => {
+    // Past the first viewport the layer is faded out — skip the work
+    if (window.scrollY > innerHeight) return;
+    const dt = gsap.ticker.deltaRatio(60) / 60; // seconds since last frame
+    if (++frame % 60 === 0) updateAvoid(); // survives resizes of the copy (lang switch)
+    const { W, gap, A } = lanes;
+    const mid = avoid ? { x: (avoid.left + avoid.right) / 2, y: (avoid.top + avoid.bottom) / 2 } : null;
+
+    lanes.forEach((lane) => {
+      lane.items.forEach((it) => {
+        it.x += lane.speed * dt;
+        if (it.x > W) {
+          // Recycle to the tail of the row with a fresh image
+          const tail = Math.min(...lane.items.map((o) => o.x));
+          it.x = tail - gap - it.w;
+          it.el.src = nextSrc();
+        }
+
+        const cx = it.x + it.w / 2;
+        // Arc path: highest mid-screen, tilted along the curve's tangent
+        const arcY = -A * Math.sin((Math.PI * cx) / W);
+        const rot = (Math.atan((-A * Math.PI * Math.cos((Math.PI * cx) / W)) / W) * 180) / Math.PI;
+        const cyEff = lane.cy + arcY; // where the card actually is on the arc
+
+        let scale = 1;
+        let px = it.x;
+        let py = cyEff - it.h / 2;
+        if (avoid && cyEff + it.h / 2 > avoid.top && cyEff - it.h / 2 < avoid.bottom) {
+          const R = Math.max(200, it.w); // suction ramp distance
+          const d = cx < avoid.left ? (avoid.left - cx) / R : cx > avoid.right ? (cx - avoid.right) / R : 0;
+          const c = Math.min(d, 1);
+          const s = c * c * (3 - 2 * c); // smoothstep: 1 far away → 0 at the zone
+          scale = s;
+          if (s < 1) {
+            // Sucked towards the NEAR edge of the copy zone: the card hits
+            // scale 0 exactly at the boundary, so it never crosses the text
+            const pull = Math.pow(1 - s, 1.5);
+            const ex = cx < mid.x ? avoid.left : avoid.right;
+            px += (ex - it.w / 2 - px) * pull;
+            py += (mid.y - it.h / 2 - py) * pull;
+          }
+        }
+        gsap.set(it.el, { x: px, y: py, scale, rotation: rot, transformOrigin: "50% 50%" });
+      });
     });
   };
 
-  pool.forEach((src) => {
-    const img = document.createElement("img");
-    img.className = "hero-drift__item";
-    img.src = src;
-    img.alt = "";
-    layer.appendChild(img);
-    spawn(img, true);
+  build();
+  gsap.ticker.add(tick);
+
+  // Rebuild the wall when the viewport actually changes size
+  let rw = innerWidth, rh = innerHeight, rt;
+  window.addEventListener("resize", () => {
+    if (innerWidth === rw && innerHeight === rh) return;
+    rw = innerWidth; rh = innerHeight;
+    clearTimeout(rt);
+    rt = setTimeout(build, 250);
   });
 }
 
@@ -755,40 +802,44 @@ function initMenu() {
   }
 }
 
+// Re-applied after the intro timeline finishes: its clearProps wipes the fade's
+// inline styles, and with no further scroll events nothing would restore them
+let applyHeroFade = () => {};
+
 // Home page: the hero is pinned (CSS sticky) while the page scrolls over it;
-// as the blocks cover it, the hero content melts into transparency and blur
+// as the blocks cover it, the hero content melts into transparency and blur.
+// Applied directly on every scroll event — a scrubbed tween here loses a race
+// with the intro timeline's clearProps and can freeze the CTA fully visible.
 function initHeroScroll() {
   if (!$(".hero") || !$(".page")) return;
 
-  const fade = (targets) =>
-    gsap.to(targets, {
-      autoAlpha: 0,
-      filter: "blur(12px)",
-      ease: "none",
-      scrollTrigger: {
-        trigger: ".page",
-        start: "top bottom",
-        end: "top 25%",
-        scrub: true,
-      },
-    });
-
-  fade([".hero__head", ".hero__cta"]);
-  // On mobile the chips sit inside the hero flow and dissolve with it;
-  // on desktop they are fixed to the viewport bottom and must stay visible
-  gsap.matchMedia().add("(max-width: 599px)", () => {
-    fade(".hero__chips");
+  const drift = $(".hero-drift");
+  const mobile = window.matchMedia("(max-width: 599px)");
+  applyHeroFade = () => apply();
+  // Back on desktop, the chips are viewport-fixed and must not stay faded
+  mobile.addEventListener("change", (e) => {
+    if (!e.matches) gsap.set(".hero__chips", { clearProps: "opacity,visibility,filter" });
   });
 
-  // The drifting images dissolve too — opacity only, a scrubbed blur over a
-  // full-viewport layer of moving images would be too costly
-  if ($(".hero-drift")) {
-    gsap.to(".hero-drift", {
-      autoAlpha: 0,
-      ease: "none",
-      scrollTrigger: { trigger: ".page", start: "top bottom", end: "top 25%", scrub: true },
-    });
-  }
+  const apply = () => {
+    // 0 at the top → 1 when the page content has covered 75% of the viewport
+    const p = Math.min(1, Math.max(0, window.scrollY / (innerHeight * 0.75)));
+    const state = {
+      opacity: 1 - p,
+      visibility: p >= 1 ? "hidden" : "visible",
+      filter: "blur(" + (12 * p).toFixed(2) + "px)",
+    };
+    gsap.set([".hero__head", ".hero__cta"], state);
+    // Mobile chips sit inside the hero flow and dissolve with it
+    if (mobile.matches) gsap.set(".hero__chips", state);
+    // Drifting wall: opacity only — blurring a full-viewport layer of moving
+    // images every frame would be too costly
+    if (drift) gsap.set(drift, { opacity: state.opacity, visibility: state.visibility });
+  };
+
+  window.addEventListener("scroll", apply, { passive: true });
+  window.addEventListener("resize", apply);
+  apply();
 }
 
 // Desktop, home page: the fixed Telegram bar slides in only after
@@ -918,6 +969,9 @@ function initLoadSequence(firstVisit) {
       // A language switch mid-intro may have been undone by split.revert() —
       // re-stamp every translated node to the current language
       applyLang(currentLang);
+      // The user may have scrolled during the intro: clearProps just wiped the
+      // hero fade state, and no new scroll event will come to restore it
+      applyHeroFade();
       // Now the sections below may enter, in viewport order
       initScrollEffects();
     },
