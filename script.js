@@ -256,6 +256,9 @@ function buildHeroDrift(projects) {
 
     lanes.gap = gap;
     lanes.W = W;
+    // The wall bows along a gentle arc: cards ride higher mid-screen and tilt
+    // with the tangent of the curve
+    lanes.A = Math.min(64, H * 0.07);
   };
 
   const tick = () => {
@@ -263,12 +266,10 @@ function buildHeroDrift(projects) {
     if (window.scrollY > innerHeight) return;
     const dt = gsap.ticker.deltaRatio(60) / 60; // seconds since last frame
     if (++frame % 60 === 0) updateAvoid(); // survives resizes of the copy (lang switch)
-    const { W, gap } = lanes;
+    const { W, gap, A } = lanes;
+    const mid = avoid ? { x: (avoid.left + avoid.right) / 2, y: (avoid.top + avoid.bottom) / 2 } : null;
 
     lanes.forEach((lane) => {
-      const inBand = avoid && lane.cy + lane.items[0].h / 2 > avoid.top && lane.cy - lane.items[0].h / 2 < avoid.bottom;
-      const mid = avoid ? { x: (avoid.left + avoid.right) / 2, y: (avoid.top + avoid.bottom) / 2 } : null;
-
       lane.items.forEach((it) => {
         it.x += lane.speed * dt;
         if (it.x > W) {
@@ -278,11 +279,16 @@ function buildHeroDrift(projects) {
           it.el.src = nextSrc();
         }
 
+        const cx = it.x + it.w / 2;
+        // Arc path: highest mid-screen, tilted along the curve's tangent
+        const arcY = -A * Math.sin((Math.PI * cx) / W);
+        const rot = (Math.atan((-A * Math.PI * Math.cos((Math.PI * cx) / W)) / W) * 180) / Math.PI;
+        const cyEff = lane.cy + arcY; // where the card actually is on the arc
+
         let scale = 1;
         let px = it.x;
-        let py = lane.cy - it.h / 2;
-        if (inBand) {
-          const cx = it.x + it.w / 2;
+        let py = cyEff - it.h / 2;
+        if (avoid && cyEff + it.h / 2 > avoid.top && cyEff - it.h / 2 < avoid.bottom) {
           const R = Math.max(200, it.w); // suction ramp distance
           const d = cx < avoid.left ? (avoid.left - cx) / R : cx > avoid.right ? (cx - avoid.right) / R : 0;
           const c = Math.min(d, 1);
@@ -297,7 +303,7 @@ function buildHeroDrift(projects) {
             py += (mid.y - it.h / 2 - py) * pull;
           }
         }
-        gsap.set(it.el, { x: px, y: py, scale, transformOrigin: "50% 50%" });
+        gsap.set(it.el, { x: px, y: py, scale, rotation: rot, transformOrigin: "50% 50%" });
       });
     });
   };
