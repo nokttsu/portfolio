@@ -105,6 +105,72 @@ function mergeContentIntoDicts() {
   }
 }
 
+// Sliding mouse trail (after madewithgsap effect 020), case pages only: a pool
+// of images from all cases; each step of the cursor grabs the next image and
+// slides it from where the cursor came from to where it is now, then it
+// shrinks away — pure scale, no opacity fade
+function buildImageTrail(projects) {
+  const srcs = [];
+  projects.forEach((p) => {
+    if (p.image) srcs.push(p.image);
+    caseBlocks(p).forEach((b) => {
+      if (b.type === "img" && b.src) srcs.push(b.src);
+    });
+  });
+  const uniq = [...new Set(srcs)];
+  if (!uniq.length || !window.gsap) return;
+  if (!window.matchMedia("(hover: hover) and (pointer: fine)").matches) return;
+
+  const layer = document.createElement("div");
+  layer.className = "img-trail";
+  document.body.appendChild(layer);
+
+  // Reusable pool — the images live in the DOM once, hidden at scale 0
+  const pool = uniq.map((src) => {
+    const img = document.createElement("img");
+    img.className = "img-trail__item";
+    img.src = src;
+    img.alt = "";
+    layer.appendChild(img);
+    gsap.set(img, { xPercent: -50, yPercent: -50, scale: 0 });
+    return img;
+  });
+
+  const SPAWN_DISTANCE = 130;
+  let last = null;
+  let idx = 0;
+  let stack = 0;
+
+  window.addEventListener(
+    "mousemove",
+    (e) => {
+      // The trail lives only in the first viewport of the page
+      if (window.scrollY > innerHeight * 0.8) {
+        last = null;
+        return;
+      }
+      const cur = { x: e.clientX, y: e.clientY };
+      if (last && Math.hypot(cur.x - last.x, cur.y - last.y) < SPAWN_DISTANCE) return;
+      const from = last || cur;
+
+      const img = pool[idx++ % pool.length];
+      gsap.killTweensOf(img);
+      img.style.zIndex = ++stack; // the freshest image rides on top
+
+      // x/y and scale live in separate tweens: the long slide would otherwise
+      // keep writing scale after the shrink tween ends, freezing the image at full size
+      gsap
+        .timeline()
+        .fromTo(img, { x: from.x, y: from.y }, { x: cur.x, y: cur.y, duration: 0.85, ease: "power3.out" })
+        .fromTo(img, { scale: 0.9 }, { scale: 1, duration: 0.4, ease: "power3.out" }, 0)
+        .to(img, { scale: 0, duration: 0.35, ease: "power2.in" }, 0.4);
+
+      last = cur;
+    },
+    { passive: true }
+  );
+}
+
 // Images drifting around the center (after madewithgsap folio 26): case images
 // fill the hero viewport and glide left → right on endless conveyor loops;
 // each one smoothly detours above or below the hero copy instead of crossing it
@@ -230,8 +296,9 @@ function renderContent() {
   });
   $$("[data-cv]").forEach((a) => (a.href = C.site.cvUrl));
 
-  // Home: drifting case-image carousel across the hero viewport
+  // Home: drifting case-image carousel; case pages: cursor trail in the first viewport
   if (!$(".project-hero")) buildHeroDrift(C.projects);
+  else buildImageTrail(C.projects);
 
   // Home: experience cards
   const panel = $('[data-panel="experience"]');
