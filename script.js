@@ -99,7 +99,7 @@ function mergeContentIntoDicts() {
       d["proj" + i + "name"] = g(p.name);
       d["proj" + i + "sub"] = g(p.subtitle);
       caseBlocks(p).forEach((b, k) => {
-        if (b.type !== "img") d["proj" + i + "b" + k] = g(b.text);
+        if (b.text) d["proj" + i + "b" + k] = g(b.text);
       });
     });
   }
@@ -360,12 +360,19 @@ function renderContent() {
       wrap.className = "case-body";
       wrap.innerHTML = blocks
         .map((b, k) => {
-          if (b.type === "h2") return `<h2 class="case-h2" data-i18n="proj${idx}b${k}"></h2>`;
+          const i18n = `data-i18n="proj${idx}b${k}"`;
+          if (b.type === "h2") return `<h2 class="case-h2" ${i18n}></h2>`;
+          if (b.type === "h3") return `<h3 class="case-h3" ${i18n}></h3>`;
+          if (b.type === "quote") return `<blockquote class="case-quote" ${i18n}></blockquote>`;
+          if (b.type === "ul") return `<ul class="case-ul" ${i18n} data-i18n-list></ul>`;
+          if (b.type === "callout")
+            return `<div class="case-callout"><span class="case-callout__icon">${esc(b.icon || "💡")}</span><p ${i18n}></p></div>`;
+          if (b.type === "divider") return '<hr class="case-divider">';
           if (b.type === "img")
             return b.src
               ? `<img class="case-img" src="${esc(b.src)}" alt="" loading="lazy">`
               : '<div class="case-img"></div>';
-          return `<div class="case-p"><p data-i18n="proj${idx}b${k}"></p></div>`;
+          return `<div class="case-p"><p ${i18n}></p></div>`;
         })
         .join("");
       body.insertBefore(wrap, other);
@@ -399,7 +406,18 @@ function applyLang(lang) {
   const dict = I18N[lang];
   $$("[data-i18n]").forEach((el) => {
     const t = dict[el.dataset.i18n];
-    if (t) el.textContent = t;
+    if (!t) return;
+    // List blocks store one item per line — rebuild the <li> set
+    if (el.hasAttribute("data-i18n-list")) {
+      el.innerHTML = t
+        .split("\n")
+        .map((s) => s.trim())
+        .filter(Boolean)
+        .map((s) => `<li>${esc(s)}</li>`)
+        .join("");
+    } else {
+      el.textContent = t;
+    }
   });
   document.documentElement.lang = lang;
   $$(".lang-toggle__btn").forEach((b) => b.classList.toggle("is-active", b.dataset.lang === lang));
@@ -871,15 +889,15 @@ function initLoadSequence(firstVisit) {
 }
 
 const SCROLL_FX_TARGETS =
-  ".projects .section-title, .other-projects .section-title, .case-h2, " +
-  ".case-p, .case-img, .card, .mini-card";
+  ".projects .section-title, .other-projects .section-title, .case-h2, .case-h3, " +
+  ".case-p, .case-img, .case-quote, .case-ul, .case-callout, .case-divider, .card, .mini-card";
 
 function initScrollEffects() {
   // Release the pre-hidden state; the from-tweens below take over per element
   gsap.set(SCROLL_FX_TARGETS, { clearProps: "opacity,visibility" });
 
   // Section titles slide up out of a line mask
-  $$(".projects .section-title, .other-projects .section-title, .case-h2").forEach((el) => {
+  $$(".projects .section-title, .other-projects .section-title, .case-h2, .case-h3").forEach((el) => {
     const split = SplitText.create(el, { type: "lines", mask: "lines" });
     gsap.from(split.lines, {
       yPercent: 110,
@@ -895,7 +913,7 @@ function initScrollEffects() {
   });
 
   // Case text and image blocks fade in
-  $$(".case-p, .case-img").forEach((elm) => {
+  $$(".case-p, .case-img, .case-quote, .case-ul, .case-callout, .case-divider").forEach((elm) => {
     gsap.from(elm, {
       y: 32,
       autoAlpha: 0,
