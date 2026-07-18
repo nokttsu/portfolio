@@ -99,16 +99,17 @@ function mergeContentIntoDicts() {
       d["proj" + i + "name"] = g(p.name);
       d["proj" + i + "sub"] = g(p.subtitle);
       caseBlocks(p).forEach((b, k) => {
-        if (b.type !== "img") d["proj" + i + "b" + k] = g(b.text);
+        if (b.text) d["proj" + i + "b" + k] = g(b.text);
+        if (b.author) d["proj" + i + "b" + k + "a"] = g(b.author);
       });
     });
   }
 }
 
-// Sliding mouse trail (after madewithgsap effect 020): a fixed pool of images
-// gathered from all cases — covers and in-body images alike; each step of the
-// cursor grabs the next image and slides it from where the cursor came from
-// to where it is now, then fades it out
+// Sliding mouse trail (after madewithgsap effect 020), case pages only: a pool
+// of images from all cases; each step of the cursor grabs the next image and
+// slides it from where the cursor came from to where it is now, then it
+// shrinks away — pure scale, no opacity fade
 function buildImageTrail(projects) {
   const srcs = [];
   projects.forEach((p) => {
@@ -125,14 +126,14 @@ function buildImageTrail(projects) {
   layer.className = "img-trail";
   document.body.appendChild(layer);
 
-  // Reusable pool — the images live in the DOM once, like the tutorial's .medias
+  // Reusable pool — the images live in the DOM once, hidden at scale 0
   const pool = uniq.map((src) => {
     const img = document.createElement("img");
     img.className = "img-trail__item";
     img.src = src;
     img.alt = "";
     layer.appendChild(img);
-    gsap.set(img, { xPercent: -50, yPercent: -50, autoAlpha: 0 });
+    gsap.set(img, { xPercent: -50, yPercent: -50, scale: 0 });
     return img;
   });
 
@@ -157,19 +158,120 @@ function buildImageTrail(projects) {
       gsap.killTweensOf(img);
       img.style.zIndex = ++stack; // the freshest image rides on top
 
+      // x/y and scale live in separate tweens: the long slide would otherwise
+      // keep writing scale after the shrink tween ends, freezing the image at full size
       gsap
         .timeline()
-        .fromTo(
-          img,
-          { x: from.x, y: from.y, scale: 0.9, autoAlpha: 1 },
-          { x: cur.x, y: cur.y, scale: 1, duration: 0.85, ease: "power3.out" }
-        )
-        .to(img, { scale: 0.05, autoAlpha: 0, duration: 0.35, ease: "power2.in" }, 0.4);
+        .fromTo(img, { x: from.x, y: from.y }, { x: cur.x, y: cur.y, duration: 0.85, ease: "power3.out" })
+        .fromTo(img, { scale: 0.9 }, { scale: 1, duration: 0.4, ease: "power3.out" }, 0)
+        .to(img, { scale: 0, duration: 0.35, ease: "power2.in" }, 0.4);
 
       last = cur;
     },
     { passive: true }
   );
+}
+
+// Images drifting around the center (after madewithgsap folio 26): case images
+// fill the hero viewport and glide left → right on endless conveyor loops;
+// each one smoothly detours above or below the hero copy instead of crossing it
+function buildHeroDrift(projects) {
+  const srcs = [];
+  projects.forEach((p) => {
+    if (p.image) srcs.push(p.image);
+    caseBlocks(p).forEach((b) => {
+      if (b.type === "img" && b.src) srcs.push(b.src);
+    });
+  });
+  const uniq = [...new Set(srcs)];
+  const hero = $(".hero");
+  if (!uniq.length || !hero || !window.gsap) return;
+  if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+
+  const layer = document.createElement("div");
+  layer.className = "hero-drift";
+  hero.prepend(layer);
+
+  // Enough copies to keep the whole screen populated, capped for performance
+  const pool = [];
+  while (pool.length < 10) pool.push(...uniq);
+  pool.length = Math.min(pool.length, 14);
+
+  // The no-fly zone: hero copy + buttons, padded with breathing room.
+  // Refreshed on every respawn so it survives resizes and language switches.
+  let avoid = null;
+  const updateAvoid = () => {
+    const lr = layer.getBoundingClientRect();
+    const els = [$(".hero__head"), $(".hero__chips"), $(".hero__cta")].filter(
+      (el) => el && el.offsetParent // drops display:none and position:fixed ones
+    );
+    if (!els.length) return;
+    const pad = 24;
+    let t = Infinity, b = -Infinity, l = Infinity, r = -Infinity;
+    els.forEach((el) => {
+      const er = el.getBoundingClientRect();
+      t = Math.min(t, er.top);
+      b = Math.max(b, er.bottom);
+      l = Math.min(l, er.left);
+      r = Math.max(r, er.right);
+    });
+    avoid = {
+      top: t - lr.top - pad,
+      bottom: b - lr.top + pad,
+      left: l - lr.left - pad,
+      right: r - lr.left + pad,
+    };
+  };
+
+  const spawn = (img, first) => {
+    updateAvoid();
+    const W = layer.clientWidth;
+    const H = layer.clientHeight;
+    const w = gsap.utils.random(0.6, 1) * Math.min(220, Math.max(120, W * 0.18));
+    const h = w * 0.7; // the cards' 928:649.6 aspect
+    img.style.width = w + "px";
+    const baseY = gsap.utils.random(8, Math.max(9, H - h - 8));
+    const speed = gsap.utils.random(45, 85); // px/s, each image keeps its own pace
+    // First wave spawns mid-screen so the hero is populated instantly;
+    // respawns re-enter from beyond the left edge, staggered
+    const startX = first ? gsap.utils.random(-w, W) : -w - gsap.utils.random(0, W * 0.4);
+    const pos = { x: startX };
+
+    const render = () => {
+      let y = baseY;
+      if (avoid && baseY + h > avoid.top && baseY < avoid.bottom) {
+        const cx = pos.x + w / 2;
+        const ramp = 220; // the detour eases in/out over this approach distance
+        const dx = cx < avoid.left ? avoid.left - cx : cx > avoid.right ? cx - avoid.right : 0;
+        let f = 1 - Math.min(dx / ramp, 1);
+        if (f > 0) {
+          f = f * f * (3 - 2 * f); // smoothstep — no kinks in the flight path
+          const above = baseY + h / 2 <= (avoid.top + avoid.bottom) / 2;
+          const clearY = above ? avoid.top - h : avoid.bottom;
+          y = baseY + (clearY - baseY) * f;
+        }
+      }
+      gsap.set(img, { x: pos.x, y });
+    };
+
+    render();
+    gsap.to(pos, {
+      x: W + w,
+      duration: (W + w - startX) / speed,
+      ease: "none",
+      onUpdate: render,
+      onComplete: () => spawn(img),
+    });
+  };
+
+  pool.forEach((src) => {
+    const img = document.createElement("img");
+    img.className = "hero-drift__item";
+    img.src = src;
+    img.alt = "";
+    layer.appendChild(img);
+    spawn(img, true);
+  });
 }
 
 // Case body is a flat list of Notion-style blocks; legacy `sections` are converted
@@ -195,8 +297,9 @@ function renderContent() {
   });
   $$("[data-cv]").forEach((a) => (a.href = C.site.cvUrl));
 
-  // Home: sliding mouse trail from every image of every case
-  if (!$(".project-hero")) buildImageTrail(C.projects);
+  // Home: drifting case-image carousel; case pages: cursor trail in the first viewport
+  if (!$(".project-hero")) buildHeroDrift(C.projects);
+  else buildImageTrail(C.projects);
 
   // Home: experience cards
   const panel = $('[data-panel="experience"]');
@@ -258,15 +361,39 @@ function renderContent() {
       wrap.className = "case-body";
       wrap.innerHTML = blocks
         .map((b, k) => {
-          if (b.type === "h2") return `<h2 class="case-h2" data-i18n="proj${idx}b${k}"></h2>`;
+          const i18n = `data-i18n="proj${idx}b${k}"`;
+          if (b.type === "h2") return `<h2 class="case-h2" ${i18n}></h2>`;
+          if (b.type === "h3") return `<h3 class="case-h3" ${i18n}></h3>`;
+          if (b.type === "quote") return `<blockquote class="case-quote" ${i18n}></blockquote>`;
+          if (b.type === "ul") return `<ul class="case-ul" ${i18n} data-i18n-list></ul>`;
+          if (b.type === "facts") return `<dl class="case-facts" ${i18n} data-i18n-facts></dl>`;
+          if (b.type === "stats") return `<div class="case-stats" ${i18n} data-i18n-stats></div>`;
+          if (b.type === "testimonial")
+            return `<figure class="case-testimonial"><blockquote ${i18n}></blockquote><figcaption data-i18n="proj${idx}b${k}a"></figcaption></figure>`;
+          if (b.type === "compare")
+            return `<div class="case-compare" data-compare tabindex="0" role="slider" aria-label="Before and after comparison" aria-valuemin="0" aria-valuemax="100" aria-valuenow="50">
+              ${b.after ? `<img src="${esc(b.after)}" alt="">` : ""}
+              <div class="case-compare__top">${b.before ? `<img src="${esc(b.before)}" alt="">` : ""}</div>
+              <div class="case-compare__handle"></div>
+              <span class="case-compare__tag case-compare__tag--a mono">Before</span>
+              <span class="case-compare__tag case-compare__tag--b mono">After</span>
+            </div>`;
+          if (b.type === "grid")
+            return `<div class="case-grid">${(b.images || [])
+              .map((s) => (s ? `<img class="case-img" src="${esc(s)}" alt="" loading="lazy">` : '<div class="case-img"></div>'))
+              .join("")}</div>`;
+          if (b.type === "callout")
+            return `<div class="case-callout"><span class="case-callout__icon">${esc(b.icon || "💡")}</span><p ${i18n}></p></div>`;
+          if (b.type === "divider") return '<hr class="case-divider">';
           if (b.type === "img")
             return b.src
               ? `<img class="case-img" src="${esc(b.src)}" alt="" loading="lazy">`
               : '<div class="case-img"></div>';
-          return `<div class="case-p"><p data-i18n="proj${idx}b${k}"></p></div>`;
+          return `<div class="case-p"><p ${i18n}></p></div>`;
         })
         .join("");
       body.insertBefore(wrap, other);
+      initCompares(wrap);
     }
 
     // Other projects: everything except the current one, first four
@@ -286,6 +413,36 @@ function renderContent() {
   }
 }
 
+// Before/after sliders: drag or arrow keys move the split, GSAP glides it
+function initCompares(scope) {
+  $$("[data-compare]", scope).forEach((box) => {
+    const top = $(".case-compare__top", box);
+    const handle = $(".case-compare__handle", box);
+    const pos = { p: 50 };
+    const apply = () => {
+      top.style.clipPath = `inset(0 ${100 - pos.p}% 0 0)`;
+      handle.style.left = pos.p + "%";
+      box.setAttribute("aria-valuenow", Math.round(pos.p));
+    };
+    apply();
+    const glide = (v) => {
+      v = Math.max(0, Math.min(100, v));
+      if (window.gsap) gsap.to(pos, { p: v, duration: 0.3, ease: "power2.out", overwrite: true, onUpdate: apply });
+      else { pos.p = v; apply(); }
+    };
+    const fromEvent = (e) => {
+      const r = box.getBoundingClientRect();
+      glide(((e.clientX - r.left) / r.width) * 100);
+    };
+    box.addEventListener("pointerdown", (e) => { box.setPointerCapture(e.pointerId); fromEvent(e); });
+    box.addEventListener("pointermove", (e) => { if (e.buttons) fromEvent(e); });
+    box.addEventListener("keydown", (e) => {
+      if (e.key === "ArrowLeft") { e.preventDefault(); glide(pos.p - 8); }
+      if (e.key === "ArrowRight") { e.preventDefault(); glide(pos.p + 8); }
+    });
+  });
+}
+
 // Re-stamp one element's text after SplitText.revert(), which restores the
 // HTML snapshot taken at split time and may resurrect a stale language
 function stampI18n(el) {
@@ -297,7 +454,34 @@ function applyLang(lang) {
   const dict = I18N[lang];
   $$("[data-i18n]").forEach((el) => {
     const t = dict[el.dataset.i18n];
-    if (t) el.textContent = t;
+    if (!t) return;
+    const lines = () => t.split("\n").map((s) => s.trim()).filter(Boolean);
+    // List blocks store one item per line — rebuild the <li> set
+    if (el.hasAttribute("data-i18n-list")) {
+      el.innerHTML = lines().map((s) => `<li>${esc(s)}</li>`).join("");
+    } else if (el.hasAttribute("data-i18n-facts")) {
+      // "Label: value" per line
+      el.innerHTML = lines()
+        .map((line) => {
+          const m = line.indexOf(":");
+          const label = m > -1 ? line.slice(0, m).trim() : "";
+          const val = (m > -1 ? line.slice(m + 1) : line).trim();
+          return `<div class="case-facts__item"><dt>${esc(label)}</dt><dd>${esc(val)}</dd></div>`;
+        })
+        .join("");
+    } else if (el.hasAttribute("data-i18n-stats")) {
+      // "Value | label" per line
+      el.innerHTML = lines()
+        .map((line) => {
+          const m = line.indexOf("|");
+          const val = (m > -1 ? line.slice(0, m) : line).trim();
+          const label = m > -1 ? line.slice(m + 1).trim() : "";
+          return `<div class="case-stats__item"><span class="case-stats__value">${esc(val)}</span><span class="case-stats__label">${esc(label)}</span></div>`;
+        })
+        .join("");
+    } else {
+      el.textContent = t;
+    }
   });
   document.documentElement.lang = lang;
   $$(".lang-toggle__btn").forEach((b) => b.classList.toggle("is-active", b.dataset.lang === lang));
@@ -345,6 +529,20 @@ function switchLang(lang) {
     },
   });
 }
+
+// Progressive blur under the header and contact-bar gradients: five stacked
+// backdrop-filter bands (styles in .pblur) injected on every page that has them
+function initProgressiveBlur() {
+  $$(".header, .contact-bar").forEach((el) => {
+    if ($(".pblur", el)) return;
+    const wrap = document.createElement("div");
+    wrap.className = "pblur";
+    wrap.setAttribute("aria-hidden", "true");
+    wrap.innerHTML = "<i></i><i></i><i></i><i></i><i></i>";
+    el.prepend(wrap);
+  });
+}
+initProgressiveBlur();
 
 // Apply saved language synchronously, before first paint and SplitText
 applyLang(currentLang);
@@ -477,6 +675,7 @@ if (window.gsap) {
     initToc();
     initMenu();
     initCtaOnScroll();
+    initHeroScroll();
     if (vtArrival) {
       // Seamless page transition: content must stand still, no intro replay
       const pre = $(".preloader");
@@ -552,6 +751,42 @@ function initMenu() {
     langBtn.addEventListener("click", () => {
       switchLang(currentLang === "en" ? "ru" : "en");
       closeMenu();
+    });
+  }
+}
+
+// Home page: the hero is pinned (CSS sticky) while the page scrolls over it;
+// as the blocks cover it, the hero content melts into transparency and blur
+function initHeroScroll() {
+  if (!$(".hero") || !$(".page")) return;
+
+  const fade = (targets) =>
+    gsap.to(targets, {
+      autoAlpha: 0,
+      filter: "blur(12px)",
+      ease: "none",
+      scrollTrigger: {
+        trigger: ".page",
+        start: "top bottom",
+        end: "top 25%",
+        scrub: true,
+      },
+    });
+
+  fade([".hero__head", ".hero__cta"]);
+  // On mobile the chips sit inside the hero flow and dissolve with it;
+  // on desktop they are fixed to the viewport bottom and must stay visible
+  gsap.matchMedia().add("(max-width: 599px)", () => {
+    fade(".hero__chips");
+  });
+
+  // The drifting images dissolve too — opacity only, a scrubbed blur over a
+  // full-viewport layer of moving images would be too costly
+  if ($(".hero-drift")) {
+    gsap.to(".hero-drift", {
+      autoAlpha: 0,
+      ease: "none",
+      scrollTrigger: { trigger: ".page", start: "top bottom", end: "top 25%", scrub: true },
     });
   }
 }
@@ -718,15 +953,16 @@ function initLoadSequence(firstVisit) {
 }
 
 const SCROLL_FX_TARGETS =
-  ".projects .section-title, .other-projects .section-title, .case-h2, " +
-  ".case-p, .case-img, .card, .mini-card";
+  ".projects .section-title, .other-projects .section-title, .case-h2, .case-h3, " +
+  ".case-p, .case-img, .case-quote, .case-ul, .case-callout, .case-divider, " +
+  ".case-facts, .case-stats, .case-testimonial, .case-compare, .case-grid, .card, .mini-card";
 
 function initScrollEffects() {
   // Release the pre-hidden state; the from-tweens below take over per element
   gsap.set(SCROLL_FX_TARGETS, { clearProps: "opacity,visibility" });
 
   // Section titles slide up out of a line mask
-  $$(".projects .section-title, .other-projects .section-title, .case-h2").forEach((el) => {
+  $$(".projects .section-title, .other-projects .section-title, .case-h2, .case-h3").forEach((el) => {
     const split = SplitText.create(el, { type: "lines", mask: "lines" });
     gsap.from(split.lines, {
       yPercent: 110,
@@ -742,7 +978,10 @@ function initScrollEffects() {
   });
 
   // Case text and image blocks fade in
-  $$(".case-p, .case-img").forEach((elm) => {
+  $$(
+    ".case-p, .case-img, .case-quote, .case-ul, .case-callout, .case-divider, " +
+      ".case-facts, .case-stats, .case-testimonial, .case-compare, .case-grid"
+  ).forEach((elm) => {
     gsap.from(elm, {
       y: 32,
       autoAlpha: 0,

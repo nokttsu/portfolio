@@ -120,17 +120,17 @@
       "image": "assets/uploads/1784302764504-colozeo.png",
       "body": [
         {
-          "type": "h2",
+          "type": "facts",
           "text": {
-            "en": "Overview",
-            "ru": "Обзор"
+            "en": "Role: Art Director & Lead UI Designer\nCompany: Plan9\nTimeline: 2023 — 2024\nScope: 3 products · iOS + web\nDeliverables: Design system, UI, art direction\nOutcome: One system powering the whole ecosystem",
+            "ru": "Роль: Арт-директор и ведущий UI-дизайнер\nКомпания: Plan9\nСроки: 2023 — 2024\nОбъём: 3 продукта · iOS + веб\nРезультат работы: Дизайн-система, UI, арт-дирекшн\nИтог: Одна система для всей экосистемы"
           }
         },
         {
           "type": "p",
           "text": {
-            "en": "Colozeo is a multi-platform football product — a connected ecosystem for players, clubs, and scouts. I led UI design and visual direction across three products: a mobile app for players, a web app for clubs, and a scouting platform, tying them together with a single design system and a set of scalable interface patterns.",
-            "ru": "Colozeo — мультиплатформенный футбольный продукт, единая экосистема для игроков, клубов и скаутов. Я вёл UI-дизайн и визуальное направление трёх продуктов: мобильного приложения для игроков, веб-приложения для клубов и скаутинговой платформы, связав их одной дизайн-системой и набором масштабируемых интерфейсных паттернов."
+            "en": "Three audiences, three products, one recognisable Colozeo. I led art direction and UI for a football talent ecosystem and built the design system that lets a player app, a club platform and a scouting tool speak one visual language.",
+            "ru": "Три аудитории, три продукта, один узнаваемый Colozeo. Я вёл арт-дирекшн и UI футбольной talent-экосистемы и собрал дизайн-систему, благодаря которой приложение для игроков, платформа для клубов и инструмент для скаутов говорят на одном визуальном языке."
           }
         },
         {
@@ -147,37 +147,48 @@
         {
           "type": "p",
           "text": {
-            "en": "Colozeo was conceived as one ecosystem rather than three separate apps. Players present and grow themselves, clubs discover and manage talent, and scouts evaluate prospects — all inside a single connected product spanning mobile and web.",
-            "ru": "Colozeo задумывался как единая экосистема, а не три отдельных приложения. Игроки презентуют себя и растут, клубы находят и ведут таланты, скауты оценивают перспективных — всё внутри одного связанного продукта на мобайле и вебе."
+            "en": "Colozeo connects football talent with the clubs and scouts looking for it. Players build a profile and grow their visibility, clubs discover and manage prospects, scouts evaluate them in the field — one connected product spanning mobile and web, conceived as an ecosystem rather than three separate apps.",
+            "ru": "Colozeo соединяет футбольные таланты с клубами и скаутами, которые их ищут. Игроки собирают профиль и растят свою заметность, клубы находят и ведут перспективных, скауты оценивают их «в полях» — один связанный продукт на мобайле и вебе, задуманный как экосистема, а не три отдельных приложения."
           }
         },
         {
           "type": "h2",
           "text": {
-            "en": "Role",
-            "ru": "Роль"
+            "en": "The problem",
+            "ru": "Проблема"
           }
         },
         {
           "type": "p",
           "text": {
-            "en": "As Art Director, I owned the visual language and led UI design across the entire ecosystem. I set the direction, defined the component library, and kept every surface coherent, scalable, and consistent from screen to screen.",
-            "ru": "Как арт-директор я отвечал за визуальный язык и вёл UI-дизайн всей экосистемы. Задавал направление, собирал библиотеку компонентов и держал каждый экран цельным, масштабируемым и консистентным."
+            "en": "One interface system for three audiences is a fragmentation risk: each audience has its own jobs, context and interaction model — and a startup timeline leaves no room to design everything three times.",
+            "ru": "Единая интерфейсная система для трёх аудиторий — это риск фрагментации: у каждой аудитории свои задачи, контекст и модель взаимодействия, а стартап-сроки не оставляют возможности проектировать всё трижды."
+          }
+        },
+        {
+          "type": "ul",
+          "text": {
+            "en": "Players live in a mobile app built around profile, growth and visibility\nClubs manage rosters and scouting pipelines in a data-heavy web product\nScouts need fast evaluation flows that work on the go\nAll three had to stay recognisably one product",
+            "ru": "Игроки живут в мобильном приложении вокруг профиля, роста и заметности\nКлубы ведут составы и скаутинговые пайплайны в насыщенном данными веб-продукте\nСкаутам нужны быстрые сценарии оценки на ходу\nПри этом все три должны узнаваться как один продукт"
           }
         },
         {
           "type": "h2",
           "text": {
-            "en": "Challenge",
-            "ru": "Задача"
+            "en": "My role",
+            "ru": "Моя роль"
           }
         },
         {
           "type": "p",
           "text": {
-            "en": "The hard part was designing one interface system for three distinct audiences with different interaction models and priorities — without letting the product fragment into three unrelated tools. It had to stay recognisably Colozeo everywhere.",
-            "ru": "Сложность была в том, чтобы спроектировать единую интерфейсную систему для трёх разных аудиторий с разными сценариями и приоритетами — и при этом не дать продукту распасться на три несвязанных инструмента. Везде он должен был узнаваться как Colozeo."
+            "en": "As Art Director at Plan9, I owned the visual language of the ecosystem and led UI design across all three products — the direction, the component library, and the quality bar from screen to screen. I worked with the product team and engineers from concept to handoff.",
+            "ru": "Как арт-директор в Plan9 я отвечал за визуальный язык экосистемы и вёл UI-дизайн всех трёх продуктов — направление, библиотеку компонентов и планку качества от экрана к экрану. Работал с продуктовой командой и разработчиками от концепции до передачи в разработку."
           }
+        },
+        {
+          "type": "img",
+          "src": "assets/uploads/1784302775318-colozeo-2.png"
         },
         {
           "type": "h2",
@@ -189,13 +200,30 @@
         {
           "type": "p",
           "text": {
-            "en": "I built a shared design system — type, colour, spacing, and components — and adapted it to each platform's context. Patterns were designed once and reused across player, club, and scout surfaces, so the ecosystem could grow without redrawing the basics.",
-            "ru": "Я собрал общую дизайн-систему — типографику, цвет, отступы, компоненты — и адаптировал её под контекст каждой платформы. Паттерны проектировались один раз и переиспользовались на экранах игроков, клубов и скаутов, чтобы экосистема росла без переизобретения базы."
+            "en": "Instead of designing three products and reconciling them later, I started from a shared foundation and let each surface bend it to its audience.",
+            "ru": "Вместо того чтобы спроектировать три продукта и потом сводить их вместе, я начал с общего фундамента и дал каждой поверхности адаптировать его под свою аудиторию."
           }
         },
         {
-          "type": "img",
-          "src": "assets/uploads/1784302775318-colozeo-2.png"
+          "type": "ul",
+          "text": {
+            "en": "One set of tokens — type, colour, spacing, radii — shared by every platform\nComponents designed once, with variants for player, club and scout contexts\nPage templates, so new screens are assembled rather than redrawn\nAn expressive, sport-driven art direction layered on top of the system",
+            "ru": "Один набор токенов — типографика, цвет, отступы, радиусы — общий для всех платформ\nКомпоненты, спроектированные один раз, с вариантами под контексты игрока, клуба и скаута\nШаблоны страниц: новые экраны собираются, а не рисуются заново\nВыразительный спортивный арт-дирекшн поверх системы"
+          }
+        },
+        {
+          "type": "grid",
+          "images": [
+            "assets/uploads/1784302781351-colozeo-3.png",
+            "assets/uploads/1784302818284-colozeo-4.png"
+          ]
+        },
+        {
+          "type": "stats",
+          "text": {
+            "en": "3 | products running on one design system\n2 | platforms — mobile and web\n1 | shared component library and visual language",
+            "ru": "3 | продукта на одной дизайн-системе\n2 | платформы — мобайл и веб\n1 | общая библиотека компонентов и визуальный язык"
+          }
         },
         {
           "type": "h2",
@@ -207,38 +235,34 @@
         {
           "type": "p",
           "text": {
-            "en": "The result is a cohesive visual direction and a scalable UI foundation ready to support future product growth and iteration across all three platforms.",
-            "ru": "Итог — цельное визуальное направление и масштабируемая UI-основа, готовая поддерживать дальнейший рост и развитие продукта на всех трёх платформах."
+            "en": "Colozeo shipped as a coherent ecosystem: every surface is recognisably the same product, and new screens assemble from shared components instead of starting from scratch. The system became the foundation the product keeps growing on — product metrics belong to the client, but a full walkthrough is available on request.",
+            "ru": "Colozeo вышел цельной экосистемой: каждая поверхность узнаётся как один продукт, а новые экраны собираются из общих компонентов, а не начинаются с нуля. Система стала фундаментом, на котором продукт продолжает расти. Продуктовые метрики принадлежат клиенту, но подробный разбор готов показать по запросу."
           }
         },
         {
-          "type": "img",
-          "src": "assets/uploads/1784302781351-colozeo-3.png"
-        },
-        {
-          "type": "p",
+          "type": "h2",
           "text": {
-            "en": "",
-            "ru": "Итог — цельное визуальное направление и масштабируемая UI-основа, готовая поддерживать дальнейший рост и развитие продукта на всех трёх платформах."
+            "en": "What I took away",
+            "ru": "Выводы"
           }
         },
         {
-          "type": "p",
+          "type": "ul",
           "text": {
-            "en": "",
-            "ru": "Итог — цельное визуальное направление и масштабируемая UI-основа, готовая поддерживать дальнейший рост и развитие продукта на всех трёх платформах."
+            "en": "A multi-audience design system has to fix the primitives and free the patterns — locking too much kills product fit\nArt direction is what keeps a multi-product system from feeling generic\nThe second product built on a system is the real test of the first",
+            "ru": "Дизайн-система для нескольких аудиторий должна фиксировать примитивы и оставлять свободу паттернам — пережмёшь, и продуктам станет тесно\nИменно арт-дирекшн не даёт мультипродуктовой системе выглядеть безлико\nВторой продукт на системе — настоящая проверка первого"
           }
         },
         {
-          "type": "p",
+          "type": "divider"
+        },
+        {
+          "type": "callout",
+          "icon": "💬",
           "text": {
-            "en": "",
-            "ru": ""
+            "en": "Want the messy middle? I'm happy to walk through the decisions, dead ends and iterations behind this system — get in touch.",
+            "ru": "Интересна «грязная середина»? С удовольствием покажу решения, тупики и итерации, которые стоят за этой системой, — напишите мне."
           }
-        },
-        {
-          "type": "img",
-          "src": "assets/uploads/1784302818284-colozeo-4.png"
         }
       ]
     },

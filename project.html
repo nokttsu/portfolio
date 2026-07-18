@@ -13,7 +13,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&family=Inter+Tight:wght@400;600&family=IBM+Plex+Mono&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="styles.css?v=23">
+  <link rel="stylesheet" href="styles.css?v=28">
 
   <!-- Yandex.Metrika counter -->
   <script type="text/javascript">
@@ -39,6 +39,13 @@
       <button class="lang-toggle__btn" type="button" data-lang="ru">RU</button>
       <button class="lang-toggle__btn is-active" type="button" data-lang="en">EN</button>
     </div>
+    <button class="menu-btn" type="button" aria-label="Menu" aria-expanded="false">
+      <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <circle cx="8" cy="3" r="1.5" fill="currentColor"/>
+        <circle cx="8" cy="8" r="1.5" fill="currentColor"/>
+        <circle cx="8" cy="13" r="1.5" fill="currentColor"/>
+      </svg>
+    </button>
   </header>
 
   <main class="page">
@@ -120,6 +127,25 @@
 
   </main>
 
+  <div class="menu" hidden>
+    <button class="menu__close" type="button" aria-label="Close menu">
+      <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M3 3L13 13M13 3L3 13" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/>
+      </svg>
+    </button>
+    <div class="menu__panel">
+      <button class="chip" type="button" data-copy="nokttsu@mail.ru" title="Copy email">
+        <span>nokttsu@mail.ru</span>
+        <svg width="12" height="12" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M14 5V14H5V5H14ZM14 4H5C4.73478 4 4.48043 4.10536 4.29289 4.29289C4.10536 4.48043 4 4.73478 4 5V14C4 14.2652 4.10536 14.5196 4.29289 14.7071C4.48043 14.8946 4.73478 15 5 15H14C14.2652 15 14.5196 14.8946 14.7071 14.7071C14.8946 14.5196 15 14.2652 15 14V5C15 4.73478 14.8946 4.48043 14.7071 4.29289C14.5196 4.10536 14.2652 4 14 4Z" fill="currentColor"/>
+          <path d="M2 9H1V2C1 1.73478 1.10536 1.48043 1.29289 1.29289C1.48043 1.10536 1.73478 1 2 1H9V2H2V9Z" fill="currentColor"/>
+        </svg>
+      </button>
+      <a class="chip" data-cv href="https://drive.google.com/" target="_blank" rel="noopener"><span>Open CV</span></a>
+      <button class="chip" type="button" data-menu-lang><span></span></button>
+    </div>
+  </div>
+
   <div class="contact-bar">
     <a class="contact-bar__btn" href="https://t.me/nokttsu" target="_blank" rel="noopener" data-i18n="cta">Contact via Telegram</a>
   </div>
@@ -128,6 +154,6 @@
   <script src="assets/vendor/gsap.min.js"></script>
   <script src="assets/vendor/ScrollTrigger.min.js"></script>
   <script src="assets/vendor/SplitText.min.js"></script>
-  <script src="script.js?v=23"></script>
+  <script src="script.js?v=28"></script>
 </body>
 </html>
