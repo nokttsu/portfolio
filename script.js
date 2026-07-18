@@ -172,10 +172,10 @@ function buildImageTrail(projects) {
   );
 }
 
-// ASCII plasma background for the hero: a canvas grid of monospace glyphs
-// driven by layered sine fields — slow, organic waves of character density.
-// The middle of the field is damped so the copy floats on quiet water.
-// One GSAP ticker at ~30fps; a single static frame under reduced motion.
+// ASCII donut behind the hero — an homage to a1k0n's donut.c: a giant 3D
+// torus tumbling in glyphs, z-buffered, lit with the classic luminance ramp
+// ".,-~:;=!*#$@". Scrolling spins it up. One GSAP ticker at ~30fps, a single
+// static frame under reduced motion.
 function buildHeroAscii() {
   const hero = $(".hero");
   if (!hero || !window.gsap) return;
@@ -186,12 +186,18 @@ function buildHeroAscii() {
   hero.prepend(cvs);
   const ctx = cvs.getContext("2d");
 
-  const CHARS = " .·:;=+*xX#"; // density ramp, dark → bright
-  const CELL = 16;
-  let cols = 0;
-  let rows = 0;
-  let w = 0;
-  let h = 0;
+  const RAMP = ".,-~:;=!*#$@"; // donut.c's luminance ramp, dark → bright
+  const CELL = 14;
+  const R1 = 1; // tube radius
+  const R2 = 2; // ring radius
+  const K2 = 5; // camera distance
+  // Pre-sampled torus angles: the per-frame loop is pure arithmetic
+  const TH = [], PH = [];
+  for (let t = 0; t < Math.PI * 2; t += 0.07) TH.push([Math.cos(t), Math.sin(t)]);
+  for (let p = 0; p < Math.PI * 2; p += 0.02) PH.push([Math.cos(p), Math.sin(p)]);
+
+  let cols = 0, rows = 0, w = 0, h = 0, K1 = 0;
+  let zbuf = null, grid = null;
 
   const resize = () => {
     const dpr = Math.min(2, devicePixelRatio || 1);
@@ -199,52 +205,93 @@ function buildHeroAscii() {
     h = hero.clientHeight;
     cvs.width = w * dpr;
     cvs.height = h * dpr;
+    // CSS size must be set explicitly — otherwise the canvas renders at its
+    // retina buffer size and blows the layout apart on DPR > 1 screens
+    cvs.style.width = w + "px";
+    cvs.style.height = h + "px";
     ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
     ctx.font = '12px "IBM Plex Mono", monospace';
     ctx.textBaseline = "top";
     cols = Math.ceil(w / CELL);
     rows = Math.ceil(h / CELL);
+    K1 = Math.min(cols, rows) * 0.72; // the donut dominates the frame
+    zbuf = new Float32Array(cols * rows);
+    grid = new Int8Array(cols * rows);
   };
   resize();
   window.addEventListener("resize", resize);
   // The webfont may land after the first frames — re-grab it for crisp glyphs
   document.fonts.ready.then(resize);
 
-  let t = gsap.utils.random(0, 20); // a different sea on every visit
+  let A = gsap.utils.random(0, 6.28); // tumble phase differs on every visit
+  let B = gsap.utils.random(0, 6.28);
+  let lastY = window.scrollY;
+  let boost = 0;
+
   const draw = () => {
+    zbuf.fill(0);
+    grid.fill(-1);
+    const cA = Math.cos(A), sA = Math.sin(A);
+    const cB = Math.cos(B), sB = Math.sin(B);
+    const ccx = cols / 2, ccy = rows / 2;
+
+    for (let i = 0; i < TH.length; i++) {
+      const ct = TH[i][0], st = TH[i][1];
+      const circx = R2 + R1 * ct;
+      const circy = R1 * st;
+      for (let j = 0; j < PH.length; j++) {
+        const cp = PH[j][0], sp = PH[j][1];
+        const x = circx * (cB * cp + sA * sB * sp) - circy * cA * sB;
+        const y = circx * (sB * cp - sA * cB * sp) + circy * cA * cB;
+        const ooz = 1 / (K2 + cA * circx * sp + circy * sA);
+        const xp = (ccx + K1 * ooz * x) | 0;
+        const yp = (ccy - K1 * ooz * y) | 0;
+        if (xp < 0 || xp >= cols || yp < 0 || yp >= rows) continue;
+        const idx = yp * cols + xp;
+        if (ooz <= zbuf[idx]) continue;
+        const L = cp * ct * sB - cA * ct * sp - sA * st + cB * (cA * st - ct * sA * sp);
+        if (L <= 0) continue;
+        zbuf[idx] = ooz;
+        grid[idx] = Math.min(RAMP.length - 1, (L * 8) | 0);
+      }
+    }
+
     ctx.clearRect(0, 0, w, h);
-    ctx.fillStyle = "rgba(255, 255, 255, 0.16)";
-    for (let y = 0; y < rows; y++) {
-      const vv = (y / rows) * 4;
-      for (let x = 0; x < cols; x++) {
-        const u = (x / cols) * 4;
-        const v =
-          Math.sin(u * 1.7 + t) +
-          Math.sin(vv * 1.3 - t * 0.8) +
-          Math.sin((u + vv) * 1.1 + t * 0.6) +
-          Math.sin(Math.hypot(u - 2, vv - 2) * 1.9 - t * 1.2);
-        let b = (v + 4) / 8; // -4..4 → 0..1
-        // radial damping: calm centre, lively edges
-        const dx = x / cols - 0.5;
-        const dy = y / rows - 0.5;
-        b *= Math.min(1, (dx * dx + dy * dy) * 5.5 + 0.12);
-        const ci = Math.min(CHARS.length - 1, Math.floor(b * CHARS.length));
-        if (ci > 0) ctx.fillText(CHARS[ci], x * CELL, y * CELL);
+    ctx.fillStyle = "rgba(255, 255, 255, 0.18)";
+    for (let r = 0; r < rows; r++) {
+      for (let c = 0; c < cols; c++) {
+        let ci = grid[r * cols + c];
+        if (ci < 0) continue;
+        // calm the middle so the copy floats over a fainter donut
+        const dx = c / cols - 0.5;
+        const dy = r / rows - 0.5;
+        const damp = Math.min(1, (dx * dx + dy * dy) * 5 + 0.3);
+        ci = (ci * damp) | 0;
+        ctx.fillText(RAMP[ci], c * CELL, r * CELL);
       }
     }
   };
 
   if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
-    draw(); // a still ASCII field, no motion
+    draw(); // a frozen donut, no motion
     return;
   }
 
   let frame = 0;
   gsap.ticker.add(() => {
     // Past the first viewport the layer is faded out — skip the work
-    if (window.scrollY > innerHeight) return;
-    if (++frame % 2) return; // ~30fps is plenty for a slow sea
-    t += (gsap.ticker.deltaRatio(60) / 60) * 1.1;
+    if (window.scrollY > innerHeight) {
+      lastY = window.scrollY;
+      return;
+    }
+    if (++frame % 2) return; // ~30fps is plenty for a donut
+    const dt = gsap.ticker.deltaRatio(30) / 30;
+    // Scroll velocity spins the donut up, then it settles back down
+    const v = Math.abs(window.scrollY - lastY) / Math.max(dt, 1 / 120);
+    lastY = window.scrollY;
+    boost += (Math.min(v / 1500, 2.5) - boost) * Math.min(1, dt * 5);
+    A += (0.45 + boost * 1.4) * dt;
+    B += (0.23 + boost * 0.8) * dt;
     draw();
   });
 }
