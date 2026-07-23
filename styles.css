@@ -103,26 +103,8 @@ html {
   align-items: center;
   gap: 8px;
   padding: 12px;
-  /* Tint gradient — 1:1 from Figma "new tint" (peak rgba(0,0,0,0.6) at the edge) */
-  background: linear-gradient(
-    to bottom,
-    rgba(0, 0, 0, 0.6) 0%,
-    rgba(0, 0, 0, 0.595) 6.667%,
-    rgba(0, 0, 0, 0.579) 13.333%,
-    rgba(0, 0, 0, 0.551) 20%,
-    rgba(0, 0, 0, 0.512) 26.667%,
-    rgba(0, 0, 0, 0.461) 33.333%,
-    rgba(0, 0, 0, 0.401) 40%,
-    rgba(0, 0, 0, 0.334) 46.667%,
-    rgba(0, 0, 0, 0.266) 53.333%,
-    rgba(0, 0, 0, 0.199) 60%,
-    rgba(0, 0, 0, 0.139) 66.667%,
-    rgba(0, 0, 0, 0.088) 73.333%,
-    rgba(0, 0, 0, 0.049) 80%,
-    rgba(0, 0, 0, 0.021) 86.667%,
-    rgba(0, 0, 0, 0.005) 93.333%,
-    rgba(0, 0, 0, 0) 100%
-  );
+  /* Tint and blur live on .pblur, sized to the Figma zone (falloff extends
+     past the content row like the mock's pb-32) */
 }
 
 .header__avatar {
@@ -1111,9 +1093,47 @@ html {
   justify-content: center;
   gap: 12px;
   padding: 16px;
-  /* Tint gradient — 1:1 from Figma "new tint" (peak rgba(0,0,0,0.6) at the edge) */
+  /* Tint and blur live on .pblur, sized to the Figma zone (falloff extends
+     past the content row like the mock's pt-32) */
+  pointer-events: none;
+}
+
+.contact-bar__btn {
+  /* sizing shared with .hero__cta — see the hero section */
+  pointer-events: auto;
+  display: inline-flex;
+}
+
+/* Mobile mockup uses the 14px pill in the fixed bar */
+@media (max-width: 599px) {
+  .contact-bar__btn {
+    font-size: 14px;
+  }
+}
+
+/* ---------- Tint + progressive blur, 1:1 with the Figma "new tint" node ----------
+   One zone per bar carries both the 16-stop eased tint (peak 0.6 at the screen
+   edge) and a progressive backdrop blur ramping 8px → 0 across the zone.
+   The zone extends past the bar's content row exactly like the mock (its
+   pb-32 / pt-32), so the falloff geometry matches, not just the colors. */
+
+.pblur {
+  position: absolute;
+  left: 0;
+  right: 0;
+  z-index: -1; /* below the bar's content */
+  pointer-events: none;
+}
+
+/* The tint is a LATER sibling of the blur bands, so it composites on top of
+   the blurred backdrop instead of being re-sampled (and multiplied) by each
+   masked backdrop-filter layer. Same model as Figma: blur first, fill above. */
+.pblur b {
+  position: absolute;
+  inset: 0;
+  /* Figma fill: 0.6 at the screen edge easing to 0 at the inner edge */
   background: linear-gradient(
-    to top,
+    var(--pb-dir),
     rgba(0, 0, 0, 0.6) 0%,
     rgba(0, 0, 0, 0.595) 6.667%,
     rgba(0, 0, 0, 0.579) 13.333%,
@@ -1131,45 +1151,19 @@ html {
     rgba(0, 0, 0, 0.005) 93.333%,
     rgba(0, 0, 0, 0) 100%
   );
-  pointer-events: none;
 }
 
-.contact-bar__btn {
-  /* sizing shared with .hero__cta — see the hero section */
-  pointer-events: auto;
-  display: inline-flex;
-}
-
-/* Mobile mockup uses the 14px pill in the fixed bar */
-@media (max-width: 599px) {
-  .contact-bar__btn {
-    font-size: 14px;
-  }
-}
-
-/* ---------- Progressive blur under the header / contact bar ----------
-   1:1 with the Figma "new tint" progressive background blur: a linear ramp
-   from 8px at the screen edge to 0 at the inner edge, contained within the
-   bar's own height. Stacked masked backdrop-filter layers approximate the
-   ramp (CSS has no native progressive blur). */
-
-.pblur {
-  position: absolute;
-  left: 0;
-  right: 0;
-  z-index: -1; /* above the bar's gradient, below its content */
-  pointer-events: none;
-}
-
+/* Figma header frame is 76px: 12px top pad + 32px row + 32px falloff below */
 .header .pblur {
   top: 0;
-  height: 100%;
+  height: calc(100% + 20px);
   --pb-dir: to bottom;
 }
 
+/* Figma bottom frame: 32px falloff above the content row */
 .contact-bar .pblur {
   bottom: 0;
-  height: 100%;
+  height: calc(100% + 16px);
   --pb-dir: to top;
 }
 
@@ -1178,49 +1172,35 @@ html {
   inset: 0;
 }
 
-/* Six layers ramping 0.6 → 8px toward the screen edge, each masked to a band
-   that reaches progressively less far in, so the effective blur climbs from
-   0 at the inner edge to ~8px at the edge — matching Figma's 8→0 ramp */
+/* Four stacked layers approximate Figma's linear 8 → 0 progressive blur:
+   strongest at the screen edge, each band reaching progressively less far
+   into the zone so the ramp stays smooth and clearly visible */
 .pblur i:nth-child(1) {
-  -webkit-backdrop-filter: blur(0.6px);
-  backdrop-filter: blur(0.6px);
-  -webkit-mask-image: linear-gradient(var(--pb-dir), #000 60%, transparent 100%);
-  mask-image: linear-gradient(var(--pb-dir), #000 60%, transparent 100%);
+  -webkit-backdrop-filter: blur(8px);
+  backdrop-filter: blur(8px);
+  -webkit-mask-image: linear-gradient(var(--pb-dir), #000 0%, transparent 50%);
+  mask-image: linear-gradient(var(--pb-dir), #000 0%, transparent 50%);
 }
 
 .pblur i:nth-child(2) {
-  -webkit-backdrop-filter: blur(1.2px);
-  backdrop-filter: blur(1.2px);
-  -webkit-mask-image: linear-gradient(var(--pb-dir), #000 45%, transparent 80%);
-  mask-image: linear-gradient(var(--pb-dir), #000 45%, transparent 80%);
+  -webkit-backdrop-filter: blur(5px);
+  backdrop-filter: blur(5px);
+  -webkit-mask-image: linear-gradient(var(--pb-dir), #000 25%, transparent 72%);
+  mask-image: linear-gradient(var(--pb-dir), #000 25%, transparent 72%);
 }
 
 .pblur i:nth-child(3) {
-  -webkit-backdrop-filter: blur(2.2px);
-  backdrop-filter: blur(2.2px);
-  -webkit-mask-image: linear-gradient(var(--pb-dir), #000 32%, transparent 62%);
-  mask-image: linear-gradient(var(--pb-dir), #000 32%, transparent 62%);
+  -webkit-backdrop-filter: blur(2.5px);
+  backdrop-filter: blur(2.5px);
+  -webkit-mask-image: linear-gradient(var(--pb-dir), #000 45%, transparent 88%);
+  mask-image: linear-gradient(var(--pb-dir), #000 45%, transparent 88%);
 }
 
 .pblur i:nth-child(4) {
-  -webkit-backdrop-filter: blur(3.6px);
-  backdrop-filter: blur(3.6px);
-  -webkit-mask-image: linear-gradient(var(--pb-dir), #000 20%, transparent 46%);
-  mask-image: linear-gradient(var(--pb-dir), #000 20%, transparent 46%);
-}
-
-.pblur i:nth-child(5) {
-  -webkit-backdrop-filter: blur(5.4px);
-  backdrop-filter: blur(5.4px);
-  -webkit-mask-image: linear-gradient(var(--pb-dir), #000 8%, transparent 32%);
-  mask-image: linear-gradient(var(--pb-dir), #000 8%, transparent 32%);
-}
-
-.pblur i:nth-child(6) {
-  -webkit-backdrop-filter: blur(8px);
-  backdrop-filter: blur(8px);
-  -webkit-mask-image: linear-gradient(var(--pb-dir), #000 0%, transparent 20%);
-  mask-image: linear-gradient(var(--pb-dir), #000 0%, transparent 20%);
+  -webkit-backdrop-filter: blur(1px);
+  backdrop-filter: blur(1px);
+  -webkit-mask-image: linear-gradient(var(--pb-dir), #000 62%, transparent 100%);
+  mask-image: linear-gradient(var(--pb-dir), #000 62%, transparent 100%);
 }
 
 /* ---------- Case page table of contents (desktop only) ---------- */

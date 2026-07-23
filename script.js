@@ -443,7 +443,8 @@ function initProgressiveBlur() {
     const wrap = document.createElement("div");
     wrap.className = "pblur";
     wrap.setAttribute("aria-hidden", "true");
-    wrap.innerHTML = "<i></i><i></i><i></i><i></i><i></i><i></i>";
+    // <i> = masked blur bands (backdrop), <b> = tint fill painted above them
+    wrap.innerHTML = "<i></i><i></i><i></i><i></i><b></b>";
     el.prepend(wrap);
   });
 }
