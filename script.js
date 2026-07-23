@@ -203,8 +203,8 @@ function renderContent() {
   });
   $$("[data-cv]").forEach((a) => (a.href = C.site.cvUrl));
 
-  // Cursor image trail in the first viewport — home and case pages alike
-  buildImageTrail(C.projects);
+  // Cursor image trail in the first viewport — case pages only for now
+  if ($(".project-hero")) buildImageTrail(C.projects);
 
   // Home: experience cards
   const panel = $('[data-panel="experience"]');
@@ -581,6 +581,7 @@ if (window.gsap) {
     initToc();
     initMenu();
     initCtaOnScroll();
+    initHeroShader();
     initHeroScroll();
     if (vtArrival) {
       // Seamless page transition: content must stand still, no intro replay
@@ -661,6 +662,159 @@ function initMenu() {
   }
 }
 
+// Interactive WebGL ink behind the hero: domain-warped fbm smoke in dark
+// monochrome. The cursor stirs the field — a swirl + soft glow whose strength
+// follows pointer speed — and the flow itself speeds up while you stir.
+// Raw WebGL1, no dependencies; static frame under reduced motion; plain black
+// background if WebGL is unavailable.
+function initHeroShader() {
+  const hero = $(".hero");
+  if (!hero || !window.gsap) return;
+
+  const cvs = document.createElement("canvas");
+  cvs.className = "hero-shader";
+  cvs.setAttribute("aria-hidden", "true");
+  hero.prepend(cvs);
+  const gl = cvs.getContext("webgl", { antialias: false, alpha: false, depth: false, stencil: false });
+  if (!gl) { cvs.remove(); return; }
+
+  const FRAG = `
+precision highp float;
+uniform vec2 u_res;
+uniform float u_time;
+uniform vec2 u_mouse;
+uniform float u_energy;
+
+float hash(vec2 p) { p = fract(p * vec2(123.34, 345.45)); p += dot(p, p + 34.345); return fract(p.x * p.y); }
+float noise(vec2 p) {
+  vec2 i = floor(p), f = fract(p);
+  vec2 u = f * f * (3.0 - 2.0 * f);
+  return mix(mix(hash(i), hash(i + vec2(1, 0)), u.x), mix(hash(i + vec2(0, 1)), hash(i + vec2(1, 1)), u.x), u.y);
+}
+float fbm(vec2 p) {
+  float v = 0.0, a = 0.5;
+  mat2 R = mat2(0.8, -0.6, 0.6, 0.8);
+  for (int i = 0; i < 5; i++) { v += a * noise(p); p = R * p * 2.02; a *= 0.5; }
+  return v;
+}
+void main() {
+  vec2 frag = gl_FragCoord.xy;
+  float side = min(u_res.x, u_res.y);
+  vec2 uv = (frag - 0.5 * u_res) / side;
+  vec2 m = (u_mouse - 0.5 * u_res) / side;
+
+  // the cursor stirs the ink: a swirl around the pointer, stronger when moving
+  vec2 dm = uv - m;
+  float infl = exp(-dot(dm, dm) * 6.0);
+  vec2 swirl = vec2(-dm.y, dm.x) * infl * (0.6 + u_energy * 2.2);
+
+  vec2 p = uv * 2.6 + swirl;
+  float t = u_time * 0.06;
+  vec2 q = vec2(fbm(p + t), fbm(p + vec2(5.2, 1.3) - t * 0.7));
+  vec2 r = vec2(fbm(p + 3.0 * q + vec2(1.7, 9.2) + t * 0.9), fbm(p + 3.0 * q + vec2(8.3, 2.8) - t * 0.6));
+  float f = fbm(p + 3.0 * r);
+
+  float lum = pow(smoothstep(0.15, 0.95, f), 1.8);
+  // local light where the pointer works the surface
+  lum += infl * (0.10 + u_energy * 0.35);
+  // quiet, darker middle so the copy floats on still ink
+  lum *= mix(0.22, 1.0, smoothstep(0.12, 0.85, length(uv * vec2(1.0, 1.35))));
+  lum = clamp(lum, 0.0, 0.6);
+
+  vec3 col = vec3(lum) * vec3(1.0, 0.97, 0.92);
+  col += (hash(frag + fract(u_time) * 17.0) - 0.5) * 0.016; // grain kills banding
+  gl_FragColor = vec4(col, 1.0);
+}`;
+  const VERT = "attribute vec2 a;void main(){gl_Position=vec4(a,0.,1.);}";
+
+  const sh = (type, src) => {
+    const s = gl.createShader(type);
+    gl.shaderSource(s, src);
+    gl.compileShader(s);
+    return gl.getShaderParameter(s, gl.COMPILE_STATUS) ? s : null;
+  };
+  const vs = sh(gl.VERTEX_SHADER, VERT);
+  const fs = sh(gl.FRAGMENT_SHADER, FRAG);
+  if (!vs || !fs) { cvs.remove(); return; }
+  const prog = gl.createProgram();
+  gl.attachShader(prog, vs);
+  gl.attachShader(prog, fs);
+  gl.linkProgram(prog);
+  if (!gl.getProgramParameter(prog, gl.LINK_STATUS)) { cvs.remove(); return; }
+  gl.useProgram(prog);
+
+  const buf = gl.createBuffer();
+  gl.bindBuffer(gl.ARRAY_BUFFER, buf);
+  gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([-1, -1, 3, -1, -1, 3]), gl.STATIC_DRAW);
+  const loc = gl.getAttribLocation(prog, "a");
+  gl.enableVertexAttribArray(loc);
+  gl.vertexAttribPointer(loc, 2, gl.FLOAT, false, 0, 0);
+  const U = {
+    res: gl.getUniformLocation(prog, "u_res"),
+    time: gl.getUniformLocation(prog, "u_time"),
+    mouse: gl.getUniformLocation(prog, "u_mouse"),
+    energy: gl.getUniformLocation(prog, "u_energy"),
+  };
+
+  let dpr = 1;
+  const resize = () => {
+    dpr = Math.min(devicePixelRatio || 1, innerWidth < 600 ? 1 : 1.5);
+    const w = hero.clientWidth;
+    const h = hero.clientHeight;
+    cvs.width = Math.round(w * dpr);
+    cvs.height = Math.round(h * dpr);
+    cvs.style.width = w + "px";
+    cvs.style.height = h + "px";
+    gl.viewport(0, 0, cvs.width, cvs.height);
+  };
+  resize();
+  window.addEventListener("resize", resize);
+
+  // Pointer state: smoothed position (the ink lags behind the hand) + energy
+  // from movement speed that decays when you stop
+  const mouse = { x: -1e4, y: -1e4, tx: -1e4, ty: -1e4 };
+  let energy = 0;
+  let energyTarget = 0;
+  const point = (x, y) => {
+    if (mouse.tx < -1e3) { mouse.x = x; mouse.y = y; }
+    energyTarget = Math.min(1, energyTarget + Math.hypot(x - mouse.tx, y - mouse.ty) / 120);
+    mouse.tx = x;
+    mouse.ty = y;
+  };
+  window.addEventListener("mousemove", (e) => point(e.clientX, e.clientY), { passive: true });
+  window.addEventListener("touchmove", (e) => {
+    if (e.touches[0]) point(e.touches[0].clientX, e.touches[0].clientY);
+  }, { passive: true });
+
+  let t = gsap.utils.random(0, 100); // a different sea on every visit
+  const draw = () => {
+    gl.uniform2f(U.res, cvs.width, cvs.height);
+    gl.uniform1f(U.time, t);
+    gl.uniform2f(U.mouse, mouse.x * dpr, cvs.height - mouse.y * dpr);
+    gl.uniform1f(U.energy, energy);
+    gl.drawArrays(gl.TRIANGLES, 0, 3);
+  };
+
+  cvs.addEventListener("webglcontextlost", (e) => e.preventDefault());
+
+  if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+    draw(); // one still frame of ink
+    return;
+  }
+
+  gsap.ticker.add(() => {
+    // Past the first viewport the layer is faded out — skip the work
+    if (window.scrollY > innerHeight) return;
+    const dt = gsap.ticker.deltaRatio(60) / 60;
+    mouse.x += (mouse.tx - mouse.x) * Math.min(1, dt * 5);
+    mouse.y += (mouse.ty - mouse.y) * Math.min(1, dt * 5);
+    energy += (energyTarget - energy) * Math.min(1, dt * 4);
+    energyTarget *= Math.max(0, 1 - dt * 2.5); // stirring fades out on its own
+    t += dt * (1 + energy * 1.6); // the flow quickens while you stir
+    draw();
+  });
+}
+
 // Re-applied after the intro timeline finishes: its clearProps wipes the fade's
 // inline styles, and with no further scroll events nothing would restore them
 let applyHeroFade = () => {};
@@ -674,6 +828,7 @@ function initHeroScroll() {
   if (!$(".hero") || !$(".page")) return;
 
   const mobile = window.matchMedia("(max-width: 599px)");
+  const shader = $(".hero-shader");
   applyHeroFade = () => apply();
   // Back on desktop, the chips are viewport-fixed and must not stay faded
   mobile.addEventListener("change", (e) => {
@@ -691,6 +846,8 @@ function initHeroScroll() {
     gsap.set([".hero__head", ".hero__cta"], state);
     // Mobile chips sit inside the hero flow and dissolve with it
     if (mobile.matches) gsap.set(".hero__chips", state);
+    // The ink shader dissolves too — opacity only, no per-frame blur cost
+    if (shader) gsap.set(shader, { opacity: state.opacity, visibility: state.visibility });
   };
 
   window.addEventListener("scroll", apply, { passive: true });
