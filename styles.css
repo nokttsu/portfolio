@@ -537,7 +537,8 @@ html {
     grid-template-columns: 1fr 379px 1fr;
     align-items: stretch;
     height: 100svh;
-    background: var(--bg);
+    /* Figma "projects" frame fill: black down to 35%, easing up to #666 */
+    background: linear-gradient(180deg, #000 0%, #000 35%, #666 100%);
     overflow: hidden;
   }
 }
@@ -557,7 +558,7 @@ html {
 }
 
 .pbrowser__name {
-  height: 96px; /* must match PB_ROW in script.js */
+  height: 140px; /* must match PB_ROW in script.js */
   display: flex;
   align-items: center;
   justify-content: center;
@@ -580,44 +581,16 @@ html {
   position: relative;
 }
 
+/* Every cover is the same element; the active one sits centre-stage and the
+   neighbours are shrunk + blurred by GSAP (see layoutCovers in script.js). */
 .pbrowser__cover {
   position: absolute;
   top: 50%;
   left: 50%;
   width: 379px;
   display: block;
-}
-
-/* Blurred previews of the neighbouring covers, 1:1 with the mock:
-   299×209 at ±339px from the centre, blur 32, half opacity */
-.pbrowser__ghost {
-  position: absolute;
-  left: 50%;
-  width: 299px;
-  height: 209px;
-  padding: 0;
-  border: 0.5px solid rgba(255, 255, 255, 0.05);
-  border-radius: 4px;
-  background: var(--placeholder);
-  overflow: hidden;
-  filter: blur(32px);
-  opacity: 0.5;
-  cursor: pointer;
-}
-
-.pbrowser__ghost--prev {
-  top: calc(50% - 339px);
-}
-
-.pbrowser__ghost--next {
-  top: calc(50% + 339px);
-}
-
-.pbrowser__ghost img {
-  display: block;
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
+  will-change: transform, filter, opacity;
+  backface-visibility: hidden;
 }
 
 .pbrowser__info {
