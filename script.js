@@ -270,7 +270,12 @@ function buildProjectsBrowser(projects) {
     active = i;
     styleNames(true);
     gsap
-      .timeline({ onComplete: () => (busy = false) })
+      .timeline({
+        onComplete: () => {
+          busy = false;
+          if (desired !== active) go(desired); // catch up after fast scrolling
+        },
+      })
       .to(cover, { y: dir * -40, autoAlpha: 0, duration: 0.28, ease: "power2.in" }, 0)
       .to(ghosts, { autoAlpha: 0, duration: 0.28, ease: "power2.in" }, 0)
       .to([sub, tags], { y: -10, autoAlpha: 0, duration: 0.25, ease: "power2.in" }, 0)
@@ -280,9 +285,25 @@ function buildProjectsBrowser(projects) {
       .fromTo([sub, tags], { y: 12 }, { y: 0, autoAlpha: 1, duration: 0.45, ease: "power2.out", stagger: 0.05 }, "<0.1");
   };
 
-  names.forEach((b, i) => b.addEventListener("click", () => go(i)));
-  ghosts[0].addEventListener("click", () => go((active - 1 + n) % n, -1));
-  ghosts[1].addEventListener("click", () => go((active + 1) % n, 1));
+  // Scroll drives the wheel: the section pins and every segment of extra
+  // scroll advances one project. Clicks just scroll to the matching spot,
+  // so the wheel and the scrollbar can never disagree.
+  let desired = 0;
+  let pinST = null;
+  const request = (i) => {
+    desired = i;
+    if (!busy && i !== active) go(i);
+  };
+  const scrollToIndex = (i) => {
+    if (!pinST) { request(i); return; }
+    const pos = pinST.start + (pinST.end - pinST.start) * (n > 1 ? i / (n - 1) : 0);
+    if (lenis) lenis.scrollTo(pos, { duration: 0.9, easing: (t) => 1 - Math.pow(1 - t, 3) });
+    else window.scrollTo({ top: pos, behavior: "smooth" });
+  };
+
+  names.forEach((b, i) => b.addEventListener("click", () => scrollToIndex(i)));
+  ghosts[0].addEventListener("click", () => scrollToIndex((active - 1 + n) % n));
+  ghosts[1].addEventListener("click", () => scrollToIndex((active + 1) % n));
 
   apply(0);
   styleNames(false);
@@ -293,6 +314,25 @@ function buildProjectsBrowser(projects) {
   gsap.from(names, { x: -24, autoAlpha: 0, stagger: 0.05, duration: 0.6, ease: "power3.out", scrollTrigger: st });
   gsap.from(cover, { y: 48, autoAlpha: 0, duration: 0.7, ease: "power3.out", scrollTrigger: st });
   gsap.from([sub, tags], { x: 24, autoAlpha: 0, stagger: 0.08, duration: 0.6, ease: "power3.out", scrollTrigger: st });
+
+  // The pin only exists on desktop — below 900px the section is display:none
+  // and the plain card list scrolls as before.
+  if (n > 1) {
+    gsap.matchMedia().add("(min-width: 900px)", () => {
+      pinST = ScrollTrigger.create({
+        trigger: sec,
+        start: "top top",
+        end: () => "+=" + (n - 1) * Math.round(window.innerHeight * 0.85),
+        pin: true,
+        anticipatePin: 1,
+        onUpdate: (self) => request(Math.min(n - 1, Math.round(self.progress * (n - 1)))),
+      });
+      return () => {
+        pinST.kill();
+        pinST = null;
+      };
+    });
+  }
 }
 
 // Case body is a flat list of Notion-style blocks; legacy `sections` are converted
