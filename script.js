@@ -181,30 +181,29 @@ function buildImageTrail(projects) {
 
 
 // Desktop project browser (Figma "projects" frame): a full-viewport wheel.
-// Names run down the left with the active one enlarged and vertically
-// centred; the active cover sits centre-stage with blurred ghosts of the
-// neighbouring covers above and below; subtitle + award tags on the right.
-// Clicking a name or a ghost spins the wheel — every move tweens on GSAP.
-// Mobile keeps the plain card list.
-const PB_ROW = 96; // one name row, must match .pbrowser__name height
+// Names run down the left with the active one enlarged and vertically centred.
+// The covers form a vertical stack — the active one sits centre-stage sharp,
+// the immediate neighbours sit above/below shrunk and blurred, anything
+// further out is parked off-stage. Scrolling shifts the stack: the centre
+// cover blurs and rises to take the top slot while the one below sharpens
+// into the middle. Subtitle + award tags on the right. Mobile keeps the
+// plain card list.
+const PB_ROW = 140; // pitch between case names
+const PB_SLOT = 339; // vertical gap between stacked covers (Figma ±339)
+const PB_GHOST = 0.79; // neighbour cover scale (299/379)
 function buildProjectsBrowser(projects) {
   const pageEl = $(".page");
   if (!pageEl || $(".pbrowser") || !projects.length || !window.gsap) return;
 
   const n = projects.length;
   let active = 0;
-  let busy = false;
 
   const sec = document.createElement("section");
   sec.className = "pbrowser";
   sec.setAttribute("aria-label", "Projects");
   sec.innerHTML = `
     <div class="pbrowser__names"><div class="pbrowser__strip"></div></div>
-    <div class="pbrowser__stage">
-      <button class="pbrowser__ghost pbrowser__ghost--prev" type="button" aria-label="Previous project"><img alt=""></button>
-      <a class="pbrowser__cover"><div class="card__media"><img alt=""></div></a>
-      <button class="pbrowser__ghost pbrowser__ghost--next" type="button" aria-label="Next project"><img alt=""></button>
-    </div>
+    <div class="pbrowser__stage"></div>
     <div class="pbrowser__info">
       <p class="pbrowser__sub"></p>
       <div class="pbrowser__tags"></div>
@@ -216,34 +215,52 @@ function buildProjectsBrowser(projects) {
     .map((p, i) => `<button class="pbrowser__name" type="button" data-i18n="proj${i}name"></button>`)
     .join("");
   const names = $$(".pbrowser__name", sec);
-  const cover = $(".pbrowser__cover", sec);
-  const coverImg = $(".pbrowser__cover img", sec);
-  const ghosts = [$(".pbrowser__ghost--prev", sec), $(".pbrowser__ghost--next", sec)];
+
+  const stage = $(".pbrowser__stage", sec);
+  stage.innerHTML = projects
+    .map((p, i) => `<a class="pbrowser__cover" href="project.html?p=${i + 1}"><div class="card__media"><img alt=""></div></a>`)
+    .join("");
+  const covers = $$(".pbrowser__cover", sec);
+  covers.forEach((c, i) => {
+    const img = $("img", c);
+    if (projects[i].image) { img.src = projects[i].image; new Image().src = projects[i].image; }
+    else img.style.display = "none";
+  });
+
   const sub = $(".pbrowser__sub", sec);
   const tags = $(".pbrowser__tags", sec);
 
-  // gsap owns the centering transforms so its y-tweens never fight CSS
-  gsap.set(cover, { xPercent: -50, yPercent: -50 });
-  gsap.set(ghosts, { xPercent: -50, yPercent: -50 });
-  projects.forEach((p) => { if (p.image) new Image().src = p.image; }); // pre-warm
+  // gsap owns the centring transform so its y/scale tweens never fight CSS
+  gsap.set(covers, { xPercent: -50, yPercent: -50 });
 
-  const setGhost = (g, i) => {
-    const img = $("img", g);
-    const src = projects[i] && projects[i].image;
-    img.style.display = src ? "" : "none";
-    if (src) img.src = src;
+  // Position the whole cover stack relative to the active one: centre is sharp
+  // and full size, the two neighbours are shrunk + blurred at ±PB_SLOT, and
+  // everything else is parked off-stage at zero opacity — so at the first and
+  // last project there is simply no neighbour to show, hence no stray preview.
+  const layoutCovers = (animate) => {
+    covers.forEach((el, i) => {
+      const off = i - active;
+      const near = Math.abs(off) <= 1;
+      const props = {
+        y: off * PB_SLOT,
+        scale: off === 0 ? 1 : PB_GHOST,
+        filter: off === 0 ? "blur(0px)" : "blur(32px)",
+        autoAlpha: near ? (off === 0 ? 1 : 0.5) : 0,
+      };
+      if (animate) gsap.to(el, { ...props, duration: 0.7, ease: "power3.out", overwrite: "auto" });
+      else gsap.set(el, props);
+    });
   };
-  const apply = (i) => {
-    cover.href = "project.html?p=" + (i + 1);
-    coverImg.style.display = projects[i].image ? "" : "none";
-    if (projects[i].image) coverImg.src = projects[i].image;
-    setGhost(ghosts[0], (i - 1 + n) % n);
-    setGhost(ghosts[1], (i + 1) % n);
-    sub.setAttribute("data-i18n", "proj" + i + "sub");
+
+  const applyInfo = (animate) => {
+    sub.setAttribute("data-i18n", "proj" + active + "sub");
     stampI18n(sub);
-    tags.innerHTML = (projects[i].awards || [])
+    tags.innerHTML = (projects[active].awards || [])
       .map((a) => `<span class="tag tag--award">${esc(a)}</span>`)
       .join("");
+    if (animate) {
+      gsap.fromTo([sub, tags], { y: 12, autoAlpha: 0 }, { y: 0, autoAlpha: 1, duration: 0.5, ease: "power3.out", stagger: 0.06, overwrite: "auto" });
+    }
   };
 
   const styleNames = (animate) => {
@@ -263,56 +280,43 @@ function buildProjectsBrowser(projects) {
     else gsap.set(strip, { y });
   };
 
-  const go = (i, dir) => {
-    if (busy || i === active) return;
-    busy = true;
-    dir = dir || (i > active ? 1 : -1);
+  const go = (i) => {
+    i = Math.max(0, Math.min(n - 1, i));
+    if (i === active) return;
     active = i;
+    layoutCovers(true);
     styleNames(true);
-    gsap
-      .timeline({
-        onComplete: () => {
-          busy = false;
-          if (desired !== active) go(desired); // catch up after fast scrolling
-        },
-      })
-      .to(cover, { y: dir * -40, autoAlpha: 0, duration: 0.28, ease: "power2.in" }, 0)
-      .to(ghosts, { autoAlpha: 0, duration: 0.28, ease: "power2.in" }, 0)
-      .to([sub, tags], { y: -10, autoAlpha: 0, duration: 0.25, ease: "power2.in" }, 0)
-      .add(() => apply(active))
-      .fromTo(cover, { y: dir * 40 }, { y: 0, autoAlpha: 1, duration: 0.5, ease: "power3.out" })
-      .to(ghosts, { autoAlpha: 0.5, duration: 0.4, ease: "power2.out" }, "<")
-      .fromTo([sub, tags], { y: 12 }, { y: 0, autoAlpha: 1, duration: 0.45, ease: "power2.out", stagger: 0.05 }, "<0.1");
+    applyInfo(true);
   };
 
   // Scroll drives the wheel: the section pins and every segment of extra
-  // scroll advances one project. Clicks just scroll to the matching spot,
-  // so the wheel and the scrollbar can never disagree.
-  let desired = 0;
+  // scroll advances one project. Clicks scroll to the matching spot, so the
+  // wheel and the scrollbar can never disagree.
   let pinST = null;
-  const request = (i) => {
-    desired = i;
-    if (!busy && i !== active) go(i);
-  };
   const scrollToIndex = (i) => {
-    if (!pinST) { request(i); return; }
+    i = Math.max(0, Math.min(n - 1, i));
+    if (!pinST) { go(i); return; }
     const pos = pinST.start + (pinST.end - pinST.start) * (n > 1 ? i / (n - 1) : 0);
     if (lenis) lenis.scrollTo(pos, { duration: 0.9, easing: (t) => 1 - Math.pow(1 - t, 3) });
     else window.scrollTo({ top: pos, behavior: "smooth" });
   };
 
   names.forEach((b, i) => b.addEventListener("click", () => scrollToIndex(i)));
-  ghosts[0].addEventListener("click", () => scrollToIndex((active - 1 + n) % n));
-  ghosts[1].addEventListener("click", () => scrollToIndex((active + 1) % n));
+  covers.forEach((c, i) =>
+    c.addEventListener("click", (e) => {
+      // neighbour covers bring themselves to centre; the active one navigates
+      if (i !== active) { e.preventDefault(); scrollToIndex(i); }
+    })
+  );
 
-  apply(0);
+  applyInfo(false);
+  layoutCovers(false);
   styleNames(false);
-  gsap.set(ghosts, { autoAlpha: 0.5 });
 
   // Entrance: the wheel assembles as the section scrolls in
   const st = { trigger: sec, start: "top 70%", once: true };
   gsap.from(names, { x: -24, autoAlpha: 0, stagger: 0.05, duration: 0.6, ease: "power3.out", scrollTrigger: st });
-  gsap.from(cover, { y: 48, autoAlpha: 0, duration: 0.7, ease: "power3.out", scrollTrigger: st });
+  gsap.from(covers[active], { y: 48, autoAlpha: 0, duration: 0.7, ease: "power3.out", scrollTrigger: st });
   gsap.from([sub, tags], { x: 24, autoAlpha: 0, stagger: 0.08, duration: 0.6, ease: "power3.out", scrollTrigger: st });
 
   // The pin only exists on desktop — below 900px the section is display:none
@@ -325,7 +329,7 @@ function buildProjectsBrowser(projects) {
         end: () => "+=" + (n - 1) * Math.round(window.innerHeight * 0.85),
         pin: true,
         anticipatePin: 1,
-        onUpdate: (self) => request(Math.min(n - 1, Math.round(self.progress * (n - 1)))),
+        onUpdate: (self) => go(Math.round(self.progress * (n - 1))),
       });
       return () => {
         pinST.kill();
