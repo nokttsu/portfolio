@@ -180,6 +180,121 @@ function buildImageTrail(projects) {
 }
 
 
+// Desktop project browser (Figma "projects" frame): a full-viewport wheel.
+// Names run down the left with the active one enlarged and vertically
+// centred; the active cover sits centre-stage with blurred ghosts of the
+// neighbouring covers above and below; subtitle + award tags on the right.
+// Clicking a name or a ghost spins the wheel — every move tweens on GSAP.
+// Mobile keeps the plain card list.
+const PB_ROW = 96; // one name row, must match .pbrowser__name height
+function buildProjectsBrowser(projects) {
+  const pageEl = $(".page");
+  if (!pageEl || $(".pbrowser") || !projects.length || !window.gsap) return;
+
+  const n = projects.length;
+  let active = 0;
+  let busy = false;
+
+  const sec = document.createElement("section");
+  sec.className = "pbrowser";
+  sec.setAttribute("aria-label", "Projects");
+  sec.innerHTML = `
+    <div class="pbrowser__names"><div class="pbrowser__strip"></div></div>
+    <div class="pbrowser__stage">
+      <button class="pbrowser__ghost pbrowser__ghost--prev" type="button" aria-label="Previous project"><img alt=""></button>
+      <a class="pbrowser__cover"><div class="card__media"><img alt=""></div></a>
+      <button class="pbrowser__ghost pbrowser__ghost--next" type="button" aria-label="Next project"><img alt=""></button>
+    </div>
+    <div class="pbrowser__info">
+      <p class="pbrowser__sub"></p>
+      <div class="pbrowser__tags"></div>
+    </div>`;
+  pageEl.after(sec);
+
+  const strip = $(".pbrowser__strip", sec);
+  strip.innerHTML = projects
+    .map((p, i) => `<button class="pbrowser__name" type="button" data-i18n="proj${i}name"></button>`)
+    .join("");
+  const names = $$(".pbrowser__name", sec);
+  const cover = $(".pbrowser__cover", sec);
+  const coverImg = $(".pbrowser__cover img", sec);
+  const ghosts = [$(".pbrowser__ghost--prev", sec), $(".pbrowser__ghost--next", sec)];
+  const sub = $(".pbrowser__sub", sec);
+  const tags = $(".pbrowser__tags", sec);
+
+  // gsap owns the centering transforms so its y-tweens never fight CSS
+  gsap.set(cover, { xPercent: -50, yPercent: -50 });
+  gsap.set(ghosts, { xPercent: -50, yPercent: -50 });
+  projects.forEach((p) => { if (p.image) new Image().src = p.image; }); // pre-warm
+
+  const setGhost = (g, i) => {
+    const img = $("img", g);
+    const src = projects[i] && projects[i].image;
+    img.style.display = src ? "" : "none";
+    if (src) img.src = src;
+  };
+  const apply = (i) => {
+    cover.href = "project.html?p=" + (i + 1);
+    coverImg.style.display = projects[i].image ? "" : "none";
+    if (projects[i].image) coverImg.src = projects[i].image;
+    setGhost(ghosts[0], (i - 1 + n) % n);
+    setGhost(ghosts[1], (i + 1) % n);
+    sub.setAttribute("data-i18n", "proj" + i + "sub");
+    stampI18n(sub);
+    tags.innerHTML = (projects[i].awards || [])
+      .map((a) => `<span class="tag tag--award">${esc(a)}</span>`)
+      .join("");
+  };
+
+  const styleNames = (animate) => {
+    names.forEach((el2, i) => {
+      const on = i === active;
+      const props = {
+        fontSize: on ? 24 : 16,
+        lineHeight: on ? "32px" : "24px",
+        letterSpacing: on ? -0.48 : -0.32,
+        opacity: on ? 1 : 0.4,
+      };
+      if (animate) gsap.to(el2, { ...props, duration: 0.5, ease: "power3.out", overwrite: "auto" });
+      else gsap.set(el2, props);
+    });
+    const y = -(active * PB_ROW + PB_ROW / 2);
+    if (animate) gsap.to(strip, { y, duration: 0.6, ease: "power3.out", overwrite: "auto" });
+    else gsap.set(strip, { y });
+  };
+
+  const go = (i, dir) => {
+    if (busy || i === active) return;
+    busy = true;
+    dir = dir || (i > active ? 1 : -1);
+    active = i;
+    styleNames(true);
+    gsap
+      .timeline({ onComplete: () => (busy = false) })
+      .to(cover, { y: dir * -40, autoAlpha: 0, duration: 0.28, ease: "power2.in" }, 0)
+      .to(ghosts, { autoAlpha: 0, duration: 0.28, ease: "power2.in" }, 0)
+      .to([sub, tags], { y: -10, autoAlpha: 0, duration: 0.25, ease: "power2.in" }, 0)
+      .add(() => apply(active))
+      .fromTo(cover, { y: dir * 40 }, { y: 0, autoAlpha: 1, duration: 0.5, ease: "power3.out" })
+      .to(ghosts, { autoAlpha: 0.5, duration: 0.4, ease: "power2.out" }, "<")
+      .fromTo([sub, tags], { y: 12 }, { y: 0, autoAlpha: 1, duration: 0.45, ease: "power2.out", stagger: 0.05 }, "<0.1");
+  };
+
+  names.forEach((b, i) => b.addEventListener("click", () => go(i)));
+  ghosts[0].addEventListener("click", () => go((active - 1 + n) % n, -1));
+  ghosts[1].addEventListener("click", () => go((active + 1) % n, 1));
+
+  apply(0);
+  styleNames(false);
+  gsap.set(ghosts, { autoAlpha: 0.5 });
+
+  // Entrance: the wheel assembles as the section scrolls in
+  const st = { trigger: sec, start: "top 70%", once: true };
+  gsap.from(names, { x: -24, autoAlpha: 0, stagger: 0.05, duration: 0.6, ease: "power3.out", scrollTrigger: st });
+  gsap.from(cover, { y: 48, autoAlpha: 0, duration: 0.7, ease: "power3.out", scrollTrigger: st });
+  gsap.from([sub, tags], { x: 24, autoAlpha: 0, stagger: 0.08, duration: 0.6, ease: "power3.out", scrollTrigger: st });
+}
+
 // Case body is a flat list of Notion-style blocks; legacy `sections` are converted
 function caseBlocks(p) {
   if (p.body) return p.body;
@@ -205,6 +320,8 @@ function renderContent() {
 
   // Cursor image trail in the first viewport — case pages only for now
   if ($(".project-hero")) buildImageTrail(C.projects);
+  // Home, desktop: the full-viewport project browser
+  else buildProjectsBrowser(C.projects);
 
   // Home: experience cards
   const panel = $('[data-panel="experience"]');
@@ -527,7 +644,7 @@ $$("[data-copy]").forEach((btn) => {
 
 // Delegated so cards created from content.json get the behaviour too
 document.addEventListener("click", (e) => {
-  const card = e.target.closest(".card, .mini-card");
+  const card = e.target.closest(".card, .mini-card, .pbrowser__cover");
   if (!card) return;
   // Only one element may carry the name on the outgoing page: when navigating
   // case → case, strip it from the current hero so the clicked tile wins
@@ -536,7 +653,7 @@ document.addEventListener("click", (e) => {
   const media = card.querySelector(".card__media");
   if (media) media.style.viewTransitionName = "project-hero";
   // remember which card was clicked so back-navigation can morph in reverse
-  sessionStorage.setItem("vt-card", String($$(".card, .mini-card").indexOf(card)));
+  sessionStorage.setItem("vt-card", String($$(".card, .mini-card, .pbrowser__cover").indexOf(card)));
 });
 
 // Did we arrive via a cross-document view transition?
@@ -548,7 +665,7 @@ window.addEventListener("pagereveal", (e) => {
   // On a case page the hero itself is the morph target, so nothing to do there.
   if (!$(".project-hero")) {
     const i = Number(sessionStorage.getItem("vt-card"));
-    const cards = $$(".card, .mini-card");
+    const cards = $$(".card, .mini-card, .pbrowser__cover");
     const media = cards[i] && cards[i].querySelector(".card__media");
     if (media) {
       media.style.viewTransitionName = "project-hero";
@@ -581,7 +698,6 @@ if (window.gsap) {
     initToc();
     initMenu();
     initCtaOnScroll();
-    initHeroShader();
     initHeroScroll();
     if (vtArrival) {
       // Seamless page transition: content must stand still, no intro replay
@@ -662,159 +778,6 @@ function initMenu() {
   }
 }
 
-// Interactive WebGL ink behind the hero: domain-warped fbm smoke in dark
-// monochrome. The cursor stirs the field — a swirl + soft glow whose strength
-// follows pointer speed — and the flow itself speeds up while you stir.
-// Raw WebGL1, no dependencies; static frame under reduced motion; plain black
-// background if WebGL is unavailable.
-function initHeroShader() {
-  const hero = $(".hero");
-  if (!hero || !window.gsap) return;
-
-  const cvs = document.createElement("canvas");
-  cvs.className = "hero-shader";
-  cvs.setAttribute("aria-hidden", "true");
-  hero.prepend(cvs);
-  const gl = cvs.getContext("webgl", { antialias: false, alpha: false, depth: false, stencil: false });
-  if (!gl) { cvs.remove(); return; }
-
-  const FRAG = `
-precision highp float;
-uniform vec2 u_res;
-uniform float u_time;
-uniform vec2 u_mouse;
-uniform float u_energy;
-
-float hash(vec2 p) { p = fract(p * vec2(123.34, 345.45)); p += dot(p, p + 34.345); return fract(p.x * p.y); }
-float noise(vec2 p) {
-  vec2 i = floor(p), f = fract(p);
-  vec2 u = f * f * (3.0 - 2.0 * f);
-  return mix(mix(hash(i), hash(i + vec2(1, 0)), u.x), mix(hash(i + vec2(0, 1)), hash(i + vec2(1, 1)), u.x), u.y);
-}
-float fbm(vec2 p) {
-  float v = 0.0, a = 0.5;
-  mat2 R = mat2(0.8, -0.6, 0.6, 0.8);
-  for (int i = 0; i < 5; i++) { v += a * noise(p); p = R * p * 2.02; a *= 0.5; }
-  return v;
-}
-void main() {
-  vec2 frag = gl_FragCoord.xy;
-  float side = min(u_res.x, u_res.y);
-  vec2 uv = (frag - 0.5 * u_res) / side;
-  vec2 m = (u_mouse - 0.5 * u_res) / side;
-
-  // the cursor stirs the ink: a swirl around the pointer, stronger when moving
-  vec2 dm = uv - m;
-  float infl = exp(-dot(dm, dm) * 6.0);
-  vec2 swirl = vec2(-dm.y, dm.x) * infl * (0.6 + u_energy * 2.2);
-
-  vec2 p = uv * 2.6 + swirl;
-  float t = u_time * 0.06;
-  vec2 q = vec2(fbm(p + t), fbm(p + vec2(5.2, 1.3) - t * 0.7));
-  vec2 r = vec2(fbm(p + 3.0 * q + vec2(1.7, 9.2) + t * 0.9), fbm(p + 3.0 * q + vec2(8.3, 2.8) - t * 0.6));
-  float f = fbm(p + 3.0 * r);
-
-  float lum = pow(smoothstep(0.15, 0.95, f), 1.8);
-  // local light where the pointer works the surface
-  lum += infl * (0.10 + u_energy * 0.35);
-  // quiet, darker middle so the copy floats on still ink
-  lum *= mix(0.22, 1.0, smoothstep(0.12, 0.85, length(uv * vec2(1.0, 1.35))));
-  lum = clamp(lum, 0.0, 0.6);
-
-  vec3 col = vec3(lum) * vec3(1.0, 0.97, 0.92);
-  col += (hash(frag + fract(u_time) * 17.0) - 0.5) * 0.016; // grain kills banding
-  gl_FragColor = vec4(col, 1.0);
-}`;
-  const VERT = "attribute vec2 a;void main(){gl_Position=vec4(a,0.,1.);}";
-
-  const sh = (type, src) => {
-    const s = gl.createShader(type);
-    gl.shaderSource(s, src);
-    gl.compileShader(s);
-    return gl.getShaderParameter(s, gl.COMPILE_STATUS) ? s : null;
-  };
-  const vs = sh(gl.VERTEX_SHADER, VERT);
-  const fs = sh(gl.FRAGMENT_SHADER, FRAG);
-  if (!vs || !fs) { cvs.remove(); return; }
-  const prog = gl.createProgram();
-  gl.attachShader(prog, vs);
-  gl.attachShader(prog, fs);
-  gl.linkProgram(prog);
-  if (!gl.getProgramParameter(prog, gl.LINK_STATUS)) { cvs.remove(); return; }
-  gl.useProgram(prog);
-
-  const buf = gl.createBuffer();
-  gl.bindBuffer(gl.ARRAY_BUFFER, buf);
-  gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([-1, -1, 3, -1, -1, 3]), gl.STATIC_DRAW);
-  const loc = gl.getAttribLocation(prog, "a");
-  gl.enableVertexAttribArray(loc);
-  gl.vertexAttribPointer(loc, 2, gl.FLOAT, false, 0, 0);
-  const U = {
-    res: gl.getUniformLocation(prog, "u_res"),
-    time: gl.getUniformLocation(prog, "u_time"),
-    mouse: gl.getUniformLocation(prog, "u_mouse"),
-    energy: gl.getUniformLocation(prog, "u_energy"),
-  };
-
-  let dpr = 1;
-  const resize = () => {
-    dpr = Math.min(devicePixelRatio || 1, innerWidth < 600 ? 1 : 1.5);
-    const w = hero.clientWidth;
-    const h = hero.clientHeight;
-    cvs.width = Math.round(w * dpr);
-    cvs.height = Math.round(h * dpr);
-    cvs.style.width = w + "px";
-    cvs.style.height = h + "px";
-    gl.viewport(0, 0, cvs.width, cvs.height);
-  };
-  resize();
-  window.addEventListener("resize", resize);
-
-  // Pointer state: smoothed position (the ink lags behind the hand) + energy
-  // from movement speed that decays when you stop
-  const mouse = { x: -1e4, y: -1e4, tx: -1e4, ty: -1e4 };
-  let energy = 0;
-  let energyTarget = 0;
-  const point = (x, y) => {
-    if (mouse.tx < -1e3) { mouse.x = x; mouse.y = y; }
-    energyTarget = Math.min(1, energyTarget + Math.hypot(x - mouse.tx, y - mouse.ty) / 120);
-    mouse.tx = x;
-    mouse.ty = y;
-  };
-  window.addEventListener("mousemove", (e) => point(e.clientX, e.clientY), { passive: true });
-  window.addEventListener("touchmove", (e) => {
-    if (e.touches[0]) point(e.touches[0].clientX, e.touches[0].clientY);
-  }, { passive: true });
-
-  let t = gsap.utils.random(0, 100); // a different sea on every visit
-  const draw = () => {
-    gl.uniform2f(U.res, cvs.width, cvs.height);
-    gl.uniform1f(U.time, t);
-    gl.uniform2f(U.mouse, mouse.x * dpr, cvs.height - mouse.y * dpr);
-    gl.uniform1f(U.energy, energy);
-    gl.drawArrays(gl.TRIANGLES, 0, 3);
-  };
-
-  cvs.addEventListener("webglcontextlost", (e) => e.preventDefault());
-
-  if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
-    draw(); // one still frame of ink
-    return;
-  }
-
-  gsap.ticker.add(() => {
-    // Past the first viewport the layer is faded out — skip the work
-    if (window.scrollY > innerHeight) return;
-    const dt = gsap.ticker.deltaRatio(60) / 60;
-    mouse.x += (mouse.tx - mouse.x) * Math.min(1, dt * 5);
-    mouse.y += (mouse.ty - mouse.y) * Math.min(1, dt * 5);
-    energy += (energyTarget - energy) * Math.min(1, dt * 4);
-    energyTarget *= Math.max(0, 1 - dt * 2.5); // stirring fades out on its own
-    t += dt * (1 + energy * 1.6); // the flow quickens while you stir
-    draw();
-  });
-}
-
 // Re-applied after the intro timeline finishes: its clearProps wipes the fade's
 // inline styles, and with no further scroll events nothing would restore them
 let applyHeroFade = () => {};
@@ -828,7 +791,6 @@ function initHeroScroll() {
   if (!$(".hero") || !$(".page")) return;
 
   const mobile = window.matchMedia("(max-width: 599px)");
-  const shader = $(".hero-shader");
   applyHeroFade = () => apply();
   // Back on desktop, the chips are viewport-fixed and must not stay faded
   mobile.addEventListener("change", (e) => {
@@ -846,8 +808,6 @@ function initHeroScroll() {
     gsap.set([".hero__head", ".hero__cta"], state);
     // Mobile chips sit inside the hero flow and dissolve with it
     if (mobile.matches) gsap.set(".hero__chips", state);
-    // The ink shader dissolves too — opacity only, no per-frame blur cost
-    if (shader) gsap.set(shader, { opacity: state.opacity, visibility: state.visibility });
   };
 
   window.addEventListener("scroll", apply, { passive: true });
@@ -972,7 +932,7 @@ function initLoadSequence(firstVisit) {
   // Whatever races happen mid-load (language switch, tab clicks), the intro
   // must never end with elements stuck invisible — clear all inline props at the end.
   const INTRO_TARGETS =
-    ".header, .hero__signature, .hero__chips, .hero__cta, .tabs__item, " +
+    ".header, .hero__chips, .hero__cta, .tabs__item, " +
     '[data-panel="experience"] .exp-card, .project-intro p, ' +
     ".project-intro__tags .tag, .project-hero, .contact-bar__btn";
   const tl = gsap.timeline({
@@ -996,7 +956,6 @@ function initLoadSequence(firstVisit) {
   // Home hero — signature → heading → chips → CTA → tabs → experience
   const lead = $(".hero__title");
   if (lead) {
-    tl.from(".hero__signature", { y: 12, scale: 0.96, autoAlpha: 0, duration: 0.6 });
     const split = SplitText.create(lead, { type: "lines", mask: "lines" });
     tl.from(split.lines, { yPercent: 110, stagger: 0.08, onComplete: () => split.revert() }, "-=0.25");
     // Tween the wrapper, not the chips: they carry CSS hover transitions
@@ -1073,7 +1032,7 @@ function initScrollEffects() {
 
 function initHoverEffects() {
   // Tilt on hover: card media follows the cursor with a light glare
-  $$(".card, .mini-card").forEach((card) => {
+  $$(".card, .mini-card, .pbrowser__cover").forEach((card) => {
     const media = card.querySelector(".card__media");
     if (!media) return;
     gsap.set(media, { transformPerspective: 800 });
