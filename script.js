@@ -179,166 +179,6 @@ function buildImageTrail(projects) {
   );
 }
 
-
-// Desktop project browser (Figma "projects" frame): a full-viewport wheel.
-// Names run down the left with the active one enlarged and vertically centred.
-// The covers form a vertical stack — the active one sits centre-stage sharp,
-// the immediate neighbours sit above/below shrunk and blurred, anything
-// further out is parked off-stage. Scrolling shifts the stack: the centre
-// cover blurs and rises to take the top slot while the one below sharpens
-// into the middle. Subtitle + award tags on the right. Mobile keeps the
-// plain card list.
-const PB_ROW = 140; // pitch between case names
-const PB_SLOT = 339; // vertical gap between stacked covers (Figma ±339)
-const PB_GHOST = 0.79; // neighbour cover scale (299/379)
-function buildProjectsBrowser(projects) {
-  const pageEl = $(".page");
-  if (!pageEl || $(".pbrowser") || !projects.length || !window.gsap) return;
-
-  const n = projects.length;
-  let active = 0;
-
-  const sec = document.createElement("section");
-  sec.className = "pbrowser";
-  sec.setAttribute("aria-label", "Projects");
-  sec.innerHTML = `
-    <div class="pbrowser__names"><div class="pbrowser__strip"></div></div>
-    <div class="pbrowser__stage"></div>
-    <div class="pbrowser__info">
-      <p class="pbrowser__sub"></p>
-      <div class="pbrowser__tags"></div>
-    </div>`;
-  pageEl.after(sec);
-
-  const strip = $(".pbrowser__strip", sec);
-  strip.innerHTML = projects
-    .map((p, i) => `<button class="pbrowser__name" type="button" data-i18n="proj${i}name"></button>`)
-    .join("");
-  const names = $$(".pbrowser__name", sec);
-
-  const stage = $(".pbrowser__stage", sec);
-  stage.innerHTML = projects
-    .map((p, i) => `<a class="pbrowser__cover" href="project.html?p=${i + 1}"><div class="card__media"><img alt=""></div></a>`)
-    .join("");
-  const covers = $$(".pbrowser__cover", sec);
-  covers.forEach((c, i) => {
-    const img = $("img", c);
-    if (projects[i].image) { img.src = projects[i].image; new Image().src = projects[i].image; }
-    else img.style.display = "none";
-  });
-
-  const sub = $(".pbrowser__sub", sec);
-  const tags = $(".pbrowser__tags", sec);
-
-  // gsap owns the centring transform so its y/scale tweens never fight CSS
-  gsap.set(covers, { xPercent: -50, yPercent: -50 });
-
-  // Position the whole cover stack relative to the active one: centre is sharp
-  // and full size, the two neighbours are shrunk + blurred at ±PB_SLOT, and
-  // everything else is parked off-stage at zero opacity — so at the first and
-  // last project there is simply no neighbour to show, hence no stray preview.
-  const layoutCovers = (animate) => {
-    covers.forEach((el, i) => {
-      const off = i - active;
-      const near = Math.abs(off) <= 1;
-      const props = {
-        y: off * PB_SLOT,
-        scale: off === 0 ? 1 : PB_GHOST,
-        filter: off === 0 ? "blur(0px)" : "blur(32px)",
-        autoAlpha: near ? (off === 0 ? 1 : 0.5) : 0,
-      };
-      if (animate) gsap.to(el, { ...props, duration: 0.7, ease: "power3.out", overwrite: "auto" });
-      else gsap.set(el, props);
-    });
-  };
-
-  const applyInfo = (animate) => {
-    sub.setAttribute("data-i18n", "proj" + active + "sub");
-    stampI18n(sub);
-    tags.innerHTML = (projects[active].awards || [])
-      .map((a) => `<span class="tag tag--award">${esc(a)}</span>`)
-      .join("");
-    if (animate) {
-      gsap.fromTo([sub, tags], { y: 12, autoAlpha: 0 }, { y: 0, autoAlpha: 1, duration: 0.5, ease: "power3.out", stagger: 0.06, overwrite: "auto" });
-    }
-  };
-
-  const styleNames = (animate) => {
-    names.forEach((el2, i) => {
-      const on = i === active;
-      const props = {
-        fontSize: on ? 24 : 16,
-        lineHeight: on ? "32px" : "24px",
-        letterSpacing: on ? -0.48 : -0.32,
-        opacity: on ? 1 : 0.4,
-      };
-      if (animate) gsap.to(el2, { ...props, duration: 0.5, ease: "power3.out", overwrite: "auto" });
-      else gsap.set(el2, props);
-    });
-    const y = -(active * PB_ROW + PB_ROW / 2);
-    if (animate) gsap.to(strip, { y, duration: 0.6, ease: "power3.out", overwrite: "auto" });
-    else gsap.set(strip, { y });
-  };
-
-  const go = (i) => {
-    i = Math.max(0, Math.min(n - 1, i));
-    if (i === active) return;
-    active = i;
-    layoutCovers(true);
-    styleNames(true);
-    applyInfo(true);
-  };
-
-  // Scroll drives the wheel: the section pins and every segment of extra
-  // scroll advances one project. Clicks scroll to the matching spot, so the
-  // wheel and the scrollbar can never disagree.
-  let pinST = null;
-  const scrollToIndex = (i) => {
-    i = Math.max(0, Math.min(n - 1, i));
-    if (!pinST) { go(i); return; }
-    const pos = pinST.start + (pinST.end - pinST.start) * (n > 1 ? i / (n - 1) : 0);
-    if (lenis) lenis.scrollTo(pos, { duration: 0.9, easing: (t) => 1 - Math.pow(1 - t, 3) });
-    else window.scrollTo({ top: pos, behavior: "smooth" });
-  };
-
-  names.forEach((b, i) => b.addEventListener("click", () => scrollToIndex(i)));
-  covers.forEach((c, i) =>
-    c.addEventListener("click", (e) => {
-      // neighbour covers bring themselves to centre; the active one navigates
-      if (i !== active) { e.preventDefault(); scrollToIndex(i); }
-    })
-  );
-
-  applyInfo(false);
-  layoutCovers(false);
-  styleNames(false);
-
-  // Entrance: the wheel assembles as the section scrolls in
-  const st = { trigger: sec, start: "top 70%", once: true };
-  gsap.from(names, { x: -24, autoAlpha: 0, stagger: 0.05, duration: 0.6, ease: "power3.out", scrollTrigger: st });
-  gsap.from(covers[active], { y: 48, autoAlpha: 0, duration: 0.7, ease: "power3.out", scrollTrigger: st });
-  gsap.from([sub, tags], { x: 24, autoAlpha: 0, stagger: 0.08, duration: 0.6, ease: "power3.out", scrollTrigger: st });
-
-  // The pin only exists on desktop — below 900px the section is display:none
-  // and the plain card list scrolls as before.
-  if (n > 1) {
-    gsap.matchMedia().add("(min-width: 900px)", () => {
-      pinST = ScrollTrigger.create({
-        trigger: sec,
-        start: "top top",
-        end: () => "+=" + (n - 1) * Math.round(window.innerHeight * 0.85),
-        pin: true,
-        anticipatePin: 1,
-        onUpdate: (self) => go(Math.round(self.progress * (n - 1))),
-      });
-      return () => {
-        pinST.kill();
-        pinST = null;
-      };
-    });
-  }
-}
-
 // Case body is a flat list of Notion-style blocks; legacy `sections` are converted
 function caseBlocks(p) {
   if (p.body) return p.body;
@@ -364,8 +204,6 @@ function renderContent() {
 
   // Cursor image trail in the first viewport — case pages only for now
   if ($(".project-hero")) buildImageTrail(C.projects);
-  // Home, desktop: the full-viewport project browser
-  else buildProjectsBrowser(C.projects);
 
   // Home: experience cards
   const panel = $('[data-panel="experience"]');
@@ -688,7 +526,7 @@ $$("[data-copy]").forEach((btn) => {
 
 // Delegated so cards created from content.json get the behaviour too
 document.addEventListener("click", (e) => {
-  const card = e.target.closest(".card, .mini-card, .pbrowser__cover");
+  const card = e.target.closest(".card, .mini-card");
   if (!card) return;
   // Only one element may carry the name on the outgoing page: when navigating
   // case → case, strip it from the current hero so the clicked tile wins
@@ -697,7 +535,7 @@ document.addEventListener("click", (e) => {
   const media = card.querySelector(".card__media");
   if (media) media.style.viewTransitionName = "project-hero";
   // remember which card was clicked so back-navigation can morph in reverse
-  sessionStorage.setItem("vt-card", String($$(".card, .mini-card, .pbrowser__cover").indexOf(card)));
+  sessionStorage.setItem("vt-card", String($$(".card, .mini-card").indexOf(card)));
 });
 
 // Did we arrive via a cross-document view transition?
@@ -709,7 +547,7 @@ window.addEventListener("pagereveal", (e) => {
   // On a case page the hero itself is the morph target, so nothing to do there.
   if (!$(".project-hero")) {
     const i = Number(sessionStorage.getItem("vt-card"));
-    const cards = $$(".card, .mini-card, .pbrowser__cover");
+    const cards = $$(".card, .mini-card");
     const media = cards[i] && cards[i].querySelector(".card__media");
     if (media) {
       media.style.viewTransitionName = "project-hero";
@@ -1076,7 +914,7 @@ function initScrollEffects() {
 
 function initHoverEffects() {
   // Tilt on hover: card media follows the cursor with a light glare
-  $$(".card, .mini-card, .pbrowser__cover").forEach((card) => {
+  $$(".card, .mini-card").forEach((card) => {
     const media = card.querySelector(".card__media");
     if (!media) return;
     gsap.set(media, { transformPerspective: 800 });
