@@ -1,6 +1,13 @@
 const $ = (s, c = document) => c.querySelector(s);
 const $$ = (s, c = document) => [...c.querySelectorAll(s)];
 
+// Always open the page at the top: stop the browser from restoring the previous
+// scroll on refresh, and pin scroll to 0 through load (Lenis can otherwise latch
+// onto a restored offset before it's cleared).
+if ("scrollRestoration" in history) history.scrollRestoration = "manual";
+window.scrollTo(0, 0);
+window.addEventListener("beforeunload", () => window.scrollTo(0, 0));
+
 // ---------- i18n ----------
 
 const I18N = {
