@@ -276,17 +276,6 @@ html {
   box-sizing: border-box;
 }
 
-/* Interactive WebGL ink field behind the hero copy */
-.hero-shader {
-  position: absolute;
-  inset: 0;
-  /* hard cap: a canvas must never render at its retina buffer size */
-  width: 100%;
-  height: 100%;
-  pointer-events: none;
-}
-
-/* Copy and buttons ride above the shader */
 .hero__head,
 .hero__chips,
 .hero__cta {
@@ -294,23 +283,11 @@ html {
   z-index: 1;
 }
 
-/* The head is white-on-transparent art + white text: screen blending drops
-   the signature's black plate so the ink shows through between the strokes */
-.hero__head {
-  mix-blend-mode: screen;
-}
-
 .hero__head {
   display: flex;
   flex-direction: column;
   align-items: center;
   gap: 16px;
-}
-
-.hero__signature {
-  width: 145px;
-  height: 69px;
-  object-fit: contain;
 }
 
 .hero__title {
@@ -382,11 +359,6 @@ html {
 @media (min-width: 600px) {
   .hero__head {
     gap: 32px;
-  }
-
-  .hero__signature {
-    width: 220px;
-    height: 106px;
   }
 
   .hero__title {
@@ -544,6 +516,129 @@ html {
   line-height: 40px;
   letter-spacing: -0.72px;
   font-weight: 400;
+}
+
+/* ---------- Desktop project browser (Figma "projects" frame) ---------- */
+
+.pbrowser {
+  display: none;
+}
+
+@media (min-width: 900px) {
+  /* the plain card list is the mobile/tablet view */
+  .projects {
+    display: none;
+  }
+
+  .pbrowser {
+    position: relative;
+    z-index: 1;
+    display: grid;
+    grid-template-columns: 1fr 379px 1fr;
+    align-items: stretch;
+    height: 100svh;
+    background: var(--bg);
+    overflow: hidden;
+  }
+}
+
+.pbrowser__names {
+  position: relative;
+  overflow: hidden;
+}
+
+.pbrowser__strip {
+  position: absolute;
+  top: 50%;
+  left: 0;
+  right: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.pbrowser__name {
+  height: 96px; /* must match PB_ROW in script.js */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  padding: 0 32px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-family: "Inter Tight", "Inter", sans-serif;
+  font-weight: 600;
+  font-size: 16px;
+  line-height: 24px;
+  letter-spacing: -0.32px;
+  color: #fff;
+  opacity: 0.4;
+  white-space: nowrap;
+}
+
+.pbrowser__stage {
+  position: relative;
+}
+
+.pbrowser__cover {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 379px;
+  display: block;
+}
+
+/* Blurred previews of the neighbouring covers, 1:1 with the mock:
+   299×209 at ±339px from the centre, blur 32, half opacity */
+.pbrowser__ghost {
+  position: absolute;
+  left: 50%;
+  width: 299px;
+  height: 209px;
+  padding: 0;
+  border: 0.5px solid rgba(255, 255, 255, 0.05);
+  border-radius: 4px;
+  background: var(--placeholder);
+  overflow: hidden;
+  filter: blur(32px);
+  opacity: 0.5;
+  cursor: pointer;
+}
+
+.pbrowser__ghost--prev {
+  top: calc(50% - 339px);
+}
+
+.pbrowser__ghost--next {
+  top: calc(50% + 339px);
+}
+
+.pbrowser__ghost img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.pbrowser__info {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 32px;
+  padding: 0 64px;
+}
+
+.pbrowser__sub {
+  max-width: 275px;
+  font-size: 16px;
+  line-height: 24px;
+}
+
+.pbrowser__tags {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 2px;
 }
 
 /* ---------- Experience cards ---------- */
