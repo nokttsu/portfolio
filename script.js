@@ -3,10 +3,12 @@ const $$ = (s, c = document) => [...c.querySelectorAll(s)];
 
 // Always open the page at the top: stop the browser from restoring the previous
 // scroll on refresh, and pin scroll to 0 through load (Lenis can otherwise latch
-// onto a restored offset before it's cleared).
+// onto a restored offset before it's cleared). Manual restoration alone is enough
+// once set, so unlike before we don't also reset scroll on the way out — a
+// beforeunload reset fires ahead of the outgoing page's view-transition snapshot
+// and would snap a scrolled-down source card to the top before it morphs.
 if ("scrollRestoration" in history) history.scrollRestoration = "manual";
 window.scrollTo(0, 0);
-window.addEventListener("beforeunload", () => window.scrollTo(0, 0));
 
 // ---------- i18n ----------
 
@@ -72,11 +74,48 @@ let currentLang = localStorage.getItem("lang") || "en";
 let CONTENT = null;
 const esc = (s) => String(s ?? "").replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
 
+function revalidateContent(cached) {
+  // Runs in the background, independent of loadContent()'s returned promise —
+  // callers past their first page already have content and shouldn't wait on
+  // the network for it again.
+  fetch("content.json?ts=" + Date.now())
+    .then((r) => (r.ok ? r.text() : null))
+    .then((raw) => {
+      if (!raw || raw === cached) return;
+      CONTENT = JSON.parse(raw);
+      sessionStorage.setItem("content-cache", raw);
+      mergeContentIntoDicts();
+      renderContent();
+      applyLang(currentLang);
+    })
+    .catch(() => {});
+}
+
 async function loadContent() {
+  // A same-session navigation (card click, back/forward) needs content available
+  // synchronously — a cross-document view transition snapshots the new page's
+  // DOM essentially at first paint, well before a fresh fetch could resolve, so
+  // an await here would morph into placeholder markup and pop the real content
+  // in afterward. Reuse this session's last fetch instead, and revalidate it in
+  // the background (not awaited) so edits still show up on the next navigation.
+  const cached = sessionStorage.getItem("content-cache");
+  if (cached) {
+    try {
+      CONTENT = JSON.parse(cached);
+      mergeContentIntoDicts();
+      renderContent();
+      revalidateContent(cached);
+      return;
+    } catch (_) {
+      /* fall through to a fresh fetch below */
+    }
+  }
   try {
     const r = await fetch("content.json?ts=" + Date.now());
     if (!r.ok) return;
-    CONTENT = await r.json();
+    const raw = await r.text();
+    CONTENT = JSON.parse(raw);
+    sessionStorage.setItem("content-cache", raw);
     mergeContentIntoDicts();
     renderContent();
   } catch (_) {
@@ -538,21 +577,28 @@ document.addEventListener("click", (e) => {
   sessionStorage.setItem("vt-card", String($$(".card, .mini-card").indexOf(card)));
 });
 
-// Did we arrive via a cross-document view transition?
-let vtArrival = false;
+// Did we arrive via an in-app navigation (link click or back/forward), as
+// opposed to a fresh load (typed URL, external referrer, refresh)? The
+// Navigation API answers this synchronously, unlike the pagereveal event —
+// pagereveal can fire before this script's listener is even attached, which
+// would otherwise race whatever reads its result.
+const vtArrival = !!(window.navigation && navigation.activation && navigation.activation.from);
+
+// Home page, arriving back from a case: morph the hero back into the stored card.
+// On a case page the hero itself is the morph target, so nothing to do there.
 window.addEventListener("pagereveal", (e) => {
-  if (!e.viewTransition) return;
-  vtArrival = true;
-  // Home page, arriving back from a case: morph the hero back into the stored card.
-  // On a case page the hero itself is the morph target, so nothing to do there.
-  if (!$(".project-hero")) {
-    const i = Number(sessionStorage.getItem("vt-card"));
-    const cards = $$(".card, .mini-card");
-    const media = cards[i] && cards[i].querySelector(".card__media");
-    if (media) {
-      media.style.viewTransitionName = "project-hero";
-      e.viewTransition.finished.then(() => (media.style.viewTransitionName = ""));
-    }
+  if (!e.viewTransition || $(".project-hero")) return;
+  const i = Number(sessionStorage.getItem("vt-card"));
+  const cards = $$(".card, .mini-card");
+  const target = cards[i];
+  const media = target && target.querySelector(".card__media");
+  if (media) {
+    // The load-time reset above puts us at scrollTop 0; jump straight to the
+    // card so the morph-back is actually on screen instead of animating
+    // somewhere below the fold.
+    target.scrollIntoView({ block: "center" });
+    media.style.viewTransitionName = "project-hero";
+    e.viewTransition.finished.then(() => (media.style.viewTransitionName = ""));
   }
 });
 
@@ -582,9 +628,13 @@ if (window.gsap) {
     initCtaOnScroll();
     initHeroScroll();
     if (vtArrival) {
-      // Seamless page transition: content must stand still, no intro replay
+      // Seamless page transition: content must stand still, no intro replay —
+      // but scroll-in sections still need their triggers, or anything below
+      // the fold stays invisible forever (initLoadSequence would normally set
+      // these up, but it's skipped here on purpose)
       const pre = $(".preloader");
       if (pre) pre.remove();
+      initScrollEffects();
     } else {
       // Scroll-in sections stay hidden until the intro sequence has finished,
       // so the page always reveals strictly top to bottom
