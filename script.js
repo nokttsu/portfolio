@@ -671,7 +671,12 @@ async function navigate(url, opts = {}) {
   const fromHero = $(".project-hero");
   const toHome = /^index\.html/.test(url);
 
-  // Capture Flip state on the shared element BEFORE any DOM mutation.
+  // Capture Flip state on the shared element BEFORE any DOM mutation. Flip
+  // matches "from" state to "to" targets by a data-flip-id it reads off the
+  // element, not by whatever object reference happens to be passed in — with
+  // no id in common between the old card and the new (different!) hero
+  // element, Flip can't tell they're "the same" thing and just no-ops
+  // (0-duration, no movement) instead of morphing between them.
   let flipState = null;
   let flipKind = null;
   const card = originEl && originEl.closest(".card, .mini-card");
@@ -679,14 +684,17 @@ async function navigate(url, opts = {}) {
     // Forward: clicked card/mini-card -> new hero. The existing click
     // listener above already tagged sessionStorage["vt-card"] for us.
     const media = card.querySelector(".card__media");
+    media.dataset.flipId = "project-media";
     flipState = Flip.getState(media, { props: "borderRadius" });
     flipKind = "toHero";
   } else if (fromHero && toHome) {
     // Backward: hero -> the stored origin card.
+    fromHero.dataset.flipId = "project-media";
     flipState = Flip.getState(fromHero, { props: "borderRadius" });
     flipKind = "toCard";
   } else if (fromHero && !toHome) {
     // project <-> project via browser back/forward, no click involved.
+    fromHero.dataset.flipId = "project-media";
     flipState = Flip.getState(fromHero, { props: "borderRadius" });
     flipKind = "toHero";
   }
@@ -741,7 +749,15 @@ async function navigate(url, opts = {}) {
   runPageEnter();
 
   if (flipTarget && flipState) {
-    Flip.from(flipState, { targets: flipTarget, duration: 0.4, ease: "power2.inOut", absolute: true, scale: true });
+    flipTarget.dataset.flipId = "project-media";
+    Flip.from(flipState, {
+      targets: flipTarget,
+      duration: 0.4,
+      ease: "power2.inOut",
+      absolute: true,
+      scale: true,
+      onComplete: () => delete flipTarget.dataset.flipId,
+    });
   }
 }
 
