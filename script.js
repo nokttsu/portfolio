@@ -652,11 +652,17 @@ function syncHero(heroHTML) {
     if (cta) bindMagneticCta(cta);
     applyHeroFade();
   } else if (!heroHTML && existing) {
+    // Leaving home: the star of this transition is the card image morphing
+    // up into the project hero, and this departing hero sits right over that
+    // path. power2.in (slow start) kept it near-opaque for the morph's first
+    // ~150ms, so it read as a crossfade, not a morph. Clear it fast (power2.out
+    // front-loads the fade) and stop it intercepting clicks immediately.
+    existing.style.pointerEvents = "none";
     gsap.to(existing, {
       y: -16,
       autoAlpha: 0,
-      duration: 0.3,
-      ease: "power2.in",
+      duration: 0.25,
+      ease: "power2.out",
       onComplete: () => existing.remove(),
     });
   }
@@ -748,6 +754,17 @@ async function navigate(url, opts = {}) {
 
   runPageEnter();
 
+  // The scroll-reveal triggers runPageEnter() just created were computed
+  // against the freshly-swapped layout — but the case images haven't loaded
+  // yet, so every block sits in a collapsed layout and its trigger start is
+  // wrong. Left uncorrected, blocks below the (real) fold stay stuck at
+  // autoAlpha:0 forever — the "half the case is empty" bug. Recompute once
+  // the layout actually settles: next frame, as each image loads, and a
+  // final safety net. On a direct load this is a non-issue because the intro
+  // timeline + document.fonts.ready delay initScrollEffects until layout is
+  // already stable.
+  refreshScrollAfterLayout();
+
   if (flipTarget && flipState) {
     flipTarget.dataset.flipId = "project-media";
     Flip.from(flipState, {
@@ -756,9 +773,27 @@ async function navigate(url, opts = {}) {
       ease: "power2.inOut",
       absolute: true,
       scale: true,
-      onComplete: () => delete flipTarget.dataset.flipId,
+      // Flip's absolute:true mutates layout for the duration of the morph;
+      // refresh once it has cleaned up so trigger positions are final.
+      onComplete: () => {
+        delete flipTarget.dataset.flipId;
+        ScrollTrigger.refresh();
+      },
     });
   }
+}
+
+// Recompute ScrollTrigger positions as the swapped-in content's layout
+// settles: on the next frame, whenever one of its images finishes loading,
+// and once more after a short delay as a catch-all.
+function refreshScrollAfterLayout() {
+  requestAnimationFrame(() => requestAnimationFrame(() => ScrollTrigger.refresh()));
+  $$("main.page img").forEach((img) => {
+    if (img.complete) return;
+    img.addEventListener("load", () => ScrollTrigger.refresh(), { once: true });
+    img.addEventListener("error", () => ScrollTrigger.refresh(), { once: true });
+  });
+  setTimeout(() => ScrollTrigger.refresh(), 400);
 }
 
 function bindRouterLinks() {
@@ -1222,34 +1257,52 @@ function bindCardTilt() {
   });
 }
 
-// Magnetic CTA button (soft pull toward the cursor). Takes a single element
-// so it can be bound once for the persistent contact-bar pill and again for
-// each freshly-inserted hero pill (the hero lives outside <main>, so a
-// router swap never touches — or rebinds — it on its own).
-function bindMagneticCta(ctaBtn) {
-  const moveX = gsap.quickTo(ctaBtn, "x", { duration: 0.5, ease: "power3.out" });
-  const moveY = gsap.quickTo(ctaBtn, "y", { duration: 0.5, ease: "power3.out" });
-  const scale = gsap.quickTo(ctaBtn, "scale", { duration: 0.5, ease: "power3.out" });
+// Magnetic CTA buttons (soft pull toward the cursor). The hero pill lives
+// outside <main>, so the router re-inserts a fresh one on every home visit;
+// binding a new window mousemove per pill would leak a listener each time
+// (each one then running getBoundingClientRect on a detached node every
+// mouse move — the "home gets laggier the more you click around" bug).
+// Instead: ONE persistent window listener drives a live registry of pills.
+const magneticCtas = new Set();
+const magneticTweens = new WeakMap();
 
+function bindMagneticCta(ctaBtn) {
+  if (magneticTweens.has(ctaBtn)) return;
+  magneticTweens.set(ctaBtn, {
+    moveX: gsap.quickTo(ctaBtn, "x", { duration: 0.5, ease: "power3.out" }),
+    moveY: gsap.quickTo(ctaBtn, "y", { duration: 0.5, ease: "power3.out" }),
+    scale: gsap.quickTo(ctaBtn, "scale", { duration: 0.5, ease: "power3.out" }),
+  });
+  magneticCtas.add(ctaBtn);
+}
+
+if (window.gsap) {
   window.addEventListener(
     "mousemove",
     (e) => {
-      // Rest center: current rect minus the button's own translation,
-      // so the magnet never feeds back on itself
-      const r = ctaBtn.getBoundingClientRect();
-      const cx = r.left + r.width / 2 - (gsap.getProperty(ctaBtn, "x") || 0);
-      const cy = r.top + r.height / 2 - (gsap.getProperty(ctaBtn, "y") || 0);
-      const dx = e.clientX - cx;
-      const dy = e.clientY - cy;
-      if (Math.hypot(dx, dy) < 100) {
-        moveX(dx * 0.12);
-        moveY(dy * 0.12);
-        scale(1.02);
-      } else {
-        moveX(0);
-        moveY(0);
-        scale(1);
-      }
+      magneticCtas.forEach((ctaBtn) => {
+        if (!ctaBtn.isConnected) {
+          magneticCtas.delete(ctaBtn); // pill was swapped out — stop tracking it
+          return;
+        }
+        const t = magneticTweens.get(ctaBtn);
+        // Rest center: current rect minus the button's own translation,
+        // so the magnet never feeds back on itself
+        const r = ctaBtn.getBoundingClientRect();
+        const cx = r.left + r.width / 2 - (gsap.getProperty(ctaBtn, "x") || 0);
+        const cy = r.top + r.height / 2 - (gsap.getProperty(ctaBtn, "y") || 0);
+        const dx = e.clientX - cx;
+        const dy = e.clientY - cy;
+        if (Math.hypot(dx, dy) < 100) {
+          t.moveX(dx * 0.12);
+          t.moveY(dy * 0.12);
+          t.scale(1.02);
+        } else {
+          t.moveX(0);
+          t.moveY(0);
+          t.scale(1);
+        }
+      });
     },
     { passive: true }
   );
