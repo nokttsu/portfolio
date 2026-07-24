@@ -372,13 +372,15 @@ html {
     margin-top: 56px;
   }
 
-  /* Email / CV chips pin to the viewport bottom corners and stay on scroll */
+  /* Email / CV chips pin to the viewport bottom corners and stay on scroll.
+     Above .contact-bar (also z-index: 10, but later in the DOM so it would
+     otherwise win the tie and paint its blur/tint zone over these corners). */
   .hero__chips {
     position: fixed;
     left: 0;
     right: 0;
     bottom: 0;
-    z-index: 10;
+    z-index: 11;
     margin: 0;
     padding: 12px;
     justify-content: space-between;
