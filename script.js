@@ -157,6 +157,9 @@ function mergeContentIntoDicts() {
 // slides it from where the cursor came from to where it is now, then it
 // shrinks away — pure scale, no opacity fade
 function buildImageTrail(projects) {
+  // Router transitions call this again on every project-page visit; the pool
+  // + mousemove listener only need to exist once per session.
+  if ($(".img-trail")) return;
   const srcs = [];
   projects.forEach((p) => {
     if (p.image) srcs.push(p.image);
@@ -543,23 +546,10 @@ function initTabs() {
 }
 
 // ---------- Copy email ----------
+// Bound once at boot; see bindCopy() for the per-element logic and why the
+// hero's copy chip needs a second, separate bind from syncHero().
 
-$$("[data-copy]").forEach((btn) => {
-  btn.addEventListener("click", async () => {
-    try {
-      await navigator.clipboard.writeText(btn.dataset.copy);
-      const label = btn.querySelector("span:last-of-type") || btn.querySelector("span");
-      const original = label.textContent;
-      label.textContent = I18N[currentLang].copied;
-      setTimeout(() => (label.textContent = original), 1200);
-      if (window.gsap) {
-        gsap.fromTo(btn, { scale: 0.94 }, { scale: 1, duration: 0.6, ease: "elastic.out(1, 0.45)" });
-      }
-    } catch (_) {
-      /* clipboard unavailable */
-    }
-  });
-});
+$$("[data-copy]").forEach(bindCopy);
 
 // ---------- View Transitions: morph clicked card into project hero ----------
 
@@ -602,12 +592,187 @@ window.addEventListener("pagereveal", (e) => {
   }
 });
 
+// ---------- Client-side router (GSAP Flip) ----------
+//
+// Progressive enhancement over the native cross-document view transition
+// above: intercept clicks on the site's own index.html/project.html links,
+// fetch + swap the <main class="page"> region in place, and morph the
+// shared card/hero image with GSAP Flip instead of the browser's own
+// ::view-transition-group() (which is a UA pseudo-element GSAP can't reach,
+// and wouldn't survive a real cross-document navigation anyway). Direct
+// loads, no-JS, and any fetch failure all fall through to a real navigation
+// and the native @view-transition CSS above — that block stays intact as
+// the permanent fallback, never removed.
+
+const ROUTABLE = /^(index\.html|project\.html)(\?[^#]*)?$/;
+
+function resolveInternal(href) {
+  if (!href) return null;
+  let url;
+  try {
+    url = new URL(href, location.href);
+  } catch (_) {
+    return null;
+  }
+  if (url.origin !== location.origin) return null;
+  const rel = url.pathname.split("/").pop() + url.search;
+  return ROUTABLE.test(rel) ? rel : null;
+}
+
+async function fetchDoc(url) {
+  const res = await fetch(url);
+  if (!res.ok) throw new Error("fetch failed: " + res.status);
+  const html = await res.text();
+  return new DOMParser().parseFromString(html, "text/html");
+}
+
+function extractRegion(doc) {
+  const main = doc.querySelector("main.page");
+  if (!main) throw new Error("no main.page in fetched document");
+  return {
+    title: doc.title,
+    mainHTML: main.innerHTML,
+    heroHTML: doc.querySelector(".hero")?.outerHTML ?? null,
+  };
+}
+
+// index.html's <section class="hero"> sits before <main>, so project.html
+// has none at all — swapping main alone would leave it stale either way.
+// Reconcile it against what the target page needs, animating it in/out
+// with GSAP independently of the Flip morph of the card/hero image.
+function syncHero(heroHTML) {
+  const existing = $(".hero");
+  if (heroHTML && !existing) {
+    $(".header").insertAdjacentHTML("afterend", heroHTML);
+    const hero = $(".hero");
+    gsap.from(hero, { y: 16, autoAlpha: 0, duration: 0.5, ease: "power3.out" });
+    const copyBtn = hero.querySelector("[data-copy]");
+    if (copyBtn) bindCopy(copyBtn);
+    const cta = hero.querySelector(".hero__cta");
+    if (cta) bindMagneticCta(cta);
+    applyHeroFade();
+  } else if (!heroHTML && existing) {
+    gsap.to(existing, {
+      y: -16,
+      autoAlpha: 0,
+      duration: 0.3,
+      ease: "power2.in",
+      onComplete: () => existing.remove(),
+    });
+  }
+}
+
+function swapMain(mainHTML) {
+  $("main.page").innerHTML = mainHTML;
+}
+
+async function navigate(url, opts = {}) {
+  const { push = true, originEl = null } = opts;
+  const fromHero = $(".project-hero");
+  const toHome = /^index\.html/.test(url);
+
+  // Capture Flip state on the shared element BEFORE any DOM mutation.
+  let flipState = null;
+  let flipKind = null;
+  const card = originEl && originEl.closest(".card, .mini-card");
+  if (card) {
+    // Forward: clicked card/mini-card -> new hero. The existing click
+    // listener above already tagged sessionStorage["vt-card"] for us.
+    const media = card.querySelector(".card__media");
+    flipState = Flip.getState(media, { props: "borderRadius" });
+    flipKind = "toHero";
+  } else if (fromHero && toHome) {
+    // Backward: hero -> the stored origin card.
+    flipState = Flip.getState(fromHero, { props: "borderRadius" });
+    flipKind = "toCard";
+  } else if (fromHero && !toHome) {
+    // project <-> project via browser back/forward, no click involved.
+    flipState = Flip.getState(fromHero, { props: "borderRadius" });
+    flipKind = "toHero";
+  }
+
+  let doc, region;
+  try {
+    doc = await fetchDoc(url);
+    region = extractRegion(doc);
+  } catch (_) {
+    // Nothing has been mutated yet — a real navigation is a clean fallback.
+    location.href = url;
+    return;
+  }
+
+  syncHero(region.heroHTML);
+  swapMain(region.mainHTML);
+  document.title = region.title;
+
+  // Before renderContent(): it derives the current project purely from
+  // location.search (same code path a direct load uses), so the URL must
+  // already point at the target before it runs — otherwise it renders
+  // whichever project the *previous* URL named. Popstate arrivals already
+  // have the right URL (the browser changed it before firing popstate).
+  if (push) history.pushState({ url }, "", url);
+
+  if (CONTENT) {
+    renderContent();
+    applyLang(currentLang);
+  }
+
+  // Scroll BEFORE runPageEnter()/initScrollEffects(): the reveal-on-scroll
+  // ScrollTriggers it creates check the current scroll position right at
+  // creation time, so if we scrolled afterward instead, the card we just
+  // landed on would fire no scroll event Lenis/ScrollTrigger ever sees and
+  // stay stuck invisible (autoAlpha: 0) — the exact bug this session's
+  // earlier native-view-transition fix was for, in the opposite order.
+  let flipTarget = null;
+  if (flipKind === "toHero") {
+    window.scrollTo(0, 0);
+    flipTarget = $(".project-hero");
+  } else if (flipKind === "toCard") {
+    const i = Number(sessionStorage.getItem("vt-card"));
+    const targetCard = $$(".card, .mini-card")[i];
+    if (targetCard) {
+      targetCard.scrollIntoView({ block: "center" });
+      flipTarget = targetCard.querySelector(".card__media");
+    }
+  } else {
+    window.scrollTo(0, 0);
+  }
+
+  runPageEnter();
+
+  if (flipTarget && flipState) {
+    Flip.from(flipState, { targets: flipTarget, duration: 0.4, ease: "power2.inOut", absolute: true, scale: true });
+  }
+}
+
+function bindRouterLinks() {
+  document.addEventListener("click", (e) => {
+    if (e.defaultPrevented || e.button !== 0 || e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return;
+    const a = e.target.closest("a[href]");
+    if (!a || a.target === "_blank" || a.hasAttribute("download")) return;
+    const url = resolveInternal(a.getAttribute("href"));
+    if (!url) return;
+    e.preventDefault();
+    navigate(url, { originEl: a });
+  });
+
+  window.addEventListener("popstate", () => {
+    const url = location.pathname.split("/").pop() + location.search;
+    navigate(url, { push: false });
+  });
+
+  history.replaceState({ url: location.pathname.split("/").pop() + location.search }, "", location.href);
+}
+
+const routerReady = !!(window.Flip && window.fetch && window.DOMParser && window.history && history.pushState);
+
 // ---------- GSAP ----------
 
 let lenis = null;
 
 if (window.gsap) {
   gsap.registerPlugin(ScrollTrigger, SplitText);
+  if (window.Flip) gsap.registerPlugin(Flip);
 
   // Lenis smooth scroll driven by the GSAP ticker
   if (window.Lenis) {
@@ -621,12 +786,16 @@ if (window.gsap) {
   Promise.all([loadContent(), document.fonts.ready]).then(() => {
     applyLang(currentLang);
     moveLangIndicator(false);
-    initHoverEffects();
-    initTabs();
-    initToc();
+    // Chrome (header/menu/contact-bar) and whichever hero exists at boot are
+    // bound exactly once here — the hero is the only one of these that can
+    // later be swapped away/back in by the router, via syncHero()'s own
+    // bindCopy()/bindMagneticCta() calls on the fresh node.
     initMenu();
-    initCtaOnScroll();
     initHeroScroll();
+    $$(".contact-bar__btn").forEach(bindMagneticCta);
+    const heroCta = $(".hero__cta");
+    if (heroCta) bindMagneticCta(heroCta);
+    if (routerReady) bindRouterLinks();
     if (vtArrival) {
       // Seamless page transition: content must stand still, no intro replay —
       // but scroll-in sections still need their triggers, or anything below
@@ -634,7 +803,7 @@ if (window.gsap) {
       // these up, but it's skipped here on purpose)
       const pre = $(".preloader");
       if (pre) pre.remove();
-      initScrollEffects();
+      runPageEnter();
     } else {
       // Scroll-in sections stay hidden until the intro sequence has finished,
       // so the page always reveals strictly top to bottom
@@ -719,8 +888,14 @@ let applyHeroFade = () => {};
 // as the blocks cover it, the hero content melts into transparency and blur.
 // Applied directly on every scroll event — a scrubbed tween here loses a race
 // with the intro timeline's clearProps and can freeze the CTA fully visible.
+//
+// Bound once at boot regardless of whether a hero exists yet — a boot on
+// project.html has none, but the router can insert one later via syncHero(),
+// which calls applyHeroFade() directly. apply() below re-queries selectors
+// live each time, so it tracks whatever hero is currently in the DOM without
+// needing to be rebound.
 function initHeroScroll() {
-  if (!$(".hero") || !$(".page")) return;
+  if (!$(".page")) return;
 
   const mobile = window.matchMedia("(max-width: 599px)");
   applyHeroFade = () => apply();
@@ -748,25 +923,36 @@ function initHeroScroll() {
 }
 
 // Desktop, home page: the fixed Telegram bar slides in only after
-// the first viewport has been scrolled past. gsap.matchMedia reverts the
-// hidden state automatically if the viewport crosses back to mobile.
+// the first viewport has been scrolled past.
+//
+// Called from runPageEnter() on every view-enter (not just once at boot) —
+// a boot on project.html has no .hero yet, and this trigger needs one to
+// exist at creation time (unlike apply() above, ScrollTrigger.create can't
+// track a selector live). Always kills its own previous trigger first, so
+// it's safe to call repeatedly across router transitions and resizes.
+let ctaScrollTrigger = null;
 function initCtaOnScroll() {
   const bar = $(".contact-bar");
-  if (!bar || !$(".hero")) return;
-  gsap.matchMedia().add("(min-width: 600px)", () => {
-    gsap.set(bar, { autoAlpha: 0, y: 24 });
-    const st = ScrollTrigger.create({
-      trigger: ".hero",
-      start: "bottom 80%",
-      onEnter: () => gsap.to(bar, { autoAlpha: 1, y: 0, duration: 0.5, ease: "power3.out" }),
-      onLeaveBack: () => gsap.to(bar, { autoAlpha: 0, y: 24, duration: 0.35, ease: "power2.in" }),
-    });
-    return () => {
-      st.kill();
-      gsap.set(bar, { clearProps: "opacity,visibility,transform" });
-    };
+  const hero = $(".hero");
+  if (ctaScrollTrigger) {
+    ctaScrollTrigger.kill();
+    ctaScrollTrigger = null;
+  }
+  if (!bar || !hero || window.innerWidth < 600) {
+    if (bar) gsap.set(bar, { clearProps: "opacity,visibility,transform" });
+    return;
+  }
+  gsap.set(bar, { autoAlpha: 0, y: 24 });
+  ctaScrollTrigger = ScrollTrigger.create({
+    trigger: hero,
+    start: "bottom 80%",
+    onEnter: () => gsap.to(bar, { autoAlpha: 1, y: 0, duration: 0.5, ease: "power3.out" }),
+    onLeaveBack: () => gsap.to(bar, { autoAlpha: 0, y: 24, duration: 0.35, ease: "power2.in" }),
   });
 }
+window.addEventListener("resize", () => {
+  if (window.gsap && $(".hero")) initCtaOnScroll();
+});
 
 // ---------- Preloader (home page only) ----------
 
@@ -811,7 +997,18 @@ function initPreloader(onDone) {
 
 // ---------- Case page table of contents ----------
 
+// Router transitions call this again on every project-page visit — tear
+// down the previous instance's DOM node and scroll listener first, or
+// repeat visits accumulate duplicate nav elements and stale trackers.
+let tocTrack = null;
 function initToc() {
+  $(".toc")?.remove();
+  if (tocTrack) {
+    if (lenis) lenis.off("scroll", tocTrack);
+    else window.removeEventListener("scroll", tocTrack);
+    tocTrack = null;
+  }
+
   // Anchors: every case heading block + the "other projects" section
   const anchors = [...$$(".case-h2"), ...$$(".other-projects .section-title")].map((titleEl) => ({
     el: titleEl.closest(".other-projects") || titleEl,
@@ -855,6 +1052,7 @@ function initToc() {
     if (Math.ceil(scrollY + innerHeight) >= document.documentElement.scrollHeight - 2) act = anchors.length - 1;
     setActive(act);
   };
+  tocTrack = track;
   if (lenis) lenis.on("scroll", track);
   else window.addEventListener("scroll", track, { passive: true });
   track();
@@ -877,8 +1075,10 @@ function initLoadSequence(firstVisit) {
       // The user may have scrolled during the intro: clearProps just wiped the
       // hero fade state, and no new scroll event will come to restore it
       applyHeroFade();
-      // Now the sections below may enter, in viewport order
-      initScrollEffects();
+      // Now the sections below may enter, in viewport order — and every
+      // other per-view binding (tilt, tabs, toc, cta-on-scroll) needs
+      // setting up too, exactly as it would after a router transition.
+      runPageEnter();
     },
   });
 
@@ -916,6 +1116,12 @@ const SCROLL_FX_TARGETS =
   ".case-facts, .case-stats, .case-testimonial, .case-compare, .case-grid, .card, .mini-card";
 
 function initScrollEffects() {
+  // Router transitions call this again on every view — kill every existing
+  // trigger first (including ones from initCtaOnScroll, recreated right
+  // after this runs) so nothing stays bound to elements the last swap just
+  // removed from the DOM.
+  ScrollTrigger.getAll().forEach((st) => st.kill());
+
   // Release the pre-hidden state; the from-tweens below take over per element
   gsap.set(SCROLL_FX_TARGETS, { clearProps: "opacity,visibility" });
 
@@ -962,8 +1168,23 @@ function initScrollEffects() {
 
 }
 
-function initHoverEffects() {
-  // Tilt on hover: card media follows the cursor with a light glare
+// Everything that needs (re)binding whenever a view becomes current — true
+// first load (from initLoadSequence's completion), a real cross-document
+// view-transition arrival (vtArrival), or a router-driven transition
+// (navigate()). Each of these fires exactly once per view, so nothing here
+// needs its own once-only guard beyond what the individual functions do.
+function runPageEnter() {
+  initScrollEffects();
+  bindCardTilt();
+  initTabs();
+  initToc();
+  initCtaOnScroll();
+}
+
+// Tilt on hover: card media follows the cursor with a light glare.
+// Router transitions replace .card/.mini-card wholesale each time, so this
+// is called again per transition — always fresh nodes, safe to re-run.
+function bindCardTilt() {
   $$(".card, .mini-card").forEach((card) => {
     const media = card.querySelector(".card__media");
     if (!media) return;
@@ -983,34 +1204,57 @@ function initHoverEffects() {
       rotX(0);
     });
   });
+}
 
-  // Magnetic CTA buttons (soft) — the hero pill and the fixed-bar pill alike
-  $$(".contact-bar__btn, .hero__cta").forEach((ctaBtn) => {
-    const moveX = gsap.quickTo(ctaBtn, "x", { duration: 0.5, ease: "power3.out" });
-    const moveY = gsap.quickTo(ctaBtn, "y", { duration: 0.5, ease: "power3.out" });
-    const scale = gsap.quickTo(ctaBtn, "scale", { duration: 0.5, ease: "power3.out" });
+// Magnetic CTA button (soft pull toward the cursor). Takes a single element
+// so it can be bound once for the persistent contact-bar pill and again for
+// each freshly-inserted hero pill (the hero lives outside <main>, so a
+// router swap never touches — or rebinds — it on its own).
+function bindMagneticCta(ctaBtn) {
+  const moveX = gsap.quickTo(ctaBtn, "x", { duration: 0.5, ease: "power3.out" });
+  const moveY = gsap.quickTo(ctaBtn, "y", { duration: 0.5, ease: "power3.out" });
+  const scale = gsap.quickTo(ctaBtn, "scale", { duration: 0.5, ease: "power3.out" });
 
-    window.addEventListener(
-      "mousemove",
-      (e) => {
-        // Rest center: current rect minus the button's own translation,
-        // so the magnet never feeds back on itself
-        const r = ctaBtn.getBoundingClientRect();
-        const cx = r.left + r.width / 2 - (gsap.getProperty(ctaBtn, "x") || 0);
-        const cy = r.top + r.height / 2 - (gsap.getProperty(ctaBtn, "y") || 0);
-        const dx = e.clientX - cx;
-        const dy = e.clientY - cy;
-        if (Math.hypot(dx, dy) < 100) {
-          moveX(dx * 0.12);
-          moveY(dy * 0.12);
-          scale(1.02);
-        } else {
-          moveX(0);
-          moveY(0);
-          scale(1);
-        }
-      },
-      { passive: true }
-    );
+  window.addEventListener(
+    "mousemove",
+    (e) => {
+      // Rest center: current rect minus the button's own translation,
+      // so the magnet never feeds back on itself
+      const r = ctaBtn.getBoundingClientRect();
+      const cx = r.left + r.width / 2 - (gsap.getProperty(ctaBtn, "x") || 0);
+      const cy = r.top + r.height / 2 - (gsap.getProperty(ctaBtn, "y") || 0);
+      const dx = e.clientX - cx;
+      const dy = e.clientY - cy;
+      if (Math.hypot(dx, dy) < 100) {
+        moveX(dx * 0.12);
+        moveY(dy * 0.12);
+        scale(1.02);
+      } else {
+        moveX(0);
+        moveY(0);
+        scale(1);
+      }
+    },
+    { passive: true }
+  );
+}
+
+// Copy-email chip click handler. Same rationale as bindMagneticCta: the
+// menu's copy chip is persistent chrome (bound once), the hero's copy chip
+// is not (bound again by syncHero() each time a hero is inserted).
+function bindCopy(btn) {
+  btn.addEventListener("click", async () => {
+    try {
+      await navigator.clipboard.writeText(btn.dataset.copy);
+      const label = btn.querySelector("span:last-of-type") || btn.querySelector("span");
+      const original = label.textContent;
+      label.textContent = I18N[currentLang].copied;
+      setTimeout(() => (label.textContent = original), 1200);
+      if (window.gsap) {
+        gsap.fromTo(btn, { scale: 0.94 }, { scale: 1, duration: 0.6, ease: "elastic.out(1, 0.45)" });
+      }
+    } catch (_) {
+      /* clipboard unavailable */
+    }
   });
 }
