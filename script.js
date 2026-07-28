@@ -9,6 +9,24 @@ const $$ = (s, c = document) => [...c.querySelectorAll(s)];
 // and would snap a scrolled-down source card to the top before it morphs.
 if ("scrollRestoration" in history) history.scrollRestoration = "manual";
 window.scrollTo(0, 0);
+// On an actual reload the browser can still restore its own remembered offset
+// asynchronously, a beat after the reset above — overwriting it. Reassert for
+// the first second (but back off the instant the visitor scrolls themselves)
+// so a refresh can never leave stale scroll in place. Only reload needs this:
+// every other arrival path (fresh nav, VT arrival, router transition) already
+// starts at 0 with nothing to fight.
+if ((performance.getEntriesByType("navigation")[0] || {}).type === "reload") {
+  let userScrolled = false;
+  const stopReassert = () => (userScrolled = true);
+  window.addEventListener("wheel", stopReassert, { once: true, passive: true });
+  window.addEventListener("touchstart", stopReassert, { once: true, passive: true });
+  window.addEventListener("keydown", stopReassert, { once: true });
+  [50, 150, 300, 600, 1000].forEach((ms) =>
+    setTimeout(() => {
+      if (!userScrolled) window.scrollTo(0, 0);
+    }, ms)
+  );
+}
 
 // ---------- i18n ----------
 
@@ -857,8 +875,13 @@ if (window.gsap) {
       runPageEnter();
     } else {
       // Scroll-in sections stay hidden until the intro sequence has finished,
-      // so the page always reveals strictly top to bottom
+      // so the page always reveals strictly top to bottom. Scrolling is locked
+      // for the same span — otherwise a fast scroll can outrun the intro and
+      // land on a section that's still waiting for runPageEnter()/
+      // initScrollEffects() to even create its reveal animation, showing a
+      // blank gap.
       gsap.set(SCROLL_FX_TARGETS, { autoAlpha: 0 });
+      if (lenis) lenis.stop();
       initPreloader(initLoadSequence);
     }
   });
@@ -1021,7 +1044,9 @@ function initPreloader(onDone) {
   }
   sessionStorage.setItem("preloaded", "1");
 
-  if (lenis) lenis.stop();
+  // Scrolling is already locked by the caller for the whole intro span —
+  // it's released once runPageEnter()/initScrollEffects() has actually set
+  // up the reveals, not the moment the preloader itself finishes
   const counter = $(".preloader__counter", pre);
   const state = { v: 0 };
 
@@ -1038,10 +1063,7 @@ function initPreloader(onDone) {
       yPercent: -100,
       duration: 0.7,
       ease: "power4.inOut",
-      onStart: () => {
-        if (lenis) lenis.start();
-        onDone(true);
-      },
+      onStart: () => onDone(true),
       onComplete: () => pre.remove(),
     }, "-=0.1");
 }
@@ -1126,9 +1148,11 @@ function initLoadSequence(firstVisit) {
       // The user may have scrolled during the intro: clearProps just wiped the
       // hero fade state, and no new scroll event will come to restore it
       applyHeroFade();
-      // Now the sections below may enter, in viewport order — and every
+      // Now the sections below may enter, in viewport order — and only now
+      // is scrolling released, so a fast scroll can never outrun this. Every
       // other per-view binding (tilt, tabs, toc, cta-on-scroll) needs
       // setting up too, exactly as it would after a router transition.
+      if (lenis) lenis.start();
       runPageEnter();
     },
   });
@@ -1140,7 +1164,10 @@ function initLoadSequence(firstVisit) {
   const lead = $(".hero__title");
   if (lead) {
     const split = SplitText.create(lead, { type: "lines", mask: "lines" });
-    tl.from(split.lines, { yPercent: 110, stagger: 0.08, onComplete: () => split.revert() }, "-=0.25");
+    // onCompleteAll (not onComplete, which fires once per staggered line) —
+    // otherwise the first line reverts the whole split while later lines
+    // are still mid-animation, and they abruptly snap instead of sliding in
+    tl.from(split.lines, { yPercent: 110, stagger: { each: 0.08, onCompleteAll: () => split.revert() } }, "-=0.25");
     // Tween the wrapper, not the chips: they carry CSS hover transitions
     // that corrupt GSAP's from() value capture
     tl.from(".hero__chips", { y: 14, autoAlpha: 0, duration: 0.5 }, "-=0.15");
@@ -1153,7 +1180,7 @@ function initLoadSequence(firstVisit) {
   const projectTitle = $(".project-intro .section-title");
   if (projectTitle) {
     const split = SplitText.create(projectTitle, { type: "lines", mask: "lines" });
-    tl.from(split.lines, { yPercent: 110, stagger: 0.08, onComplete: () => split.revert() }, "-=0.3");
+    tl.from(split.lines, { yPercent: 110, stagger: { each: 0.08, onCompleteAll: () => split.revert() } }, "-=0.3");
     tl.from(".project-intro p", { y: 16, autoAlpha: 0, duration: 0.6 }, "-=0.4");
     tl.from(".project-intro__tags .tag", { y: 12, autoAlpha: 0, stagger: 0.05, duration: 0.4 }, "-=0.45");
   }
@@ -1183,10 +1210,12 @@ function initScrollEffects() {
       yPercent: 110,
       duration: 0.8,
       ease: "power3.out",
-      stagger: 0.08,
-      onComplete: () => {
-        split.revert();
-        stampI18n(el);
+      stagger: {
+        each: 0.08,
+        onCompleteAll: () => {
+          split.revert();
+          stampI18n(el);
+        },
       },
       scrollTrigger: { trigger: el, start: "top 88%", once: true },
     });
