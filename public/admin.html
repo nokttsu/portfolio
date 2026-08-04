@@ -3,434 +3,709 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>CMS — портфолио</title>
+<title>Портфолио — CMS</title>
 <meta name="robots" content="noindex, nofollow">
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=IBM+Plex+Mono&display=swap" rel="stylesheet">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
-:root{--bg:#0a0a0a;--panel:#141414;--panel2:#1c1c1c;--line:#232323;--text:#ededed;--dim:#8a8a8a}
+:root{
+  --bg:#191919; --side:#202020; --hover:rgba(255,255,255,.055); --hover2:rgba(255,255,255,.09);
+  --text:rgba(255,255,255,.81); --dim:rgba(255,255,255,.443); --faint:rgba(255,255,255,.282);
+  --line:rgba(255,255,255,.094); --panel:#252525; --blue:#2383e2; --blue-h:#1a6dbf;
+  --shadow:0 0 0 1px rgba(15,15,15,.2),0 3px 6px rgba(15,15,15,.1),0 9px 24px rgba(15,15,15,.2);
+}
 *{margin:0;padding:0;box-sizing:border-box}
 html,body{height:100%}
-body{background:var(--bg);color:var(--text);font:400 13px/1.5 Inter,sans-serif;-webkit-font-smoothing:antialiased}
+body{background:var(--bg);color:var(--text);font:400 16px/1.5 Inter,ui-sans-serif,-apple-system,"Segoe UI",sans-serif;-webkit-font-smoothing:antialiased;overflow:hidden}
 button{font:inherit;color:inherit;background:none;border:none;cursor:pointer}
-input,textarea,select{font:inherit;color:var(--text);background:var(--panel2);border:1px solid transparent;border-radius:8px;padding:8px 10px;width:100%}
-input:focus,textarea:focus,select:focus{outline:none;border-color:#3d3d3d}
-textarea{min-height:76px;resize:vertical}
+input,textarea{font:inherit;color:var(--text);background:none;border:none;width:100%;resize:none;outline:none}
+::placeholder{color:var(--faint)}
 #app{display:flex;height:100%}
-.side{width:210px;flex-shrink:0;border-right:1px solid var(--line);padding:16px 10px;display:flex;flex-direction:column;gap:3px}
-.brand{font-weight:600;padding:6px 10px 14px;display:flex;align-items:center;gap:8px}
-.dot{width:8px;height:8px;border-radius:50%;background:#4ade80}.dot.gray{background:#555}
-.navbtn{display:block;width:100%;text-align:left;padding:7px 10px;border-radius:8px;color:var(--dim);font-weight:500}
-.navbtn:hover{background:var(--panel);color:var(--text)}
-.navbtn.active{background:var(--panel2);color:var(--text)}
-.spacer{flex:1}
-.main{flex:1;display:flex;flex-direction:column;min-width:0}
-.top{height:56px;flex-shrink:0;border-bottom:1px solid var(--line);display:flex;align-items:center;gap:12px;padding:0 20px}
-.crumb{font-weight:600;font-size:14px;display:flex;align-items:center;gap:8px}
+
+/* ---------- sidebar ---------- */
+.side{width:248px;flex:none;background:var(--side);display:flex;flex-direction:column;padding:8px 0;user-select:none}
+.ws{display:flex;align-items:center;gap:8px;padding:6px 10px;margin:0 8px 8px;border-radius:4px;font-size:14px;font-weight:600}
+.ws:hover{background:var(--hover)}
+.ws .ava{width:20px;height:20px;border-radius:4px;background:#fff;color:#000;display:grid;place-items:center;font-size:11px;font-weight:700}
+.ws .st{width:6px;height:6px;border-radius:50%;background:#eb5757;margin-left:auto}
+.ws .st.ok{background:#4dab6d}
+.sec{padding:14px 16px 4px;font-size:11px;font-weight:600;color:var(--faint);letter-spacing:.02em}
+.item{display:flex;align-items:center;gap:7px;height:28px;margin:0 8px;padding:0 8px;border-radius:4px;font-size:14px;color:var(--dim);cursor:pointer;white-space:nowrap;overflow:hidden}
+.item:hover{background:var(--hover);color:var(--text)}
+.item.on{background:var(--hover2);color:var(--text);font-weight:500}
+.item .ic{width:18px;text-align:center;font-size:14px;opacity:.75;flex:none}
+.item .tw{width:14px;text-align:center;font-size:10px;color:var(--faint);flex:none}
+.item .lbl{flex:1;overflow:hidden;text-overflow:ellipsis}
+.item .add{opacity:0;font-size:15px;color:var(--faint);width:18px;text-align:center}
+.item:hover .add{opacity:1}
+.item.sub{padding-left:26px}
 .grow{flex:1}
-.langsw{display:flex;background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:2px}
-.langsw button{padding:4px 12px;border-radius:6px;color:var(--dim);font-size:12px;font-weight:600}
-.langsw button.on{background:var(--panel2);color:var(--text)}
-#publish{background:var(--panel2);color:var(--dim);font-weight:600;padding:8px 16px;border-radius:8px}
-#publish.dirty{background:#fff;color:#000}
-.view{flex:1;overflow-y:auto;padding:24px 20px 100px}
-.inner{max-width:720px;margin:0 auto;display:flex;flex-direction:column;gap:18px}
-.card{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:16px;display:flex;flex-direction:column;gap:12px}
-.card h3{font-size:13px;font-weight:600}
-.f{display:flex;flex-direction:column;gap:6px}
-.f>span{color:var(--dim);font-size:12px;font-weight:500}
-.row{display:flex;gap:10px}.row>*{flex:1}
-.rec{display:flex;align-items:center;gap:12px;padding:10px 12px;background:var(--panel);border:1px solid var(--line);border-radius:10px;cursor:pointer}
-.rec:hover{border-color:#333}
-.rec img{width:56px;height:32px;object-fit:cover;border-radius:5px;background:#222;flex-shrink:0}
-.rec .t{flex:1;min-width:0;font-weight:500;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.rec .m{color:var(--dim);font-size:11px;font-family:"IBM Plex Mono",monospace}
-.mini{padding:6px 12px;border-radius:8px;background:var(--panel2);color:var(--dim);font-weight:500}
-.mini:hover{color:var(--text)}
-.mini.danger:hover{color:#f87171}
-.blk{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:12px;display:flex;flex-direction:column;gap:10px}
-.blk .bh{display:flex;align-items:center;gap:8px}
-.blk .bt{font-size:11px;font-weight:600;color:var(--dim);text-transform:uppercase;letter-spacing:.06em;flex:1}
-.addbar{display:flex;flex-wrap:wrap;gap:6px}
-.addbar button{padding:6px 10px;border-radius:8px;background:var(--panel2);color:var(--dim);font-size:12px}
-.addbar button:hover{color:var(--text)}
-.toast{position:fixed;bottom:20px;left:50%;transform:translateX(-50%);background:#fff;color:#000;padding:10px 18px;border-radius:10px;font-weight:600;opacity:0;transition:.2s;pointer-events:none}
-.toast.on{opacity:1}
-.toast.err{background:#f87171;color:#fff}
-.hint{color:var(--dim);font-size:12px}
-a{color:#7dd3fc}
+
+/* ---------- main ---------- */
+.main{flex:1;display:flex;flex-direction:column;min-width:0}
+.top{height:45px;flex:none;display:flex;align-items:center;gap:10px;padding:0 14px;font-size:14px}
+.crumbs{display:flex;align-items:center;gap:6px;color:var(--dim);min-width:0}
+.crumbs b{font-weight:500;color:var(--text)}
+.crumbs .sep{color:var(--faint)}
+.crumbs button{padding:3px 6px;border-radius:4px}
+.crumbs button:hover{background:var(--hover)}
+.seg{display:flex;background:rgba(255,255,255,.055);border-radius:6px;padding:2px}
+.seg button{padding:3px 10px;border-radius:4px;font-size:12px;font-weight:500;color:var(--dim)}
+.seg button.on{background:#373737;color:var(--text)}
+.pub{background:var(--blue);color:#fff;font-size:14px;font-weight:500;padding:5px 12px;border-radius:4px}
+.pub:hover{background:var(--blue-h)}
+.pub[disabled]{opacity:.5;cursor:default}
+.pub.clean{background:transparent;color:var(--dim)}
+.pub.clean:hover{background:var(--hover)}
+
+.doc{flex:1;overflow-y:auto;scrollbar-width:thin;scrollbar-color:rgba(255,255,255,.2) transparent}
+.doc::-webkit-scrollbar{width:10px}
+.doc::-webkit-scrollbar-thumb{background:rgba(255,255,255,.18);border-radius:99px;border:3px solid transparent;background-clip:content-box}
+.page{max-width:708px;margin:0 auto;padding:60px 60px 40vh}
+.h1{font-size:40px;line-height:1.2;font-weight:700;color:#fff;margin-bottom:6px}
+.sub{color:var(--faint);font-size:14px;margin-bottom:26px}
+
+/* ---------- property rows (Notion database style) ---------- */
+.props{display:flex;flex-direction:column;gap:1px;margin-bottom:26px}
+.prop{display:flex;align-items:flex-start;gap:6px;border-radius:4px;padding:5px 6px;min-height:34px}
+.prop:hover{background:var(--hover)}
+.prop>.k{display:flex;align-items:center;gap:7px;width:180px;flex:none;color:var(--dim);font-size:14px;padding-top:3px}
+.prop>.k .ic{opacity:.6;width:16px;text-align:center}
+.prop>.v{flex:1;min-width:0;font-size:14px}
+.prop .v input,.prop .v textarea{font-size:14px;padding:3px 4px;border-radius:4px}
+.prop .v input:hover,.prop .v textarea:hover{background:var(--hover)}
+.prop .v input:focus,.prop .v textarea:focus{background:var(--hover);box-shadow:inset 0 0 0 1px var(--blue)}
+.chip{display:inline-flex;align-items:center;gap:5px;background:rgba(255,255,255,.06);border-radius:4px;padding:2px 7px;font-size:13px;margin:2px 4px 2px 0}
+.chip button{color:var(--faint);font-size:12px}
+.chip button:hover{color:var(--text)}
+
+/* ---------- blocks ---------- */
+.blocks{display:flex;flex-direction:column}
+.b{position:relative;padding:3px 2px;border-radius:3px}
+.b.drag-over{box-shadow:0 -2px 0 var(--blue)}
+.b.dragging{opacity:.35}
+.gutter{position:absolute;left:-52px;top:2px;display:flex;gap:1px;opacity:0;transition:opacity .1s}
+.b:hover>.gutter,.gutter:focus-within{opacity:1}
+.gutter button{width:24px;height:24px;border-radius:4px;color:var(--faint);display:grid;place-items:center;font-size:15px}
+.gutter button:hover{background:var(--hover2);color:var(--text)}
+.b textarea,.b input{padding:3px 2px;border-radius:3px;line-height:1.5}
+.b textarea:hover,.b input:hover{background:rgba(255,255,255,.03)}
+.t-h1 textarea{font-size:30px;font-weight:600;color:#fff;line-height:1.3}
+.t-h2 textarea{font-size:24px;font-weight:600;color:#fff;line-height:1.3}
+.eyebrow input{font-size:12px;font-weight:600;color:var(--dim);letter-spacing:.06em;text-transform:uppercase}
+.t-quote{border-left:3px solid rgba(255,255,255,.85);padding-left:14px}
+.t-quote textarea{font-size:17px}
+.t-callout{background:rgba(255,255,255,.045);border-radius:4px;padding:14px 14px 14px 12px;display:flex;gap:9px}
+.t-callout .emo{font-size:18px;line-height:1.4;cursor:pointer}
+.li{display:flex;gap:8px;align-items:flex-start}
+.li .bullet{color:var(--dim);line-height:1.55;user-select:none;flex:none;width:14px;text-align:center}
+.li .del{opacity:0;color:var(--faint);font-size:12px;padding:0 4px}
+.li:hover .del{opacity:1}
+.imgbox{border-radius:4px;overflow:hidden;background:rgba(255,255,255,.03);position:relative}
+.imgbox img{width:100%;display:block;aspect-ratio:16/9;object-fit:cover}
+.imgbox .empty{aspect-ratio:16/9;display:grid;place-items:center;color:var(--faint);font-size:14px;gap:6px}
+.imgtools{display:flex;gap:6px;margin-top:6px}
+.cap input{font-size:13px;color:var(--dim);text-align:center}
+.grid2{display:grid;gap:8px}
+.mini{font-size:13px;color:var(--dim);padding:4px 8px;border-radius:4px;background:rgba(255,255,255,.055)}
+.mini:hover{background:var(--hover2);color:var(--text)}
+.mini.danger:hover{color:#ff7369}
+.addblock{display:flex;align-items:center;gap:8px;height:32px;margin-top:6px;color:var(--faint);font-size:14px;border-radius:4px;padding:0 4px}
+.addblock:hover{background:var(--hover);color:var(--dim)}
+.cols{display:grid;grid-template-columns:1fr 1fr;gap:22px}
+
+/* ---------- menus ---------- */
+.menu{position:fixed;z-index:60;width:320px;max-height:340px;overflow-y:auto;background:var(--panel);border-radius:6px;box-shadow:var(--shadow);padding:6px 4px;display:none}
+.menu.on{display:block}
+.menu .gh{padding:6px 10px 4px;font-size:11px;font-weight:600;color:var(--faint)}
+.menu .mi{display:flex;align-items:center;gap:10px;padding:6px 10px;border-radius:4px;cursor:pointer}
+.menu .mi:hover,.menu .mi.sel{background:var(--hover2)}
+.menu .mi .mic{width:38px;height:38px;flex:none;border-radius:4px;background:rgba(255,255,255,.06);display:grid;place-items:center;font-size:17px}
+.menu .mi .mn{font-size:14px}
+.menu .mi .md{font-size:12px;color:var(--faint)}
+.menu.small{width:210px}
+.menu.small .mi{gap:8px}
+.menu.small .mi .mic{width:20px;height:20px;background:none;font-size:14px}
+
+.bar{position:fixed;z-index:70;display:none;background:var(--panel);border-radius:5px;box-shadow:var(--shadow);padding:3px}
+.bar.on{display:flex}
+.bar button{padding:5px 9px;border-radius:4px;font-size:14px;color:var(--text)}
+.bar button:hover{background:var(--hover2)}
+.bar .sepv{width:1px;background:var(--line);margin:4px 2px}
+.bar b{font-weight:700}.bar i{font-style:italic}
+.bar .hl{background:rgba(255,255,255,.18);border-radius:3px;padding:0 4px}
+
+.toast{position:fixed;bottom:22px;left:50%;transform:translateX(-50%) translateY(8px);background:var(--panel);color:var(--text);padding:10px 16px;border-radius:6px;box-shadow:var(--shadow);font-size:14px;opacity:0;transition:.18s;pointer-events:none;z-index:90}
+.toast.on{opacity:1;transform:translateX(-50%)}
+.toast.err{color:#ff7369}
+.hint{color:var(--faint);font-size:13px;line-height:1.6}
+a{color:#5e9ee8}
 </style>
 </head>
 <body>
 <div id="app">
   <div class="side">
-    <div class="brand"><span class="dot gray" id="dot"></span><span>CMS</span></div>
-    <button class="navbtn" data-v="site">Сайт и шапка</button>
-    <button class="navbtn" data-v="hero">Главный экран</button>
-    <button class="navbtn" data-v="experience">Опыт</button>
-    <button class="navbtn" data-v="works">Работы</button>
-    <button class="navbtn" data-v="about">Обо мне</button>
-    <button class="navbtn" data-v="footer">Подвал</button>
-    <button class="navbtn" data-v="ui">Кнопки и подписи</button>
-    <div class="spacer"></div>
-    <button class="navbtn" data-v="settings">Настройки</button>
-    <a class="navbtn" href="./" target="_blank">Открыть сайт ↗</a>
+    <div class="ws" id="ws"><span class="ava">V</span><span>Портфолио</span><span class="st" id="st"></span></div>
+    <div class="sec">Страницы</div>
+    <div id="nav"></div>
+    <div class="grow"></div>
+    <div class="item" data-p="settings"><span class="ic">⚙</span><span class="lbl">Настройки</span></div>
+    <a class="item" href="./" target="_blank"><span class="ic">↗</span><span class="lbl">Открыть сайт</span></a>
   </div>
+
   <div class="main">
     <div class="top">
-      <div class="crumb"><button class="mini" id="back" style="display:none">←</button><span id="title">Сайт</span></div>
+      <div class="crumbs" id="crumbs"></div>
       <div class="grow"></div>
-      <div class="langsw"><button data-l="ru">RU</button><button data-l="en">EN</button></div>
-      <button id="publish">Опубликовать</button>
+      <div class="seg" id="seg"><button data-l="ru">RU</button><button data-l="en">EN</button></div>
+      <button class="pub clean" id="pub">Опубликовано</button>
     </div>
-    <div class="view"><div class="inner" id="view"></div></div>
+    <div class="doc"><div class="page" id="page"></div></div>
   </div>
 </div>
+
+<div class="menu" id="slash"></div>
+<div class="menu small" id="ctx"></div>
+<div class="bar" id="bar"></div>
 <div class="toast" id="toast"></div>
 
 <script>
-const REPO = "nokttsu/portfolio", BRANCH = "main";
-let C = null, L = localStorage.getItem("cms-lang") || "ru", V = "site", dirty = false, editing = null;
+const REPO="nokttsu/portfolio", BRANCH="main";
+let C=null, L=localStorage.getItem("cms-lang")||"ru", P="site", CASE=null, dirty=false;
 
-const $ = (s, r = document) => r.querySelector(s);
-const token = () => localStorage.getItem("gh-token") || "";
-const toast = (m, t) => { const el = $("#toast"); el.textContent = m; el.className = "toast on" + (t === "err" ? " err" : ""); setTimeout(() => el.className = "toast", 2200) };
-const el = (h) => { const d = document.createElement("div"); d.innerHTML = h.trim(); return d.firstElementChild };
-const mark = () => { dirty = true; $("#publish").classList.add("dirty") };
+const $=(s,r=document)=>r.querySelector(s);
+const el=h=>{const d=document.createElement("div");d.innerHTML=h.trim();return d.firstElementChild};
+const token=()=>localStorage.getItem("gh-token")||"";
+const toast=(m,t)=>{const e=$("#toast");e.textContent=m;e.className="toast on"+(t==="err"?" err":"");setTimeout(()=>e.className="toast",2400)};
+const mark=()=>{dirty=true;const b=$("#pub");b.textContent="Опубликовать";b.classList.remove("clean")};
+const bi=()=>({en:"",ru:""});
 
-async function api(path, opts = {}) {
-  const headers = { Accept: "application/vnd.github+json", ...(opts.headers || {}) };
-  if (token()) headers.Authorization = "Bearer " + token();
-  const r = await fetch("https://api.github.com/repos/" + REPO + "/" + path, { ...opts, headers });
-  if (!r.ok) throw new Error(await r.text());
+async function api(path,opts={}){
+  const headers={Accept:"application/vnd.github+json",...(opts.headers||{})};
+  if(token())headers.Authorization="Bearer "+token();
+  const r=await fetch("https://api.github.com/repos/"+REPO+"/"+path,{...opts,headers});
+  if(!r.ok)throw new Error(await r.text());
   return r.json();
 }
+async function upload(file){
+  if(!token())throw new Error("no token");
+  const buf=await file.arrayBuffer();let s="";const b=new Uint8Array(buf);
+  for(let i=0;i<b.length;i++)s+=String.fromCharCode(b[i]);
+  const safe=Date.now()+"-"+file.name.replace(/[^a-zA-Z0-9._-]/g,"");
+  await api("contents/public/img/uploads/"+safe,{method:"PUT",body:JSON.stringify({message:"cms: upload "+safe,content:btoa(s),branch:BRANCH})});
+  return "/img/uploads/"+safe;
+}
 
-/* ---------- field helpers (bilingual {en,ru} or plain) ---------- */
-function fText(label, obj, key, multi) {
-  const f = el(`<label class="f"><span>${label}</span>${multi ? "<textarea></textarea>" : "<input>"}</label>`);
-  const i = f.querySelector("input,textarea");
-  const val = obj[key];
-  const bi = val && typeof val === "object";
-  i.value = bi ? (val[L] ?? "") : (val ?? "");
-  i.addEventListener("input", () => {
-    if (bi || (obj[key] && typeof obj[key] === "object")) {
-      obj[key] = { ...(obj[key] || {}), [L]: i.value };
-    } else obj[key] = i.value;
-    mark();
-  });
-  return f;
+/* ---------- editable primitives ---------- */
+function grow(t){t.style.height="auto";t.style.height=t.scrollHeight+"px"}
+function area(get,set,ph,cls){
+  const t=el(`<textarea rows="1" placeholder="${ph||""}"></textarea>`);
+  if(cls)t.className=cls;
+  t.value=get()||"";
+  requestAnimationFrame(()=>grow(t));
+  t.addEventListener("input",()=>{set(t.value);grow(t);mark()});
+  t.addEventListener("focus",()=>activeArea=t);
+  t.addEventListener("keydown",e=>slashKey(e,t));
+  return t;
 }
-function fBiText(label, obj, key, multi) {
-  if (obj[key] == null || typeof obj[key] === "string") obj[key] = { en: obj[key] || "", ru: obj[key] || "" };
-  return fText(label + " · " + L.toUpperCase(), obj, key, multi);
+function line(get,set,ph,cls){
+  const i=el(`<input placeholder="${ph||""}">`);
+  if(cls)i.className=cls;
+  i.value=get()||"";
+  i.addEventListener("input",()=>{set(i.value);mark()});
+  return i;
 }
-function fImage(label, obj, key) {
-  const f = el(`<label class="f"><span>${label}</span><div class="row"><input><button class="mini">Загрузить</button></div></label>`);
-  const i = f.querySelector("input"), b = f.querySelector("button");
-  i.value = obj[key] || "";
-  i.addEventListener("input", () => { obj[key] = i.value; mark() });
-  b.addEventListener("click", async (e) => {
-    e.preventDefault();
-    const inp = document.createElement("input"); inp.type = "file"; inp.accept = "image/*,video/*";
-    inp.onchange = async () => {
-      const file = inp.files[0]; if (!file) return;
-      try { const p = await upload(file); obj[key] = p; i.value = p; mark(); toast("Загружено") }
-      catch (err) { toast("Ошибка загрузки", "err") }
+// bilingual helpers
+const bget=o=>k=>{const v=o[k];return v&&typeof v==="object"?(v[L]||""):(v||"")};
+const bset=o=>k=>v=>{if(o[k]==null||typeof o[k]==="string")o[k]={en:o[k]||"",ru:o[k]||""};o[k][L]=v};
+const bArea=(o,k,ph)=>area(()=>bget(o)(k),bset(o)(k),ph);
+const bLine=(o,k,ph,cls)=>line(()=>bget(o)(k),bset(o)(k),ph,cls);
+
+function prop(icon,label,node){
+  const r=el(`<div class="prop"><div class="k"><span class="ic">${icon}</span><span>${label}</span></div><div class="v"></div></div>`);
+  $(".v",r).append(node);return r;
+}
+function imageField(obj,key,label){
+  const wrap=el(`<div></div>`);
+  const draw=()=>{
+    wrap.innerHTML="";
+    const box=el(`<div class="imgbox"></div>`);
+    if(obj[key])box.append(el(`<img src="${obj[key]}" alt="">`));
+    else box.append(el(`<div class="empty"><span>🖼</span><span>${label||"Нет изображения"}</span></div>`));
+    const tools=el(`<div class="imgtools"></div>`);
+    const up=el(`<button class="mini">Загрузить</button>`);
+    up.onclick=()=>{
+      const i=document.createElement("input");i.type="file";i.accept="image/*,video/*";
+      i.onchange=async()=>{const f=i.files[0];if(!f)return;toast("Загрузка…");
+        try{obj[key]=await upload(f);mark();draw();toast("Загружено")}catch(e){toast("Нужен токен или нет прав","err")}};
+      i.click();
     };
-    inp.click();
-  });
-  return f;
-}
-async function upload(file) {
-  if (!token()) throw new Error("нужен токен");
-  const buf = await file.arrayBuffer();
-  let bin = ""; const b = new Uint8Array(buf);
-  for (let i = 0; i < b.length; i++) bin += String.fromCharCode(b[i]);
-  const safe = Date.now() + "-" + file.name.replace(/[^a-zA-Z0-9._-]/g, "");
-  const path = "public/img/uploads/" + safe;
-  await api("contents/" + path, { method: "PUT", body: JSON.stringify({ message: "cms: upload " + safe, content: btoa(bin), branch: BRANCH }) });
-  return "/img/uploads/" + safe;
-}
-function listEditor(arr, render, add, label) {
-  const wrap = el(`<div class="f"><span>${label}</span><div class="rowlist"></div></div>`);
-  const list = wrap.querySelector(".rowlist");
-  const draw = () => {
-    list.innerHTML = "";
-    arr.forEach((item, i) => {
-      const row = el(`<div class="blk"></div>`);
-      const head = el(`<div class="bh"><div class="bt">${i + 1}</div></div>`);
-      const up = el(`<button class="mini">↑</button>`), dn = el(`<button class="mini">↓</button>`), rm = el(`<button class="mini danger">Удалить</button>`);
-      up.onclick = () => { if (i > 0) { [arr[i - 1], arr[i]] = [arr[i], arr[i - 1]]; mark(); draw() } };
-      dn.onclick = () => { if (i < arr.length - 1) { [arr[i + 1], arr[i]] = [arr[i], arr[i + 1]]; mark(); draw() } };
-      rm.onclick = () => { arr.splice(i, 1); mark(); draw() };
-      head.append(up, dn, rm); row.append(head);
-      render(item, row, draw);
-      list.append(row);
-    });
-    const bar = el(`<div class="addbar"></div>`);
-    const b = el(`<button>+ Добавить</button>`); b.onclick = () => { arr.push(add()); mark(); draw() };
-    bar.append(b); list.append(bar);
+    const path=line(()=>obj[key],v=>obj[key]=v,"/img/...");
+    path.style.fontSize="13px";
+    tools.append(up);
+    wrap.append(box,tools,prop("🔗","Путь",path));
+    $(".prop",wrap).style.marginTop="2px";
   };
-  draw();
-  return wrap;
+  draw();return wrap;
 }
 
-/* ---------- views ---------- */
-const views = {
-  site: () => {
-    const s = C.site, out = [];
-    const c1 = el(`<div class="card"><h3>Контакты</h3></div>`);
-    c1.append(fText("Имя", s, "name"), fImage("Аватар", s, "avatar"), fText("Email", s, "email"),
-      fText("Ссылка на резюме", s, "cvUrl"), fText("Telegram", s, "telegram"));
-    out.push(c1);
-    const c2 = el(`<div class="card"><h3>Ссылки в меню</h3></div>`);
-    c2.append(listEditor(s.links, (it, row) => { row.append(fText("Название", it, "label"), fText("URL", it, "href")) },
-      () => ({ label: "Link", href: "#" }), "Пункты"));
-    out.push(c2);
-    return out;
-  },
-  hero: () => {
-    const h = C.hero, out = [];
-    const c = el(`<div class="card"><h3>Главный экран</h3></div>`);
-    c.append(fBiText("Заголовок", h, "title", true), fBiText("Описание", h, "intro", true),
-      fImage("Видео", h, "video"), fImage("Постер (кадр)", h, "poster"));
-    out.push(c);
-    const n = el(`<div class="card"><h3>Нижняя навигация</h3></div>`);
-    n.append(fBiText("Опыт", h.nav, "experience"), fBiText("Работы", h.nav, "works"), fBiText("Обо мне", h.nav, "about"));
-    out.push(n);
-    return out;
-  },
-  experience: () => {
-    const e = C.experience, out = [];
-    const c = el(`<div class="card"><h3>Секция</h3></div>`);
-    c.append(fBiText("Заголовок", e, "heading"), fBiText("Текст под карточками", e, "text", true));
-    out.push(c);
-    const l = el(`<div class="card"><h3>Карточки</h3></div>`);
-    l.append(listEditor(e.items, (it, row) => {
-      if (it.divider) { row.append(el(`<div class="hint">Разделительная линия</div>`)); return }
-      row.append(fBiText("Компания", it, "company"), fBiText("Роль", it, "role"), fBiText("Период", it, "meta"), fImage("Логотип", it, "logo"));
-      const opts = el(`<div class="row"></div>`);
-      const hi = el(`<label class="f"><span>Подсветить</span><select><option value="">нет</option><option value="1">да</option></select></label>`);
-      hi.querySelector("select").value = it.highlight ? "1" : "";
-      hi.querySelector("select").onchange = (ev) => { it.highlight = !!ev.target.value; mark() };
-      const rd = el(`<label class="f"><span>Круглый логотип</span><select><option value="">нет</option><option value="1">да</option></select></label>`);
-      rd.querySelector("select").value = it.round ? "1" : "";
-      rd.querySelector("select").onchange = (ev) => { it.round = !!ev.target.value; mark() };
-      opts.append(hi, rd); row.append(opts);
-    }, () => ({ company: { en: "", ru: "" }, role: { en: "", ru: "" }, meta: { en: "", ru: "" }, logo: "" }), "Список"));
-    const dv = el(`<div class="addbar"><button>+ Разделитель</button></div>`);
-    dv.querySelector("button").onclick = () => { e.items.push({ divider: true }); mark(); render() };
-    l.append(dv);
-    out.push(l);
-    return out;
-  },
-  works: () => {
-    if (editing != null) return caseEditor(C.cases[editing]);
-    const out = [];
-    const c = el(`<div class="card"><h3>Секция</h3></div>`);
-    c.append(fBiText("Заголовок", C.works, "heading"));
-    const st = el(`<label class="f"><span>Показывать по</span><input type="number" min="1"></label>`);
-    st.querySelector("input").value = C.works.step || 4;
-    st.querySelector("input").oninput = (ev) => { C.works.step = +ev.target.value || 4; mark() };
-    c.append(st); out.push(c);
-
-    const l = el(`<div class="card"><h3>Кейсы</h3></div>`);
-    const list = el(`<div class="rowlist" style="display:flex;flex-direction:column;gap:6px"></div>`);
-    C.cases.forEach((cs, i) => {
-      const r = el(`<div class="rec"><img src="${cs.cover || ""}" alt=""><div class="t">${cs.title || "—"}</div><div class="m">${(cs.blocks || []).length} блоков</div></div>`);
-      r.onclick = () => { editing = i; render() };
-      list.append(r);
-    });
-    const add = el(`<div class="addbar"><button>+ Новый кейс</button></div>`);
-    add.querySelector("button").onclick = () => {
-      C.cases.push({ id: "case-" + Date.now(), title: "Новый кейс", cover: "", metrics: [], intro: { en: "", ru: "" }, cta: { label: { en: "Visit live site", ru: "Открыть сайт" }, href: "#" }, meta: [], blocks: [] });
-      mark(); editing = C.cases.length - 1; render();
-    };
-    l.append(list, add); out.push(l);
-    return out;
-  },
-  about: () => {
-    const a = C.about, out = [];
-    const c = el(`<div class="card"><h3>Тексты</h3></div>`);
-    c.append(fBiText("Заголовок", a, "heading"), fBiText("Абзац 1", a, "p1", true), fBiText("Абзац 2", a, "p2", true), fBiText("Абзац 3", a, "p3", true));
-    out.push(c);
-    const p = el(`<div class="card"><h3>Фото в колесе</h3><div class="hint">Вертикальные фото ставь «высокое» — они идут в плитки 3:4.</div></div>`);
-    p.append(listEditor(a.photos, (it, row) => {
-      row.append(fImage("Фото", it, "src"));
-      const t = el(`<label class="f"><span>Формат</span><select><option value="">4:3 (горизонтальное)</option><option value="1">3:4 (высокое)</option></select></label>`);
-      t.querySelector("select").value = it.tall ? "1" : "";
-      t.querySelector("select").onchange = (ev) => { it.tall = !!ev.target.value; mark() };
-      row.append(t);
-    }, () => ({ src: "", tall: false }), "Фотографии"));
-    out.push(p);
-    return out;
-  },
-  footer: () => {
-    const c = el(`<div class="card"><h3>Подвал</h3></div>`);
-    c.append(fBiText("Слева", C.footer, "made"), fBiText("Справа", C.footer, "location"));
-    return [c];
-  },
-  ui: () => {
-    const c = el(`<div class="card"><h3>Кнопки и подписи</h3></div>`);
-    Object.keys(C.ui).forEach((k) => c.append(fBiText(k, C.ui, k)));
-    return [c];
-  },
-  settings: () => {
-    const c = el(`<div class="card"><h3>GitHub</h3><div class="hint">Токен хранится только в этом браузере. Нужен доступ Contents: Read and write к репозиторию ${REPO}. <a href="https://github.com/settings/personal-access-tokens/new" target="_blank">Создать токен ↗</a></div></div>`);
-    const f = el(`<label class="f"><span>Токен</span><input type="password" autocomplete="off"></label>`);
-    const i = f.querySelector("input"); i.value = token();
-    i.oninput = () => { localStorage.setItem("gh-token", i.value.trim()); $("#dot").className = "dot" + (i.value.trim() ? "" : " gray") };
-    const out = el(`<button class="mini danger">Выйти (удалить токен)</button>`);
-    out.onclick = () => { localStorage.removeItem("gh-token"); location.reload() };
-    c.append(f, out);
-    return [c];
-  },
-};
-
-/* ---------- case editor (Notion-like blocks) ---------- */
-const BLOCK_KINDS = [
-  ["section", "Раздел"], ["subheading", "Подзаголовок"], ["paragraph", "Абзац"],
-  ["list", "Список"], ["quote", "Цитата"], ["callout", "Выноска"],
-  ["metrics", "Метрики"], ["image", "Картинка"], ["gallery", "Галерея"], ["columns", "Две колонки"],
+/* ---------- slash menu + inline toolbar ---------- */
+let activeArea=null, slashCtx=null, slashSel=0;
+const BLOCKS=[
+  ["section","Раздел","H1 · крупный заголовок раздела","H1"],
+  ["subheading","Подзаголовок","H2 · заголовок внутри раздела","H2"],
+  ["paragraph","Текст","Обычный абзац","¶"],
+  ["list","Список","Маркированный список с подводкой","•"],
+  ["quote","Цитата","Выделенная цитата с автором","❝"],
+  ["callout","Выноска","Блок с иконкой и акцентом","💡"],
+  ["metrics","Метрики","Карточки с цифрами","📊"],
+  ["image","Картинка","Изображение с подписью","🖼"],
+  ["gallery","Галерея","Несколько картинок в ряд","▦"],
+  ["columns","Две колонки","Два текста рядом","▥"],
 ];
-const newBlock = (kind) => {
-  const bi = () => ({ en: "", ru: "" });
-  switch (kind) {
-    case "section": return { type: "section", name: bi(), title: bi() };
-    case "subheading": return { type: "subheading", text: bi() };
-    case "paragraph": return { type: "paragraph", text: bi() };
-    case "list": return { type: "list", title: bi(), items: [bi()] };
-    case "quote": return { type: "quote", text: bi(), author: bi(), href: "#" };
-    case "callout": return { type: "callout", icon: "⚡", text: bi() };
-    case "metrics": return { type: "metrics", items: [{ value: bi(), label: bi() }] };
-    case "image": return { type: "image", src: "", size: "wide", caption: bi() };
-    case "gallery": return { type: "gallery", columns: 2, images: [], caption: bi() };
-    case "columns": return { type: "columns", left: bi(), right: bi() };
+function newBlock(k){
+  switch(k){
+    case "section":return{type:"section",name:bi(),title:bi()};
+    case "subheading":return{type:"subheading",text:bi()};
+    case "paragraph":return{type:"paragraph",text:bi()};
+    case "list":return{type:"list",title:bi(),items:[bi()]};
+    case "quote":return{type:"quote",text:bi(),author:bi(),href:"#"};
+    case "callout":return{type:"callout",icon:"💡",text:bi()};
+    case "metrics":return{type:"metrics",items:[{value:bi(),label:bi()}]};
+    case "image":return{type:"image",src:"",size:"wide",caption:bi()};
+    case "gallery":return{type:"gallery",columns:2,images:[],caption:bi()};
+    case "columns":return{type:"columns",left:bi(),right:bi()};
   }
+}
+function openSlash(ta,onPick){
+  const m=$("#slash");slashSel=0;
+  const r=ta.getBoundingClientRect();
+  m.innerHTML=`<div class="gh">Блоки</div>`;
+  BLOCKS.forEach(([k,n,d,ic],i)=>{
+    const it=el(`<div class="mi${i===0?" sel":""}"><div class="mic">${ic}</div><div><div class="mn">${n}</div><div class="md">${d}</div></div></div>`);
+    it.onmousedown=e=>{e.preventDefault();onPick(k);closeMenus()};
+    m.append(it);
+  });
+  m.style.left=Math.min(r.left,innerWidth-340)+"px";
+  m.style.top=Math.min(r.bottom+6,innerHeight-350)+"px";
+  m.classList.add("on");slashCtx={ta,onPick};
+}
+function slashKey(e,ta){
+  const m=$("#slash");
+  if(m.classList.contains("on")){
+    const items=[...m.querySelectorAll(".mi")];
+    if(e.key==="ArrowDown"||e.key==="ArrowUp"){
+      e.preventDefault();
+      items[slashSel]?.classList.remove("sel");
+      slashSel=(slashSel+(e.key==="ArrowDown"?1:-1)+items.length)%items.length;
+      items[slashSel].classList.add("sel");items[slashSel].scrollIntoView({block:"nearest"});return;
+    }
+    if(e.key==="Enter"){e.preventDefault();items[slashSel].dispatchEvent(new MouseEvent("mousedown"));return}
+    if(e.key==="Escape"){closeMenus();return}
+  }
+  if(e.key==="/"&&ta.value.trim()===""&&slashCtx?.ta!==ta&&ta.dataset.slash==="1"){
+    setTimeout(()=>openSlash(ta,k=>{ta.value="";ta.dispatchEvent(new Event("input"));ta.dataset.insert&&window.__insert(ta.dataset.insert,k)}),0);
+  }
+}
+function closeMenus(){$("#slash").classList.remove("on");$("#ctx").classList.remove("on");slashCtx=null}
+document.addEventListener("mousedown",e=>{if(!e.target.closest(".menu"))closeMenus()});
+
+// inline formatting toolbar over a textarea selection
+function wrapSel(ta,a,b){
+  const s=ta.selectionStart,e=ta.selectionEnd;if(s===e)return;
+  const v=ta.value,sel=v.slice(s,e);
+  ta.value=v.slice(0,s)+a+sel+(b||a)+v.slice(e);
+  ta.dispatchEvent(new Event("input"));
+  ta.focus();ta.setSelectionRange(s+a.length,e+a.length);
+}
+(function initBar(){
+  const bar=$("#bar");
+  const mk=(html,fn,title)=>{const b=el(`<button title="${title}">${html}</button>`);b.onmousedown=e=>{e.preventDefault();fn()};return b};
+  bar.append(
+    mk("<b>B</b>",()=>wrapSel(activeArea,"**"),"Жирный"),
+    mk("<i>I</i>",()=>wrapSel(activeArea,"*"),"Курсив"),
+    mk('<span class="hl">A</span>',()=>wrapSel(activeArea,"=="),"Выделение"),
+    el(`<div class="sepv"></div>`),
+    mk("✕",()=>{const t=activeArea;if(!t)return;const s=t.selectionStart,e=t.selectionEnd;
+      t.value=t.value.slice(0,s)+t.value.slice(s,e).replace(/\*\*|==|\*/g,"")+t.value.slice(e);
+      t.dispatchEvent(new Event("input"))},"Убрать форматирование")
+  );
+  const upd=()=>{
+    const t=document.activeElement;
+    if(!(t&&t.tagName==="TEXTAREA")||t.selectionStart===t.selectionEnd){bar.classList.remove("on");return}
+    activeArea=t;
+    const r=t.getBoundingClientRect();
+    bar.style.left=Math.max(8,Math.min(r.left+20,innerWidth-200))+"px";
+    bar.style.top=(r.top-42)+"px";
+    bar.classList.add("on");
+  };
+  document.addEventListener("selectionchange",upd);
+  document.addEventListener("scroll",()=>bar.classList.remove("on"),true);
+})();
+
+/* ---------- block rendering (case document) ---------- */
+function blockNode(list,i,redraw){
+  const b=list[i];
+  const kind=BLOCKS.find(x=>x[0]===b.type);
+  const node=el(`<div class="b t-${b.type}"></div>`);
+  const gut=el(`<div class="gutter"></div>`);
+  const add=el(`<button title="Добавить ниже">＋</button>`);
+  const hnd=el(`<button title="Перетащить · меню">⠿</button>`);
+  add.onclick=()=>{const r=add.getBoundingClientRect();
+    openSlashAt(r,k=>{list.splice(i+1,0,newBlock(k));mark();redraw()})};
+  hnd.onclick=()=>{const r=hnd.getBoundingClientRect();ctxMenu(r,list,i,redraw)};
+  gut.append(add,hnd);node.append(gut);
+
+  // drag & drop reorder
+  node.draggable=true;
+  node.addEventListener("dragstart",e=>{e.dataTransfer.setData("i",i);node.classList.add("dragging")});
+  node.addEventListener("dragend",()=>node.classList.remove("dragging"));
+  node.addEventListener("dragover",e=>{e.preventDefault();node.classList.add("drag-over")});
+  node.addEventListener("dragleave",()=>node.classList.remove("drag-over"));
+  node.addEventListener("drop",e=>{
+    e.preventDefault();node.classList.remove("drag-over");
+    const from=+e.dataTransfer.getData("i");if(from===i)return;
+    const [m]=list.splice(from,1);list.splice(from<i?i-1:i,0,m);mark();redraw();
+  });
+
+  const body=el(`<div></div>`);node.append(body);
+  const A=(o,k,ph)=>{const t=bArea(o,k,ph);t.dataset.slash="1";return t};
+
+  if(b.type==="section"){
+    body.append(el(`<div class="eyebrow"></div>`));
+    $(".eyebrow",body).append(bLine(b,"name","Название раздела (OVERVIEW)"));
+    body.append(A(b,"title","Заголовок раздела"));
+  }
+  if(b.type==="subheading")body.append(A(b,"text","Подзаголовок"));
+  if(b.type==="paragraph")body.append(A(b,"text","Текст, «/» — вставить блок"));
+  if(b.type==="quote"){
+    body.append(A(b,"text","Цитата"));
+    const a=bLine(b,"author","Автор");a.style.fontSize="13px";a.style.color="var(--dim)";
+    body.append(a);
+  }
+  if(b.type==="callout"){
+    const box=el(`<div style="display:flex;gap:9px;width:100%"></div>`);
+    const emo=el(`<span class="emo">${b.icon||"💡"}</span>`);
+    emo.onclick=()=>{const v=prompt("Иконка (эмодзи)",b.icon||"💡");if(v){b.icon=v;mark();redraw()}};
+    box.append(emo,A(b,"text","Текст выноски"));body.append(box);
+  }
+  if(b.type==="columns"){
+    const g=el(`<div class="cols"></div>`);
+    g.append(A(b,"left","Левая колонка"),A(b,"right","Правая колонка"));body.append(g);
+  }
+  if(b.type==="list"){
+    body.append(bLine(b,"title","Подводка (Ключевые решения)"));
+    b.items.forEach((it,j)=>{
+      const row=el(`<div class="li"><span class="bullet">•</span></div>`);
+      const t=area(()=>bget(it)("v")||(typeof it==="object"?it[L]||"":it),v=>{
+        if(typeof b.items[j]!=="object")b.items[j]={en:"",ru:""};
+        b.items[j][L]=v;
+      },"Пункт списка");
+      t.addEventListener("keydown",e=>{
+        if(e.key==="Enter"&&!e.shiftKey){e.preventDefault();b.items.splice(j+1,0,bi());mark();redraw()}
+        if(e.key==="Backspace"&&t.value===""&&b.items.length>1){e.preventDefault();b.items.splice(j,1);mark();redraw()}
+      });
+      const del=el(`<button class="del">✕</button>`);del.onclick=()=>{b.items.splice(j,1);mark();redraw()};
+      row.append(t,del);body.append(row);
+    });
+    const a=el(`<div class="addblock">＋ Пункт</div>`);a.onclick=()=>{b.items.push(bi());mark();redraw()};
+    body.append(a);
+  }
+  if(b.type==="metrics"){
+    b.items.forEach((m,j)=>{
+      const row=el(`<div class="li"></div>`);
+      const v=bLine(m,"value","+20%");v.style.fontWeight="600";v.style.maxWidth="120px";
+      const l=bLine(m,"label","Подпись");
+      const del=el(`<button class="del">✕</button>`);del.onclick=()=>{b.items.splice(j,1);mark();redraw()};
+      row.append(v,l,del);body.append(row);
+    });
+    const a=el(`<div class="addblock">＋ Метрика</div>`);a.onclick=()=>{b.items.push({value:bi(),label:bi()});mark();redraw()};
+    body.append(a);
+  }
+  if(b.type==="image"){
+    body.append(imageField(b,"src","Перетащи или загрузи картинку"));
+    const cap=el(`<div class="cap"></div>`);cap.append(bLine(b,"caption","Подпись под картинкой"));
+    body.append(cap);
+    const sz=el(`<div class="imgtools"></div>`);
+    [["wide","По сетке"],["full","Во всю колонку"]].forEach(([v,n])=>{
+      const btn=el(`<button class="mini">${n}</button>`);
+      if((b.size||"wide")===v)btn.style.color="var(--text)",btn.style.background="var(--hover2)";
+      btn.onclick=()=>{b.size=v;mark();redraw()};sz.append(btn);
+    });
+    body.append(sz);
+  }
+  if(b.type==="gallery"){
+    const g=el(`<div class="grid2"></div>`);
+    g.style.gridTemplateColumns=`repeat(${b.columns||2},1fr)`;
+    (b.images||[]).forEach((src,j)=>{
+      const c=el(`<div class="imgbox"><img src="${src}" alt=""></div>`);
+      const x=el(`<button class="mini danger" style="position:absolute;top:6px;right:6px">✕</button>`);
+      x.onclick=()=>{b.images.splice(j,1);mark();redraw()};c.append(x);g.append(c);
+    });
+    body.append(g);
+    const tools=el(`<div class="imgtools"></div>`);
+    const up=el(`<button class="mini">＋ Картинка</button>`);
+    up.onclick=()=>{const i=document.createElement("input");i.type="file";i.accept="image/*";
+      i.onchange=async()=>{const f=i.files[0];if(!f)return;toast("Загрузка…");
+        try{b.images=[...(b.images||[]),await upload(f)];mark();redraw();toast("Загружено")}catch(e){toast("Нужен токен","err")}};i.click()};
+    const cols=el(`<button class="mini">Колонок: ${b.columns||2}</button>`);
+    cols.onclick=()=>{b.columns=(b.columns||2)%3+1;mark();redraw()};
+    tools.append(up,cols);body.append(tools);
+    const cap=el(`<div class="cap"></div>`);cap.append(bLine(b,"caption","Подпись"));body.append(cap);
+  }
+  if(kind)node.title="";
+  return node;
+}
+function openSlashAt(rect,onPick){
+  const m=$("#slash");slashSel=0;
+  m.innerHTML=`<div class="gh">Блоки</div>`;
+  BLOCKS.forEach(([k,n,d,ic],i)=>{
+    const it=el(`<div class="mi${i===0?" sel":""}"><div class="mic">${ic}</div><div><div class="mn">${n}</div><div class="md">${d}</div></div></div>`);
+    it.onmousedown=e=>{e.preventDefault();onPick(k);closeMenus()};
+    m.append(it);
+  });
+  m.style.left=Math.min(rect.left,innerWidth-340)+"px";
+  m.style.top=Math.min(rect.bottom+6,innerHeight-350)+"px";
+  m.classList.add("on");
+}
+function ctxMenu(rect,list,i,redraw){
+  const m=$("#ctx");m.innerHTML="";
+  const item=(ic,name,fn)=>{const it=el(`<div class="mi"><div class="mic">${ic}</div><div class="mn">${name}</div></div>`);
+    it.onmousedown=e=>{e.preventDefault();fn();closeMenus()};m.append(it)};
+  item("🗑","Удалить",()=>{list.splice(i,1);mark();redraw()});
+  item("⧉","Дублировать",()=>{list.splice(i+1,0,JSON.parse(JSON.stringify(list[i])));mark();redraw()});
+  item("↑","Вверх",()=>{if(i>0){[list[i-1],list[i]]=[list[i],list[i-1]];mark();redraw()}});
+  item("↓","Вниз",()=>{if(i<list.length-1){[list[i+1],list[i]]=[list[i],list[i+1]];mark();redraw()}});
+  m.append(el(`<div class="gh">Превратить в</div>`));
+  BLOCKS.forEach(([k,n,,ic])=>item(ic,n,()=>{list[i]={...newBlock(k),...{}};mark();redraw()}));
+  m.style.left=Math.min(rect.left,innerWidth-230)+"px";
+  m.style.top=Math.min(rect.bottom+6,innerHeight-320)+"px";
+  m.classList.add("on");
+}
+
+/* ---------- pages ---------- */
+const PAGES={
+  site:{icon:"🏠",name:"Сайт и шапка",render:()=>{
+    const s=C.site,out=[];
+    out.push(el(`<div class="h1">Сайт и шапка</div>`),el(`<div class="sub">Контакты и кнопки в шапке сайта</div>`));
+    const p=el(`<div class="props"></div>`);
+    p.append(prop("👤","Имя",line(()=>s.name,v=>s.name=v)),
+      prop("✉","Email",line(()=>s.email,v=>s.email=v)),
+      prop("📄","Ссылка на резюме",line(()=>s.cvUrl,v=>s.cvUrl=v)),
+      prop("✈","Telegram",line(()=>s.telegram,v=>s.telegram=v)));
+    out.push(p,el(`<div class="sub" style="margin:8px 0 6px">Аватар</div>`),imageField(s,"avatar"));
+    out.push(el(`<div class="sub" style="margin:26px 0 6px">Ссылки в меню</div>`));
+    const lp=el(`<div class="props"></div>`);
+    s.links.forEach((l,i)=>{
+      const row=el(`<div class="prop"><div class="k"><span class="ic">🔗</span></div><div class="v" style="display:flex;gap:8px"></div></div>`);
+      $(".v",row).append(line(()=>l.label,v=>l.label=v,"Название"),line(()=>l.href,v=>l.href=v,"URL"));
+      const x=el(`<button class="mini danger">✕</button>`);x.onclick=()=>{s.links.splice(i,1);mark();draw()};
+      $(".v",row).append(x);lp.append(row);
+    });
+    const a=el(`<div class="addblock">＋ Ссылка</div>`);a.onclick=()=>{s.links.push({label:"",href:"#"});mark();draw()};
+    out.push(lp,a);return out;
+  }},
+  hero:{icon:"⭐",name:"Главный экран",render:()=>{
+    const h=C.hero,out=[];
+    out.push(el(`<div class="h1">Главный экран</div>`),el(`<div class="sub">Заголовок, описание и фон первого экрана</div>`));
+    const t=bArea(h,"title","Заголовок");t.className="";t.style.fontSize="30px";t.style.fontWeight="600";t.style.color="#fff";
+    out.push(t,bArea(h,"intro","Описание справа"));
+    out.push(el(`<div class="sub" style="margin:26px 0 6px">Фоновое видео</div>`),imageField(h,"video"));
+    out.push(el(`<div class="sub" style="margin:22px 0 6px">Постер (первый кадр)</div>`),imageField(h,"poster"));
+    out.push(el(`<div class="sub" style="margin:26px 0 6px">Нижняя навигация</div>`));
+    const p=el(`<div class="props"></div>`);
+    p.append(prop("→","Опыт",bLine(h.nav,"experience")),prop("→","Работы",bLine(h.nav,"works")),prop("→","Обо мне",bLine(h.nav,"about")));
+    out.push(p);return out;
+  }},
+  experience:{icon:"💼",name:"Опыт",render:()=>{
+    const e=C.experience,out=[];
+    out.push(el(`<div class="h1">Опыт</div>`));
+    out.push(prop("H","Заголовок секции",bLine(e,"heading")),bArea(e,"text","Текст под карточками"));
+    out.push(el(`<div class="sub" style="margin:26px 0 8px">Карточки</div>`));
+    e.items.forEach((it,i)=>{
+      const card=el(`<div class="b" style="padding:10px 12px;background:rgba(255,255,255,.03);border-radius:6px;margin-bottom:8px"></div>`);
+      const head=el(`<div style="display:flex;gap:8px;align-items:center;margin-bottom:6px"></div>`);
+      const up=el(`<button class="mini">↑</button>`),dn=el(`<button class="mini">↓</button>`),rm=el(`<button class="mini danger">✕</button>`);
+      up.onclick=()=>{if(i>0){[e.items[i-1],e.items[i]]=[e.items[i],e.items[i-1]];mark();draw()}};
+      dn.onclick=()=>{if(i<e.items.length-1){[e.items[i+1],e.items[i]]=[e.items[i],e.items[i+1]];mark();draw()}};
+      rm.onclick=()=>{e.items.splice(i,1);mark();draw()};
+      head.append(el(`<div style="flex:1;font-size:13px;color:var(--faint)">${it.divider?"Разделитель":"Карточка "+(i+1)}</div>`),up,dn,rm);
+      card.append(head);
+      if(!it.divider){
+        const p=el(`<div class="props"></div>`);
+        p.append(prop("🏢","Компания",bLine(it,"company")),prop("👤","Роль",bLine(it,"role")),prop("📅","Период",bLine(it,"meta")));
+        const hi=el(`<button class="mini">${it.highlight?"✓ ":""}Подсветить</button>`);
+        hi.onclick=()=>{it.highlight=!it.highlight;mark();draw()};
+        const rd=el(`<button class="mini">${it.round?"✓ ":""}Круглый логотип</button>`);
+        rd.onclick=()=>{it.round=!it.round;mark();draw()};
+        const tools=el(`<div class="imgtools"></div>`);tools.append(hi,rd);
+        card.append(p,imageField(it,"logo","Логотип"),tools);
+      }
+      out.push(card);
+    });
+    const bar=el(`<div style="display:flex;gap:8px"></div>`);
+    const a=el(`<div class="addblock">＋ Карточка</div>`);a.onclick=()=>{e.items.push({company:bi(),role:bi(),meta:bi(),logo:""});mark();draw()};
+    const d=el(`<div class="addblock">＋ Разделитель</div>`);d.onclick=()=>{e.items.push({divider:true});mark();draw()};
+    bar.append(a,d);out.push(bar);return out;
+  }},
+  works:{icon:"📁",name:"Работы",render:()=>{
+    if(CASE!=null)return caseDoc(C.cases[CASE]);
+    const out=[];
+    out.push(el(`<div class="h1">Работы</div>`),el(`<div class="sub">${C.cases.length} кейсов · нажми, чтобы открыть</div>`));
+    out.push(prop("H","Заголовок секции",bLine(C.works,"heading")));
+    const st=line(()=>String(C.works.step||4),v=>C.works.step=+v||4);
+    out.push(prop("#","Показывать по",st));
+    const list=el(`<div class="props" style="margin-top:20px"></div>`);
+    C.cases.forEach((cs,i)=>{
+      const r=el(`<div class="prop" style="cursor:pointer"><div class="k" style="width:auto;gap:9px"><span class="ic">📄</span><span style="color:var(--text)">${cs.title||"Без названия"}</span></div><div class="v" style="text-align:right;color:var(--faint);font-size:13px">${(cs.blocks||[]).length} блоков</div></div>`);
+      r.onclick=()=>{CASE=i;draw()};list.append(r);
+    });
+    out.push(list);
+    const a=el(`<div class="addblock">＋ Новый кейс</div>`);
+    a.onclick=()=>{C.cases.push({id:"case-"+Date.now(),title:"Новый кейс",cover:"",metrics:[],intro:bi(),cta:{label:bi(),href:"#"},meta:[],blocks:[newBlock("section"),newBlock("paragraph")]});mark();CASE=C.cases.length-1;draw()};
+    out.push(a);return out;
+  }},
+  about:{icon:"🙂",name:"Обо мне",render:()=>{
+    const a=C.about,out=[];
+    out.push(el(`<div class="h1">Обо мне</div>`));
+    out.push(prop("H","Заголовок секции",bLine(a,"heading")));
+    out.push(bArea(a,"p1","Абзац 1"),bArea(a,"p2","Абзац 2"),bArea(a,"p3","Абзац 3"));
+    out.push(el(`<div class="sub" style="margin:26px 0 8px">Фото в колесе</div>`));
+    a.photos.forEach((ph,i)=>{
+      const card=el(`<div style="padding:10px 12px;background:rgba(255,255,255,.03);border-radius:6px;margin-bottom:8px"></div>`);
+      const head=el(`<div style="display:flex;gap:8px;align-items:center;margin-bottom:6px"></div>`);
+      const fmt=el(`<button class="mini">${ph.tall?"3:4 вертикальное":"4:3 горизонтальное"}</button>`);
+      fmt.onclick=()=>{ph.tall=!ph.tall;mark();draw()};
+      const rm=el(`<button class="mini danger">✕</button>`);rm.onclick=()=>{a.photos.splice(i,1);mark();draw()};
+      head.append(el(`<div style="flex:1;font-size:13px;color:var(--faint)">Фото ${i+1}</div>`),fmt,rm);
+      card.append(head,imageField(ph,"src"));out.push(card);
+    });
+    const add=el(`<div class="addblock">＋ Фото</div>`);add.onclick=()=>{a.photos.push({src:"",tall:false});mark();draw()};
+    out.push(add);return out;
+  }},
+  footer:{icon:"⬇",name:"Подвал",render:()=>{
+    const out=[el(`<div class="h1">Подвал</div>`)];
+    const p=el(`<div class="props"></div>`);
+    p.append(prop("←","Слева",bLine(C.footer,"made")),prop("→","Справа",bLine(C.footer,"location")));
+    out.push(p);return out;
+  }},
+  ui:{icon:"🔤",name:"Кнопки и подписи",render:()=>{
+    const out=[el(`<div class="h1">Кнопки и подписи</div>`),el(`<div class="sub">Короткие строки интерфейса</div>`)];
+    const p=el(`<div class="props"></div>`);
+    Object.keys(C.ui).forEach(k=>p.append(prop("·",k,bLine(C.ui,k))));
+    out.push(p);return out;
+  }},
+  settings:{icon:"⚙",name:"Настройки",render:()=>{
+    const out=[el(`<div class="h1">Настройки</div>`)];
+    out.push(el(`<div class="hint">Токен хранится только в этом браузере. Нужен доступ <b>Contents: Read and write</b> к репозиторию ${REPO}. <a href="https://github.com/settings/personal-access-tokens/new" target="_blank">Создать токен ↗</a></div>`));
+    const p=el(`<div class="props" style="margin-top:16px"></div>`);
+    const inp=el(`<input type="password" placeholder="github_pat_..." autocomplete="off">`);
+    inp.value=token();
+    inp.oninput=()=>{localStorage.setItem("gh-token",inp.value.trim());$("#st").className="st"+(inp.value.trim()?" ok":"")};
+    p.append(prop("🔑","GitHub токен",inp));
+    const rm=el(`<button class="mini danger">Удалить токен</button>`);rm.onclick=()=>{localStorage.removeItem("gh-token");location.reload()};
+    out.push(p,rm);return out;
+  }},
 };
 
-function caseEditor(cs) {
-  const out = [];
-  const c = el(`<div class="card"><h3>Кейс</h3></div>`);
-  c.append(fText("Название", cs, "title"), fImage("Обложка", cs, "cover"), fBiText("Описание (под заголовком)", cs, "intro", true));
-  const m = el(`<label class="f"><span>Метрики через запятую (AWARD, +20% CTR)</span><input></label>`);
-  m.querySelector("input").value = (cs.metrics || []).join(", ");
-  m.querySelector("input").oninput = (ev) => { cs.metrics = ev.target.value.split(",").map(s => s.trim()).filter(Boolean); mark() };
-  c.append(m);
-  const cta = el(`<div class="row"></div>`);
-  cta.append(fBiText("Кнопка", cs.cta, "label"), fText("Ссылка кнопки", cs.cta, "href"));
-  c.append(cta);
-  out.push(c);
+function caseDoc(cs){
+  const out=[];
+  const title=area(()=>cs.title,v=>cs.title=v,"Без названия");
+  title.style.cssText="font-size:40px;font-weight:700;color:#fff;line-height:1.2";
+  out.push(title);
+  const p=el(`<div class="props"></div>`);
+  const metrics=line(()=>(cs.metrics||[]).join(", "),v=>cs.metrics=v.split(",").map(s=>s.trim()).filter(Boolean),"AWARD, +20% CTR");
+  p.append(prop("🏷","Метрики",metrics),prop("🔗","Кнопка",bLine(cs.cta,"label")),prop("↗","Ссылка кнопки",line(()=>cs.cta.href,v=>cs.cta.href=v)));
+  out.push(p);
+  out.push(el(`<div class="sub" style="margin:14px 0 6px">Обложка</div>`),imageField(cs,"cover"));
+  out.push(el(`<div class="sub" style="margin:22px 0 4px">Описание</div>`),bArea(cs,"intro","Короткое описание под заголовком"));
 
-  const mt = el(`<div class="card"><h3>Мета (роль, сроки, платформа)</h3></div>`);
-  mt.append(listEditor(cs.meta, (it, row) => { row.append(fBiText("Название", it, "k"), fBiText("Значение", it, "v")) },
-    () => ({ k: { en: "", ru: "" }, v: { en: "", ru: "" } }), "Поля"));
-  out.push(mt);
-
-  const bl = el(`<div class="card"><h3>Содержание</h3></div>`);
-  bl.append(listEditor(cs.blocks, (b, row) => {
-    row.querySelector(".bt").textContent = (BLOCK_KINDS.find(k => k[0] === b.type) || [, b.type])[1];
-    if (b.type === "section") row.append(fBiText("Подпись раздела", b, "name"), fBiText("Заголовок", b, "title", true));
-    if (b.type === "subheading") row.append(fBiText("Текст", b, "text"));
-    if (b.type === "paragraph") row.append(fBiText("Текст (**жирный**, *курсив*, ==выделение==)", b, "text", true));
-    if (b.type === "callout") row.append(fText("Иконка", b, "icon"), fBiText("Текст", b, "text", true));
-    if (b.type === "quote") row.append(fBiText("Цитата", b, "text", true), fBiText("Автор", b, "author"), fText("Ссылка", b, "href"));
-    if (b.type === "columns") row.append(fBiText("Левая колонка", b, "left", true), fBiText("Правая колонка", b, "right", true));
-    if (b.type === "list") {
-      row.append(fBiText("Вводная строка", b, "title"));
-      row.append(listEditor(b.items, (it, r2) => {
-        const holder = { v: it };
-        r2.append(fBiText("Пункт", holder, "v", true));
-        // keep the array reference in sync
-        const inp = r2.querySelector("input,textarea");
-        inp.addEventListener("input", () => { b.items[b.items.indexOf(it)] = holder.v });
-      }, () => ({ en: "", ru: "" }), "Пункты"));
-    }
-    if (b.type === "metrics") {
-      row.append(listEditor(b.items, (it, r2) => { r2.append(fBiText("Значение", it, "value"), fBiText("Подпись", it, "label")) },
-        () => ({ value: { en: "", ru: "" }, label: { en: "", ru: "" } }), "Метрики"));
-    }
-    if (b.type === "image") {
-      row.append(fImage("Картинка", b, "src"), fBiText("Подпись", b, "caption"));
-      const sz = el(`<label class="f"><span>Ширина</span><select><option value="wide">по сетке</option><option value="full">во всю колонку</option></select></label>`);
-      sz.querySelector("select").value = b.size || "wide";
-      sz.querySelector("select").onchange = (ev) => { b.size = ev.target.value; mark() };
-      row.append(sz);
-    }
-    if (b.type === "gallery") {
-      const g = el(`<label class="f"><span>Пути к картинкам, по одному в строке</span><textarea></textarea></label>`);
-      g.querySelector("textarea").value = (b.images || []).join("\n");
-      g.querySelector("textarea").oninput = (ev) => { b.images = ev.target.value.split("\n").map(s => s.trim()).filter(Boolean); mark() };
-      const cols = el(`<label class="f"><span>Колонок</span><input type="number" min="1" max="4"></label>`);
-      cols.querySelector("input").value = b.columns || 2;
-      cols.querySelector("input").oninput = (ev) => { b.columns = +ev.target.value || 2; mark() };
-      row.append(g, cols, fBiText("Подпись", b, "caption"));
-    }
-  }, () => newBlock("paragraph"), "Блоки"));
-
-  const bar = el(`<div class="addbar"></div>`);
-  BLOCK_KINDS.forEach(([k, name]) => {
-    const b = el(`<button>+ ${name}</button>`);
-    b.onclick = () => { cs.blocks.push(newBlock(k)); mark(); render() };
-    bar.append(b);
+  out.push(el(`<div class="sub" style="margin:26px 0 6px">Мета</div>`));
+  const mp=el(`<div class="props"></div>`);
+  cs.meta.forEach((m,i)=>{
+    const row=el(`<div class="prop"><div class="k" style="width:180px"></div><div class="v" style="display:flex;gap:8px"></div></div>`);
+    $(".k",row).append(bLine(m,"k","Название"));
+    const x=el(`<button class="mini danger">✕</button>`);x.onclick=()=>{cs.meta.splice(i,1);mark();draw()};
+    $(".v",row).append(bLine(m,"v","Значение"),x);mp.append(row);
   });
-  bl.append(bar);
-  out.push(bl);
+  const ma=el(`<div class="addblock">＋ Поле</div>`);ma.onclick=()=>{cs.meta.push({k:bi(),v:bi()});mark();draw()};
+  out.push(mp,ma);
 
-  const del = el(`<div class="card"></div>`);
-  const db = el(`<button class="mini danger">Удалить кейс</button>`);
-  db.onclick = () => { if (confirm("Удалить кейс?")) { C.cases.splice(editing, 1); editing = null; mark(); render() } };
-  del.append(db); out.push(del);
+  out.push(el(`<div class="sub" style="margin:30px 0 8px">Содержание</div>`));
+  const wrap=el(`<div class="blocks"></div>`);
+  cs.blocks.forEach((b,i)=>wrap.append(blockNode(cs.blocks,i,draw)));
+  out.push(wrap);
+  const add=el(`<div class="addblock">＋ Блок · нажми или напиши «/» в тексте</div>`);
+  add.onclick=()=>{const r=add.getBoundingClientRect();openSlashAt(r,k=>{cs.blocks.push(newBlock(k));mark();draw()})};
+  out.push(add);
+
+  const del=el(`<div style="margin-top:40px"><button class="mini danger">Удалить кейс</button></div>`);
+  $("button",del).onclick=()=>{if(confirm("Удалить кейс?")){C.cases.splice(CASE,1);CASE=null;mark();draw()}};
+  out.push(del);
   return out;
 }
 
 /* ---------- shell ---------- */
-function render() {
-  $("#view").innerHTML = "";
-  const titles = { site: "Сайт и шапка", hero: "Главный экран", experience: "Опыт", works: editing != null ? "Кейс" : "Работы", about: "Обо мне", footer: "Подвал", ui: "Кнопки и подписи", settings: "Настройки" };
-  $("#title").textContent = titles[V] || V;
-  $("#back").style.display = (V === "works" && editing != null) ? "" : "none";
-  document.querySelectorAll(".navbtn").forEach(b => b.classList.toggle("active", b.dataset.v === V));
-  if (!C) { $("#view").append(el(`<div class="card">Загрузка…</div>`)); return }
-  (views[V]() || []).forEach(n => $("#view").append(n));
+function drawNav(){
+  const nav=$("#nav");nav.innerHTML="";
+  ["site","hero","experience","works","about","footer","ui"].forEach(k=>{
+    const pg=PAGES[k];
+    const it=el(`<div class="item${P===k&&CASE==null?" on":""}"><span class="ic">${pg.icon}</span><span class="lbl">${pg.name}</span></div>`);
+    it.onclick=()=>{P=k;CASE=null;draw()};
+    nav.append(it);
+    if(k==="works"&&C){
+      C.cases.forEach((cs,i)=>{
+        const s=el(`<div class="item sub${P==="works"&&CASE===i?" on":""}"><span class="ic">📄</span><span class="lbl">${cs.title||"Без названия"}</span></div>`);
+        s.onclick=()=>{P="works";CASE=i;draw()};nav.append(s);
+      });
+    }
+  });
 }
-
-$("#back").onclick = () => { editing = null; render() };
-document.querySelectorAll(".navbtn[data-v]").forEach(b => b.onclick = () => { V = b.dataset.v; editing = null; render() });
-document.querySelectorAll(".langsw button").forEach(b => b.onclick = () => {
-  L = b.dataset.l; localStorage.setItem("cms-lang", L);
-  document.querySelectorAll(".langsw button").forEach(x => x.classList.toggle("on", x.dataset.l === L));
-  render();
+function drawCrumbs(){
+  const c=$("#crumbs");c.innerHTML="";
+  const pg=PAGES[P];
+  if(P==="works"&&CASE!=null){
+    const b=el(`<button>Работы</button>`);b.onclick=()=>{CASE=null;draw()};
+    c.append(b,el(`<span class="sep">/</span>`),el(`<b>${C.cases[CASE]?.title||""}</b>`));
+  } else c.append(el(`<b>${pg?.name||""}</b>`));
+}
+function draw(){
+  drawNav();drawCrumbs();
+  const page=$("#page");page.innerHTML="";
+  if(!C){page.append(el(`<div class="hint">Загрузка…</div>`));return}
+  (PAGES[P].render()||[]).forEach(n=>page.append(n));
+  page.querySelectorAll("textarea").forEach(grow);
+}
+document.querySelectorAll(".item[data-p]").forEach(b=>b.onclick=()=>{P=b.dataset.p;CASE=null;draw()});
+document.querySelectorAll("#seg button").forEach(b=>b.onclick=()=>{
+  L=b.dataset.l;localStorage.setItem("cms-lang",L);
+  document.querySelectorAll("#seg button").forEach(x=>x.classList.toggle("on",x.dataset.l===L));
+  draw();
 });
-
-$("#publish").onclick = async () => {
-  if (!token()) { toast("Нужен токен — вкладка Настройки", "err"); return }
-  $("#publish").disabled = true;
-  try {
-    const cur = await api("contents/public/content.json?ref=" + BRANCH).catch(() => null);
-    const body = {
-      message: "cms: update content",
-      content: btoa(unescape(encodeURIComponent(JSON.stringify(C, null, 2)))),
-      branch: BRANCH,
-      ...(cur && cur.sha ? { sha: cur.sha } : {}),
-    };
-    await api("contents/public/content.json", { method: "PUT", body: JSON.stringify(body) });
-    dirty = false; $("#publish").classList.remove("dirty");
-    toast("Опубликовано — сборка займёт ~минуту");
-  } catch (e) { toast("Ошибка публикации", "err"); console.error(e) }
-  $("#publish").disabled = false;
+$("#pub").onclick=async()=>{
+  if(!dirty){toast("Нет изменений");return}
+  if(!token()){P="settings";CASE=null;draw();toast("Сначала добавь токен","err");return}
+  const b=$("#pub");b.disabled=true;b.textContent="Публикую…";
+  try{
+    const cur=await api("contents/public/content.json?ref="+BRANCH).catch(()=>null);
+    await api("contents/public/content.json",{method:"PUT",body:JSON.stringify({
+      message:"cms: update content",
+      content:btoa(unescape(encodeURIComponent(JSON.stringify(C,null,2)))),
+      branch:BRANCH,...(cur?.sha?{sha:cur.sha}:{})
+    })});
+    dirty=false;b.textContent="Опубликовано";b.classList.add("clean");
+    toast("Опубликовано · сборка займёт ~минуту");
+  }catch(e){toast("Ошибка публикации","err");console.error(e);b.textContent="Опубликовать"}
+  b.disabled=false;
 };
+addEventListener("beforeunload",e=>{if(dirty){e.preventDefault();e.returnValue=""}});
 
-window.addEventListener("beforeunload", (e) => { if (dirty) { e.preventDefault(); e.returnValue = "" } });
-
-(async function init() {
-  document.querySelectorAll(".langsw button").forEach(x => x.classList.toggle("on", x.dataset.l === L));
-  $("#dot").className = "dot" + (token() ? "" : " gray");
-  try {
-    const r = await fetch("./content.json?" + Date.now());
-    C = await r.json();
-  } catch (e) { toast("Не удалось загрузить content.json", "err"); C = {} }
-  render();
+(async function init(){
+  document.querySelectorAll("#seg button").forEach(x=>x.classList.toggle("on",x.dataset.l===L));
+  $("#st").className="st"+(token()?" ok":"");
+  try{C=await(await fetch("./content.json?"+Date.now())).json()}
+  catch(e){toast("Не удалось загрузить content.json","err");C=null}
+  draw();
 })();
 </script>
 </body>
