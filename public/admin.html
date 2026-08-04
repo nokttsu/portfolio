@@ -111,7 +111,8 @@ input,textarea{font:inherit;color:var(--text);background:none;border:none;width:
 .imgbox img{max-width:100%;max-height:260px;display:block;object-fit:contain}
 .imgbox .empty{width:100%;height:132px;display:grid;place-items:center;align-content:center;color:var(--faint);font-size:14px;gap:6px}
 .grid2 .imgbox img{width:100%;aspect-ratio:16/9;object-fit:cover}
-.imgtools{display:flex;gap:6px;margin-top:6px}
+.imgtools{display:flex;gap:8px;align-items:center;margin-top:6px;flex-wrap:wrap}
+.spec{font-size:12px;color:var(--faint);line-height:1.4}
 .cap input{font-size:13px;color:var(--dim);text-align:center}
 .grid2{display:grid;gap:8px}
 .mini{font-size:13px;color:var(--dim);padding:4px 8px;border-radius:4px;background:rgba(255,255,255,.055)}
@@ -234,7 +235,7 @@ function prop(icon,label,node){
   const r=el(`<div class="prop"><div class="k"><span class="ic">${icon}</span><span>${label}</span></div><div class="v"></div></div>`);
   $(".v",r).append(node);return r;
 }
-function imageField(obj,key,label){
+function imageField(obj,key,label,spec){
   const wrap=el(`<div></div>`);
   const draw=()=>{
     wrap.innerHTML="";
@@ -252,6 +253,7 @@ function imageField(obj,key,label){
     const path=line(()=>obj[key],v=>obj[key]=v,"/img/...");
     path.style.fontSize="13px";
     tools.append(up);
+    if(spec)tools.append(el(`<div class="spec">${spec}</div>`));
     wrap.append(box,tools,prop("🔗","Путь",path));
     $(".prop",wrap).style.marginTop="2px";
   };
@@ -432,7 +434,7 @@ function blockNode(list,i,redraw){
     body.append(a);
   }
   if(b.type==="image"){
-    body.append(imageField(b,"src","Перетащи или загрузи картинку"));
+    body.append(imageField(b,"src","Перетащи или загрузи картинку","JPG или PNG · 16:9 · 1920×1080"));
     const cap=el(`<div class="cap"></div>`);cap.append(bLine(b,"caption","Подпись под картинкой"));
     body.append(cap);
     const sz=el(`<div class="imgtools"></div>`);
@@ -502,7 +504,7 @@ const PAGES={
       prop("✉","Email",line(()=>s.email,v=>s.email=v)),
       prop("📄","Ссылка на резюме",line(()=>s.cvUrl,v=>s.cvUrl=v)),
       prop("✈","Telegram",line(()=>s.telegram,v=>s.telegram=v)));
-    out.push(p,el(`<div class="sub" style="margin:8px 0 6px">Аватар</div>`),imageField(s,"avatar"));
+    out.push(p,el(`<div class="sub" style="margin:8px 0 6px">Аватар</div>`),imageField(s,"avatar","Аватар","JPG или PNG · квадрат 1:1 · от 160×160"));
     out.push(el(`<div class="sub" style="margin:26px 0 6px">Ссылки в меню</div>`));
     const lp=el(`<div class="props"></div>`);
     s.links.forEach((l,i)=>{
@@ -519,8 +521,8 @@ const PAGES={
     out.push(el(`<div class="h1">Главный экран</div>`),el(`<div class="sub">Заголовок, описание и фон первого экрана</div>`));
     const t=bArea(h,"title","Заголовок");t.className="";t.style.fontSize="30px";t.style.fontWeight="600";t.style.color="#fff";
     out.push(t,bArea(h,"intro","Описание справа"));
-    out.push(el(`<div class="sub" style="margin:26px 0 6px">Фоновое видео</div>`),imageField(h,"video"));
-    out.push(el(`<div class="sub" style="margin:22px 0 6px">Постер (первый кадр)</div>`),imageField(h,"poster"));
+    out.push(el(`<div class="sub" style="margin:26px 0 6px">Фоновое видео</div>`),imageField(h,"video","Видео","MP4 (H.264), без звука · 16:9 · 1920×1080 · до ~10 МБ"));
+    out.push(el(`<div class="sub" style="margin:22px 0 6px">Постер (первый кадр)</div>`),imageField(h,"poster","Постер","JPG или PNG · 16:9 · 1920×1080 · первый кадр видео"));
     out.push(el(`<div class="sub" style="margin:26px 0 6px">Нижняя навигация</div>`));
     const p=el(`<div class="props"></div>`);
     p.append(prop("→","Опыт",bLine(h.nav,"experience")),prop("→","Работы",bLine(h.nav,"works")),prop("→","Обо мне",bLine(h.nav,"about")));
@@ -548,7 +550,7 @@ const PAGES={
         const rd=el(`<button class="mini">${it.round?"✓ ":""}Круглый логотип</button>`);
         rd.onclick=()=>{it.round=!it.round;mark();draw()};
         const tools=el(`<div class="imgtools"></div>`);tools.append(hi,rd);
-        card.append(p,imageField(it,"logo","Логотип"),tools);
+        card.append(p,imageField(it,"logo","Логотип","SVG или PNG с прозрачным фоном · квадрат 1:1 · от 64×64"),tools);
       }
       out.push(card);
     });
@@ -587,7 +589,7 @@ const PAGES={
       fmt.onclick=()=>{ph.tall=!ph.tall;mark();draw()};
       const rm=el(`<button class="mini danger">✕</button>`);rm.onclick=()=>{a.photos.splice(i,1);mark();draw()};
       head.append(el(`<div style="flex:1;font-size:13px;color:var(--faint)">Фото ${i+1}</div>`),fmt,rm);
-      card.append(head,imageField(ph,"src"));out.push(card);
+      card.append(head,imageField(ph,"src","Фото","JPG · горизонтальное 4:3 (1600×1200) или вертикальное 3:4 (1200×1600)"));out.push(card);
     });
     const add=el(`<div class="addblock">＋ Фото</div>`);add.onclick=()=>{a.photos.push({src:"",tall:false});mark();draw()};
     out.push(add);return out;
@@ -626,7 +628,7 @@ function caseDoc(cs){
   const metrics=line(()=>(cs.metrics||[]).join(", "),v=>cs.metrics=v.split(",").map(s=>s.trim()).filter(Boolean),"AWARD, +20% CTR");
   p.append(prop("🏷","Метрики",metrics),prop("🔗","Кнопка",bLine(cs.cta,"label")),prop("↗","Ссылка кнопки",line(()=>cs.cta.href,v=>cs.cta.href=v)));
   out.push(p);
-  out.push(el(`<div class="sub" style="margin:14px 0 6px">Обложка</div>`),imageField(cs,"cover"));
+  out.push(el(`<div class="sub" style="margin:14px 0 6px">Обложка</div>`),imageField(cs,"cover","Обложка","JPG или PNG · 16:9 · 1920×1080"));
   out.push(el(`<div class="sub" style="margin:22px 0 4px">Описание</div>`),bArea(cs,"intro","Короткое описание под заголовком"));
 
   out.push(el(`<div class="sub" style="margin:26px 0 6px">Мета</div>`));
