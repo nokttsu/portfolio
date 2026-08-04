@@ -21,6 +21,7 @@ export default function WorksTable({ onOpenCase, rows = [] }) {
 
     const rowEls = [...table.querySelectorAll('.wt-row')]
     const cleanups = []
+    let shown = false // is the hover preview currently up?
 
     const moveThumb = (e) => {
       const r = table.getBoundingClientRect()
@@ -41,12 +42,15 @@ export default function WorksTable({ onOpenCase, rows = [] }) {
         const img = thumb.querySelector('img')
         img.src = row.dataset.cover
         gsap.to(thumb, { autoAlpha: 1, scale: 1, duration: 0.3, ease: 'back.out(2)' })
+        shown = true
       }
       row.addEventListener('mouseenter', enter)
       cleanups.push(() => row.removeEventListener('mouseenter', enter))
     })
 
     const leave = () => {
+      if (!shown) return
+      shown = false
       gsap.to(hl, { autoAlpha: 0, duration: 0.3, ease: 'power2.out' })
       gsap.to(thumb, { autoAlpha: 0, scale: 0.8, duration: 0.25, ease: 'power2.in' })
     }
@@ -54,6 +58,20 @@ export default function WorksTable({ onOpenCase, rows = [] }) {
     table.addEventListener('mouseleave', leave)
     cleanups.push(() => table.removeEventListener('mousemove', moveThumb))
     cleanups.push(() => table.removeEventListener('mouseleave', leave))
+
+    // `mouseleave` on the table can be missed (fast exits, overlapping controls),
+    // which left the preview hanging in mid-air — so also watch the pointer
+    // globally and hide as soon as it isn't over this table any more.
+    const onDocMove = (e) => {
+      const inside = e.target instanceof Element && table.contains(e.target)
+      if (inside) shown = true
+      else leave()
+    }
+    const onWinBlur = () => leave()
+    document.addEventListener('pointermove', onDocMove, true)
+    window.addEventListener('blur', onWinBlur)
+    cleanups.push(() => document.removeEventListener('pointermove', onDocMove, true))
+    cleanups.push(() => window.removeEventListener('blur', onWinBlur))
 
     return () => cleanups.forEach((fn) => fn())
   }, [rows])
