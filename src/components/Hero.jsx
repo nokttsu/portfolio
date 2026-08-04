@@ -7,7 +7,8 @@ import { useLang } from '../i18n.jsx'
 gsap.registerPlugin(ScrollToPlugin)
 
 export default function Hero() {
-  const { t } = useLang()
+  const { content, tr } = useLang()
+  const hero = content.hero
 
   const scrollTo = (e, target) => {
     e.preventDefault()
@@ -22,8 +23,8 @@ export default function Hero() {
     <section className="hero" id="top">
       <video
         className="hero__bg"
-        src={asset('/img/hero.mp4')}
-        poster={asset('/img/hero.png')}
+        src={asset(hero.video)}
+        poster={asset(hero.poster)}
         autoPlay
         muted
         loop
@@ -32,16 +33,17 @@ export default function Hero() {
       />
 
       <div className="hero__inner" data-anim="hero-inner">
-        <MaskedHeading as="h1" className="hero__title" text={t('heroTitle')} onLoad />
+        <MaskedHeading as="h1" className="hero__title" text={tr(hero.title)} onLoad />
 
-        <p className="hero__intro" data-anim="intro">{t('heroIntro')}</p>
+        <p className="hero__intro" data-anim="intro">{tr(hero.intro)}</p>
 
         <nav className="hero__nav" data-anim="hero-nav">
-          <a href="#experience" onClick={(e) => scrollTo(e, '#experience')}>{t('navExperience')}</a>
+          <a href="#experience" onClick={(e) => scrollTo(e, '#experience')}>{tr(hero.nav.experience)}</a>
           <a href="#works" className="hero__nav-works" onClick={(e) => scrollTo(e, '#works')}>
-            {t('navWorks')}<span className="hero__nav-count">(15)</span>
+            {tr(hero.nav.works)}
+            <span className="hero__nav-count">({content.cases.length})</span>
           </a>
-          <a href="#about" onClick={(e) => scrollTo(e, '#about')}>{t('navAbout')}</a>
+          <a href="#about" onClick={(e) => scrollTo(e, '#about')}>{tr(hero.nav.about)}</a>
         </nav>
       </div>
     </section>

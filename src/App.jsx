@@ -28,6 +28,7 @@ export default function App() {
   const scope = useRef(null)
   const [caseOpen, setCaseOpen] = useState(false)
   const [caseCover, setCaseCover] = useState(null)
+  const [caseData, setCaseData] = useState(null)
   const originRef = useRef(null) // the clicked cover element
 
   useHomeAnimation(scope)
@@ -41,10 +42,11 @@ export default function App() {
   }, [caseOpen])
 
   // open the full-screen case modal; the clicked cover FLIP-expands into the hero
-  const openCase = useCallback((coverEl) => {
+  const openCase = useCallback((coverEl, data) => {
     originRef.current = coverEl
     const img = coverEl.querySelector('img')
     setCaseCover(img ? img.src : null)
+    if (data) setCaseData(data)
     const first = coverEl.getBoundingClientRect()
     setCaseOpen(true)
     lockPageScroll()
@@ -124,7 +126,7 @@ export default function App() {
 
       <Scrollbar hidden={caseOpen} />
 
-      {caseOpen && <CaseModal cover={caseCover} onClose={closeCase} />}
+      {caseOpen && <CaseModal cover={caseCover} data={caseData} onClose={closeCase} />}
     </div>
   )
 }

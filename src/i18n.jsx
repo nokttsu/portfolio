@@ -1,98 +1,38 @@
-import { createContext, useContext, useState, useCallback } from 'react'
+import { createContext, useContext, useState, useCallback, useEffect, useMemo } from 'react'
 import gsap from 'gsap'
-
-const INTRO_EN =
-  "I'm Vadim, a product designer and art director with experience across fintech, aviation, sports and media — from Aeroflot and Yandex to experimental products of my own"
-const INTRO_RU =
-  'Я Вадим, продуктовый дизайнер и арт-директор с опытом в финтехе, авиации, спорте и медиа — от Аэрофлота и Яндекса до собственных экспериментальных продуктов'
-
-const DICT = {
-  en: {
-    openCV: 'Open CV',
-    contact: 'Contact via Telegram',
-    backToTop: 'Back to top',
-    langToggle: 'Русский язык', // shows the language you can switch TO
-    email: 'nokttsu@mail.ru',
-    copied: 'Copied!',
-
-    heroTitle: 'Leaving a huuuuge digital trail and making users happy',
-    heroIntro: INTRO_EN,
-    navExperience: 'Experience',
-    navWorks: 'Works',
-    navAbout: 'About me',
-
-    experience: 'Experience',
-    roleArt: 'Art director',
-    roleSenior: 'Senior designer',
-    roleLead: 'Lead UX/UI designer',
-    currentlyAt: 'Currently at :)',
-    freelance: 'Freelance',
-    expIntro: INTRO_EN,
-
-    works: 'Works',
-    listView: 'List view',
-    tableView: 'Table view',
-    showMore: 'Show more',
-
-    about: 'About me',
-    aboutP1: `${INTRO_EN} ${INTRO_EN}`,
-    aboutP2: INTRO_EN,
-    aboutP3: `${INTRO_EN} I'm Vadim`,
-    watchPhotos: 'Watch my film photos',
-
-    madeWith: 'Made /w Claude Code',
-    location: 'Saint Petersburg, Russia',
-
-    AWARD: 'AWARD',
-    FINALIST: 'FINALIST',
-    'HONORABLE MENTION': 'HONORABLE MENTION',
-  },
-  ru: {
-    openCV: 'Открыть резюме',
-    contact: 'Написать в Telegram',
-    backToTop: 'Наверх',
-    langToggle: 'English',
-    email: 'nokttsu@mail.ru',
-    copied: 'Скопировано!',
-
-    heroTitle: 'Оставляю огро-о-омный цифровой след и делаю пользователей счастливыми',
-    heroIntro: INTRO_RU,
-    navExperience: 'Опыт',
-    navWorks: 'Работы',
-    navAbout: 'Обо мне',
-
-    experience: 'Опыт',
-    roleArt: 'Арт-директор',
-    roleSenior: 'Старший дизайнер',
-    roleLead: 'Ведущий UX/UI дизайнер',
-    currentlyAt: 'Сейчас здесь :)',
-    freelance: 'Фриланс',
-    expIntro: INTRO_RU,
-
-    works: 'Работы',
-    listView: 'Списком',
-    tableView: 'Таблицей',
-    showMore: 'Показать ещё',
-
-    about: 'Обо мне',
-    aboutP1: `${INTRO_RU} ${INTRO_RU}`,
-    aboutP2: INTRO_RU,
-    aboutP3: `${INTRO_RU} Я Вадим`,
-    watchPhotos: 'Смотреть мои плёночные фото',
-
-    madeWith: 'Сделано с Claude Code',
-    location: 'Санкт-Петербург, Россия',
-
-    AWARD: 'НАГРАДА',
-    FINALIST: 'ФИНАЛИСТ',
-    'HONORABLE MENTION': 'ПООЩРЕНИЕ',
-  },
-}
+import { DEFAULTS } from './content.js'
+import { asset } from './asset.js'
 
 const LangContext = createContext(null)
 
+// deep-merge content.json over the bundled defaults (arrays are replaced whole)
+function merge(base, over) {
+  if (Array.isArray(over)) return over
+  if (over && typeof over === 'object' && !Array.isArray(base) && typeof base === 'object') {
+    const out = { ...base }
+    for (const k of Object.keys(over)) out[k] = merge(base?.[k], over[k])
+    return out
+  }
+  return over === undefined ? base : over
+}
+
 export function LangProvider({ children }) {
   const [lang, setLang] = useState('en')
+  const [content, setContent] = useState(DEFAULTS)
+
+  // content.json is written by admin.html; fall back to the bundled defaults
+  useEffect(() => {
+    let alive = true
+    fetch(asset('/content.json'), { cache: 'no-cache' })
+      .then((r) => (r.ok ? r.json() : null))
+      .then((json) => {
+        if (alive && json) setContent(merge(DEFAULTS, json))
+      })
+      .catch(() => {})
+    return () => {
+      alive = false
+    }
+  }, [])
 
   // translate the site with a quick fade while the text swaps
   const toggleLang = useCallback(() => {
@@ -108,13 +48,18 @@ export function LangProvider({ children }) {
       .to(el, { autoAlpha: 1, duration: 0.4, ease: 'power2.out' }, '+=0.03')
   }, [])
 
-  const t = useCallback((key) => (DICT[lang] && DICT[lang][key]) ?? key, [lang])
+  const value = useMemo(() => {
+    // resolve a bilingual field ({en, ru}) or pass a plain string through
+    const tr = (field) => {
+      if (field == null) return ''
+      if (typeof field === 'string') return field
+      return field[lang] ?? field.en ?? ''
+    }
+    const t = (key) => tr(content.ui?.[key]) || key
+    return { lang, toggleLang, content, t, tr }
+  }, [lang, content, toggleLang])
 
-  return (
-    <LangContext.Provider value={{ lang, t, toggleLang }}>
-      {children}
-    </LangContext.Provider>
-  )
+  return <LangContext.Provider value={value}>{children}</LangContext.Provider>
 }
 
 export function useLang() {

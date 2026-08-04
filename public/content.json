@@ -1,0 +1,4376 @@
+{
+  "site": {
+    "name": "Vadim Prisyachev",
+    "avatar": "/img/avatar.png",
+    "email": "nokttsu@mail.ru",
+    "cvUrl": "#",
+    "telegram": "#",
+    "links": [
+      {
+        "label": "LinkedIn",
+        "href": "#"
+      },
+      {
+        "label": "Cosmos",
+        "href": "#"
+      },
+      {
+        "label": "Are.na",
+        "href": "#"
+      }
+    ]
+  },
+  "ui": {
+    "openCV": {
+      "en": "Open CV",
+      "ru": "Открыть резюме"
+    },
+    "contact": {
+      "en": "Contact via Telegram",
+      "ru": "Написать в Telegram"
+    },
+    "backToTop": {
+      "en": "Back to top",
+      "ru": "Наверх"
+    },
+    "langToggle": {
+      "en": "Русский язык",
+      "ru": "English"
+    },
+    "copied": {
+      "en": "Copied!",
+      "ru": "Скопировано!"
+    },
+    "listView": {
+      "en": "List view",
+      "ru": "Списком"
+    },
+    "tableView": {
+      "en": "Table view",
+      "ru": "Таблицей"
+    },
+    "showMore": {
+      "en": "Show more",
+      "ru": "Показать ещё"
+    },
+    "readAlso": {
+      "en": "Read also",
+      "ru": "Читайте также"
+    },
+    "close": {
+      "en": "Close",
+      "ru": "Закрыть"
+    },
+    "AWARD": {
+      "en": "AWARD",
+      "ru": "НАГРАДА"
+    },
+    "FINALIST": {
+      "en": "FINALIST",
+      "ru": "ФИНАЛИСТ"
+    },
+    "HONORABLE MENTION": {
+      "en": "HONORABLE MENTION",
+      "ru": "ПООЩРЕНИЕ"
+    }
+  },
+  "hero": {
+    "title": {
+      "en": "Leaving a huuuuge digital trail and making users happy",
+      "ru": "Оставляю огро-о-омный цифровой след и делаю пользователей счастливыми"
+    },
+    "intro": {
+      "en": "I'm Vadim, a product designer and art director with experience across fintech, aviation, sports and media — from Aeroflot and Yandex to experimental products of my own",
+      "ru": "Я Вадим, продуктовый дизайнер и арт-директор с опытом в финтехе, авиации, спорте и медиа — от Аэрофлота и Яндекса до собственных экспериментальных продуктов"
+    },
+    "video": "/img/hero.mp4",
+    "poster": "/img/hero.png",
+    "nav": {
+      "experience": {
+        "en": "Experience",
+        "ru": "Опыт"
+      },
+      "works": {
+        "en": "Works",
+        "ru": "Работы"
+      },
+      "about": {
+        "en": "About me",
+        "ru": "Обо мне"
+      }
+    }
+  },
+  "experience": {
+    "heading": {
+      "en": "Experience",
+      "ru": "Опыт"
+    },
+    "text": {
+      "en": "I'm Vadim, a product designer and art director with experience across fintech, aviation, sports and media — from Aeroflot and Yandex to experimental products of my own",
+      "ru": "Я Вадим, продуктовый дизайнер и арт-директор с опытом в финтехе, авиации, спорте и медиа — от Аэрофлота и Яндекса до собственных экспериментальных продуктов"
+    },
+    "items": [
+      {
+        "company": "Aeroflot",
+        "role": {
+          "en": "Art director",
+          "ru": "Арт-директор"
+        },
+        "meta": {
+          "en": "Currently at :)",
+          "ru": "Сейчас здесь :)"
+        },
+        "logo": "/img/exp-aeroflot.svg",
+        "highlight": true
+      },
+      {
+        "company": "Plan9",
+        "role": {
+          "en": "Senior designer",
+          "ru": "Старший дизайнер"
+        },
+        "meta": {
+          "en": "2023-2024",
+          "ru": "2023-2024"
+        },
+        "logo": "/img/exp-plan9.png",
+        "round": true
+      },
+      {
+        "divider": true
+      },
+      {
+        "company": "div.",
+        "role": {
+          "en": "Lead UX/UI designer",
+          "ru": "Ведущий UX/UI дизайнер"
+        },
+        "meta": {
+          "en": "2023-2024",
+          "ru": "2023-2024"
+        },
+        "logo": "/img/exp-div.svg"
+      },
+      {
+        "divider": true
+      },
+      {
+        "company": {
+          "en": "Freelance",
+          "ru": "Фриланс"
+        },
+        "meta": {
+          "en": "2023-2024",
+          "ru": "2023-2024"
+        }
+      }
+    ]
+  },
+  "works": {
+    "heading": {
+      "en": "Works",
+      "ru": "Работы"
+    },
+    "step": 4
+  },
+  "about": {
+    "heading": {
+      "en": "About me",
+      "ru": "Обо мне"
+    },
+    "p1": {
+      "en": "I'm Vadim, a product designer and art director with experience across fintech, aviation, sports and media — from Aeroflot and Yandex to experimental products of my own I'm Vadim, a product designer and art director with experience across fintech, aviation, sports and media — from Aeroflot and Yandex to experimental products of my own",
+      "ru": "Я Вадим, продуктовый дизайнер и арт-директор с опытом в финтехе, авиации, спорте и медиа — от Аэрофлота и Яндекса до собственных экспериментальных продуктов Я Вадим, продуктовый дизайнер и арт-директор с опытом в финтехе, авиации, спорте и медиа — от Аэрофлота и Яндекса до собственных экспериментальных продуктов"
+    },
+    "p2": {
+      "en": "I'm Vadim, a product designer and art director with experience across fintech, aviation, sports and media — from Aeroflot and Yandex to experimental products of my own",
+      "ru": "Я Вадим, продуктовый дизайнер и арт-директор с опытом в финтехе, авиации, спорте и медиа — от Аэрофлота и Яндекса до собственных экспериментальных продуктов"
+    },
+    "p3": {
+      "en": "I'm Vadim, a product designer and art director with experience across fintech, aviation, sports and media — from Aeroflot and Yandex to experimental products of my own I'm Vadim",
+      "ru": "Я Вадим, продуктовый дизайнер и арт-директор с опытом в финтехе, авиации, спорте и медиа — от Аэрофлота и Яндекса до собственных экспериментальных продуктов Я Вадим"
+    },
+    "photos": [
+      {
+        "src": "/img/about/1.jpg",
+        "tall": false
+      },
+      {
+        "src": "/img/about/2.jpg",
+        "tall": true
+      },
+      {
+        "src": "/img/about/3.jpg",
+        "tall": false
+      },
+      {
+        "src": "/img/about/4.jpg",
+        "tall": false
+      }
+    ]
+  },
+  "footer": {
+    "made": {
+      "en": "Made with Claude Code",
+      "ru": "Сделано с Claude Code"
+    },
+    "location": {
+      "en": "Saint Petersburg, Russia",
+      "ru": "Санкт-Петербург, Россия"
+    }
+  },
+  "cases": [
+    {
+      "id": "colozeo",
+      "title": "Colozeo",
+      "cover": "/img/covers/cover1.png",
+      "metrics": [
+        "AWARD",
+        "+20% CTR",
+        "+10% MAU"
+      ],
+      "intro": {
+        "en": "Colozeo turns raw match footage into scouted careers. Across two years I partnered with the team to design the scouting platform, build its design system, and craft the flows that make a player’s level legible in seconds.",
+        "ru": "Colozeo превращает сырое видео матчей в карьеры, замеченные скаутами. Два года я вместе с командой проектировал платформу, строил дизайн-систему и сценарии, где уровень игрока считывается за секунды."
+      },
+      "cta": {
+        "label": {
+          "en": "Visit live site",
+          "ru": "Открыть сайт"
+        },
+        "href": "#"
+      },
+      "meta": [
+        {
+          "k": {
+            "en": "Role",
+            "ru": "Роль"
+          },
+          "v": {
+            "en": "UX, UI Design, Design System, Creative Lead",
+            "ru": "UX, UI-дизайн, дизайн-система, креативный лид"
+          }
+        },
+        {
+          "k": {
+            "en": "Duration",
+            "ru": "Сроки"
+          },
+          "v": {
+            "en": "2 years (2023 to 2024)",
+            "ru": "2 года (2023–2024)"
+          }
+        },
+        {
+          "k": {
+            "en": "Platform",
+            "ru": "Платформа"
+          },
+          "v": {
+            "en": "Web & iOS, React, GSAP",
+            "ru": "Веб и iOS, React, GSAP"
+          }
+        }
+      ],
+      "blocks": [
+        {
+          "type": "section",
+          "name": {
+            "en": "Overview",
+            "ru": "Обзор"
+          },
+          "title": {
+            "en": "A startup inside the football industry",
+            "ru": "Стартап внутри футбольной индустрии"
+          }
+        },
+        {
+          "type": "paragraph",
+          "text": {
+            "en": "Colozeo set out to fix a broken discovery market: thousands of talented players never get seen, and scouts drown in unstructured footage. My job was to turn that ambition into a product people actually reach for — one that makes ability ==comparable and trustworthy== in a glance.",
+            "ru": "Colozeo взялся починить сломанный рынок поиска талантов: тысячи игроков остаются незамеченными, а скауты тонут в неструктурированном видео. Моя задача — превратить эту амбицию в продукт, к которому реально тянутся, где уровень игрока ==понятен и достоверен== с одного взгляда."
+          }
+        },
+        {
+          "type": "image",
+          "src": "/img/covers/cover1.png",
+          "size": "full",
+          "caption": {
+            "en": "The scouting home — level-first, evidence second.",
+            "ru": "Главный экран скаутинга — сначала уровень, потом доказательства."
+          }
+        },
+        {
+          "type": "section",
+          "name": {
+            "en": "The challenge",
+            "ru": "Задача"
+          },
+          "title": {
+            "en": "A technical product for a fragmented audience",
+            "ru": "Технический продукт для разрозненной аудитории"
+          }
+        },
+        {
+          "type": "paragraph",
+          "text": {
+            "en": "Two audiences, opposite needs. Scouts want a fast, defensible signal; players want a fair shot at being seen. Designing for both without diluting either was the core constraint.",
+            "ru": "Две аудитории с противоположными задачами. Скаутам нужен быстрый и обоснованный сигнал, игрокам — честный шанс быть замеченными. Спроектировать для обеих, не размыв ни одну, — главное ограничение."
+          }
+        },
+        {
+          "type": "subheading",
+          "text": {
+            "en": "User personas",
+            "ru": "Персоны"
+          }
+        },
+        {
+          "type": "paragraph",
+          "text": {
+            "en": "I built three personas from 14 interviews — the *time-pressed scout*, the *ambitious academy player*, and the *club analyst* — and used them to arbitrate every hard trade-off along the way.",
+            "ru": "На основе 14 интервью я собрал три персоны — *скаут в цейтноте*, *амбициозный игрок академии* и *аналитик клуба* — и через них разрешал каждый сложный компромисс."
+          }
+        },
+        {
+          "type": "image",
+          "src": "/img/about/2.jpg",
+          "size": "wide",
+          "caption": {
+            "en": "Persona synthesis from interviews and a two-club diary study.",
+            "ru": "Синтез персон по интервью и дневниковому исследованию в двух клубах."
+          }
+        },
+        {
+          "type": "section",
+          "name": {
+            "en": "My role",
+            "ru": "Моя роль"
+          },
+          "title": {
+            "en": "Leading design across the platform",
+            "ru": "Дизайн-лид всей платформы"
+          }
+        },
+        {
+          "type": "paragraph",
+          "text": {
+            "en": "I owned product design end-to-end and set the creative direction, then grew and guided a small team as the product scaled across web and iOS.",
+            "ru": "Я вёл продуктовый дизайн от начала до конца и задавал креативное направление, затем собрал и вёл небольшую команду, пока продукт рос на вебе и iOS."
+          }
+        },
+        {
+          "type": "image",
+          "src": "/img/covers/cover2.png",
+          "size": "full",
+          "caption": {
+            "en": "The design system that kept four phases coherent.",
+            "ru": "Дизайн-система, удержавшая четыре фазы в одном языке."
+          }
+        },
+        {
+          "type": "section",
+          "name": {
+            "en": "Phase breakdown",
+            "ru": "Фазы"
+          },
+          "title": {
+            "en": "Four phases. Two years. One evolving platform.",
+            "ru": "Четыре фазы. Два года. Одна растущая платформа."
+          }
+        },
+        {
+          "type": "subheading",
+          "text": {
+            "en": "Phase 1 — 2023 · Foundations",
+            "ru": "Фаза 1 — 2023 · Основа"
+          }
+        },
+        {
+          "type": "paragraph",
+          "text": {
+            "en": "We started by mapping the scout’s real decision path, not the data we happened to have. Paper sketches killed a “timeline of everything” direction fast.",
+            "ru": "Начали с карты реального пути принятия решения скаутом, а не с тех данных, что были под рукой. Бумажные скетчи быстро похоронили идею «ленты всего подряд»."
+          }
+        },
+        {
+          "type": "list",
+          "title": {
+            "en": "Key decisions",
+            "ru": "Ключевые решения"
+          },
+          "items": [
+            {
+              "en": "Lead every profile with a single, comparable level score.",
+              "ru": "Каждый профиль начинается с одной сравнимой оценки уровня."
+            },
+            {
+              "en": "Cut onboarding to three steps.",
+              "ru": "Онбординг сокращён до трёх шагов."
+            },
+            {
+              "en": "Design in the open with weekly scout reviews.",
+              "ru": "Открытый дизайн-процесс с еженедельными ревью со скаутами."
+            }
+          ]
+        },
+        {
+          "type": "subheading",
+          "text": {
+            "en": "Phase 2 — 2023 · IA & visual language",
+            "ru": "Фаза 2 — 2023 · Структура и визуальный язык"
+          }
+        },
+        {
+          "type": "paragraph",
+          "text": {
+            "en": "A restructured information architecture and a moodboard set the tone — confident, sporty, data-literate — before a pixel was polished.",
+            "ru": "Переработанная информационная архитектура и мудборд задали тон — уверенный, спортивный, дружелюбный к данным — ещё до полировки пикселей."
+          }
+        },
+        {
+          "type": "gallery",
+          "columns": 2,
+          "images": [
+            "/img/covers/cover3.png",
+            "/img/covers/cover4.png"
+          ],
+          "caption": {
+            "en": "Sitemap, moodboard, and the first component explorations.",
+            "ru": "Карта сайта, мудборд и первые поиски компонентов."
+          }
+        },
+        {
+          "type": "subheading",
+          "text": {
+            "en": "Phase 3 — 2024 · The scouting flow",
+            "ru": "Фаза 3 — 2024 · Сценарий скаутинга"
+          }
+        },
+        {
+          "type": "paragraph",
+          "text": {
+            "en": "The core flow — ==the 10-second signal== — shipped: a level read, a 3-clip highlight reel, and one-tap outreach, all above the fold.",
+            "ru": "Ключевой сценарий — ==сигнал за 10 секунд== — вышел: оценка уровня, три клипа хайлайтов и связь в один тап, всё на первом экране."
+          }
+        },
+        {
+          "type": "list",
+          "title": {
+            "en": "Key decisions",
+            "ru": "Ключевые решения"
+          },
+          "items": [
+            {
+              "en": "Side-by-side compare for shortlists.",
+              "ru": "Сравнение шорт-листа бок о бок."
+            },
+            {
+              "en": "Instant upload feedback to push profile completion.",
+              "ru": "Мгновенная обратная связь при загрузке, чтобы профиль заполняли до конца."
+            }
+          ]
+        },
+        {
+          "type": "image",
+          "src": "/img/about/1.jpg",
+          "size": "wide",
+          "caption": {
+            "en": "Scouts began using Colozeo during live matches.",
+            "ru": "Скауты начали открывать Colozeo прямо во время матчей."
+          }
+        },
+        {
+          "type": "subheading",
+          "text": {
+            "en": "Phase 4 — 2024 · Polish & system",
+            "ru": "Фаза 4 — 2024 · Полировка и система"
+          }
+        },
+        {
+          "type": "paragraph",
+          "text": {
+            "en": "The last phase hardened the system and sanded the details — motion, empty states, accessibility — so the product could keep growing without me in every review.",
+            "ru": "Последняя фаза укрепила систему и отшлифовала детали — анимации, пустые состояния, доступность — чтобы продукт рос без меня на каждом ревью."
+          }
+        },
+        {
+          "type": "list",
+          "title": {
+            "en": "UI improvements",
+            "ru": "Улучшения интерфейса"
+          },
+          "items": [
+            {
+              "en": "Consistent motion language via GSAP.",
+              "ru": "Единый язык движения на GSAP."
+            },
+            {
+              "en": "Accessible contrast + focus states.",
+              "ru": "Доступный контраст и состояния фокуса."
+            },
+            {
+              "en": "A documented component library for the team.",
+              "ru": "Документированная библиотека компонентов для команды."
+            }
+          ]
+        },
+        {
+          "type": "section",
+          "name": {
+            "en": "Outcome",
+            "ru": "Результат"
+          },
+          "title": {
+            "en": "A platform that grew with the business",
+            "ru": "Платформа, выросшая вместе с бизнесом"
+          }
+        },
+        {
+          "type": "list",
+          "items": [
+            {
+              "en": "Click-through on player profiles rose **+20%**.",
+              "ru": "Переходы в профили игроков выросли на **+20%**."
+            },
+            {
+              "en": "Monthly active users grew **+10%** in three months.",
+              "ru": "Месячная аудитория выросла на **+10%** за три месяца."
+            },
+            {
+              "en": "Time per scout review dropped **−48%**.",
+              "ru": "Время одного просмотра скаутом упало на **−48%**."
+            }
+          ]
+        },
+        {
+          "type": "quote",
+          "text": {
+            "en": "The moment scouts started opening Colozeo *during* matches, we knew the product had earned a place in their day.",
+            "ru": "Когда скауты начали открывать Colozeo *во время* матчей, стало ясно: продукт занял место в их дне."
+          },
+          "author": {
+            "en": "Founder, Colozeo",
+            "ru": "Основатель, Colozeo"
+          },
+          "href": "#"
+        },
+        {
+          "type": "image",
+          "src": "/img/covers/cover1.png",
+          "size": "full",
+          "caption": {
+            "en": "The platform, two years and four phases later.",
+            "ru": "Платформа спустя два года и четыре фазы."
+          }
+        }
+      ]
+    },
+    {
+      "id": "innovaflow",
+      "title": "InnovaFlow",
+      "cover": "/img/covers/cover2.png",
+      "metrics": [
+        "FINALIST",
+        "+18% CTR",
+        "+9% MAU"
+      ],
+      "intro": {
+        "en": "Colozeo turns raw match footage into scouted careers. Across two years I partnered with the team to design the scouting platform, build its design system, and craft the flows that make a player’s level legible in seconds.",
+        "ru": "Colozeo превращает сырое видео матчей в карьеры, замеченные скаутами. Два года я вместе с командой проектировал платформу, строил дизайн-систему и сценарии, где уровень игрока считывается за секунды."
+      },
+      "cta": {
+        "label": {
+          "en": "Visit live site",
+          "ru": "Открыть сайт"
+        },
+        "href": "#"
+      },
+      "meta": [
+        {
+          "k": {
+            "en": "Role",
+            "ru": "Роль"
+          },
+          "v": {
+            "en": "UX, UI Design, Design System, Creative Lead",
+            "ru": "UX, UI-дизайн, дизайн-система, креативный лид"
+          }
+        },
+        {
+          "k": {
+            "en": "Duration",
+            "ru": "Сроки"
+          },
+          "v": {
+            "en": "2 years (2023 to 2024)",
+            "ru": "2 года (2023–2024)"
+          }
+        },
+        {
+          "k": {
+            "en": "Platform",
+            "ru": "Платформа"
+          },
+          "v": {
+            "en": "Web & iOS, React, GSAP",
+            "ru": "Веб и iOS, React, GSAP"
+          }
+        }
+      ],
+      "blocks": [
+        {
+          "type": "section",
+          "name": {
+            "en": "Overview",
+            "ru": "Обзор"
+          },
+          "title": {
+            "en": "A startup inside the football industry",
+            "ru": "Стартап внутри футбольной индустрии"
+          }
+        },
+        {
+          "type": "paragraph",
+          "text": {
+            "en": "Colozeo set out to fix a broken discovery market: thousands of talented players never get seen, and scouts drown in unstructured footage. My job was to turn that ambition into a product people actually reach for — one that makes ability ==comparable and trustworthy== in a glance.",
+            "ru": "Colozeo взялся починить сломанный рынок поиска талантов: тысячи игроков остаются незамеченными, а скауты тонут в неструктурированном видео. Моя задача — превратить эту амбицию в продукт, к которому реально тянутся, где уровень игрока ==понятен и достоверен== с одного взгляда."
+          }
+        },
+        {
+          "type": "image",
+          "src": "/img/covers/cover1.png",
+          "size": "full",
+          "caption": {
+            "en": "The scouting home — level-first, evidence second.",
+            "ru": "Главный экран скаутинга — сначала уровень, потом доказательства."
+          }
+        },
+        {
+          "type": "section",
+          "name": {
+            "en": "The challenge",
+            "ru": "Задача"
+          },
+          "title": {
+            "en": "A technical product for a fragmented audience",
+            "ru": "Технический продукт для разрозненной аудитории"
+          }
+        },
+        {
+          "type": "paragraph",
+          "text": {
+            "en": "Two audiences, opposite needs. Scouts want a fast, defensible signal; players want a fair shot at being seen. Designing for both without diluting either was the core constraint.",
+            "ru": "Две аудитории с противоположными задачами. Скаутам нужен быстрый и обоснованный сигнал, игрокам — честный шанс быть замеченными. Спроектировать для обеих, не размыв ни одну, — главное ограничение."
+          }
+        },
+        {
+          "type": "subheading",
+          "text": {
+            "en": "User personas",
+            "ru": "Персоны"
+          }
+        },
+        {
+          "type": "paragraph",
+          "text": {
+            "en": "I built three personas from 14 interviews — the *time-pressed scout*, the *ambitious academy player*, and the *club analyst* — and used them to arbitrate every hard trade-off along the way.",
+            "ru": "На основе 14 интервью я собрал три персоны — *скаут в цейтноте*, *амбициозный игрок академии* и *аналитик клуба* — и через них разрешал каждый сложный компромисс."
+          }
+        },
+        {
+          "type": "image",
+          "src": "/img/about/2.jpg",
+          "size": "wide",
+          "caption": {
+            "en": "Persona synthesis from interviews and a two-club diary study.",
+            "ru": "Синтез персон по интервью и дневниковому исследованию в двух клубах."
+          }
+        },
+        {
+          "type": "section",
+          "name": {
+            "en": "My role",
+            "ru": "Моя роль"
+          },
+          "title": {
+            "en": "Leading design across the platform",
+            "ru": "Дизайн-лид всей платформы"
+          }
+        },
+        {
+          "type": "paragraph",
+          "text": {
+            "en": "I owned product design end-to-end and set the creative direction, then grew and guided a small team as the product scaled across web and iOS.",
+            "ru": "Я вёл продуктовый дизайн от начала до конца и задавал креативное направление, затем собрал и вёл небольшую команду, пока продукт рос на вебе и iOS."
+          }
+        },
+        {
+          "type": "image",
+          "src": "/img/covers/cover2.png",
+          "size": "full",
+          "caption": {
+            "en": "The design system that kept four phases coherent.",
+            "ru": "Дизайн-система, удержавшая четыре фазы в одном языке."
+          }
+        },
+        {
+          "type": "section",
+          "name": {
+            "en": "Phase breakdown",
+            "ru": "Фазы"
+          },
+          "title": {
+            "en": "Four phases. Two years. One evolving platform.",
+            "ru": "Четыре фазы. Два года. Одна растущая платформа."
+          }
+        },
+        {
+          "type": "subheading",
+          "text": {
+            "en": "Phase 1 — 2023 · Foundations",
+            "ru": "Фаза 1 — 2023 · Основа"
+          }
+        },
+        {
+          "type": "paragraph",
+          "text": {
+            "en": "We started by mapping the scout’s real decision path, not the data we happened to have. Paper sketches killed a “timeline of everything” direction fast.",
+            "ru": "Начали с карты реального пути принятия решения скаутом, а не с тех данных, что были под рукой. Бумажные скетчи быстро похоронили идею «ленты всего подряд»."
+          }
+        },
+        {
+          "type": "list",
+          "title": {
+            "en": "Key decisions",
+            "ru": "Ключевые решения"
+          },
+          "items": [
+            {
+              "en": "Lead every profile with a single, comparable level score.",
+              "ru": "Каждый профиль начинается с одной сравнимой оценки уровня."
+            },
+            {
+              "en": "Cut onboarding to three steps.",
+              "ru": "Онбординг сокращён до трёх шагов."
+            },
+            {
+              "en": "Design in the open with weekly scout reviews.",
+              "ru": "Открытый дизайн-процесс с еженедельными ревью со скаутами."
+            }
+          ]
+        },
+        {
+          "type": "subheading",
+          "text": {
+            "en": "Phase 2 — 2023 · IA & visual language",
+            "ru": "Фаза 2 — 2023 · Структура и визуальный язык"
+          }
+        },
+        {
+          "type": "paragraph",
+          "text": {
+            "en": "A restructured information architecture and a moodboard set the tone — confident, sporty, data-literate — before a pixel was polished.",
+            "ru": "Переработанная информационная архитектура и мудборд задали тон — уверенный, спортивный, дружелюбный к данным — ещё до полировки пикселей."
+          }
+        },
+        {
+          "type": "gallery",
+          "columns": 2,
+          "images": [
+            "/img/covers/cover3.png",
+            "/img/covers/cover4.png"
+          ],
+          "caption": {
+            "en": "Sitemap, moodboard, and the first component explorations.",
+            "ru": "Карта сайта, мудборд и первые поиски компонентов."
+          }
+        },
+        {
+          "type": "subheading",
+          "text": {
+            "en": "Phase 3 — 2024 · The scouting flow",
+            "ru": "Фаза 3 — 2024 · Сценарий скаутинга"
+          }
+        },
+        {
+          "type": "paragraph",
+          "text": {
+            "en": "The core flow — ==the 10-second signal== — shipped: a level read, a 3-clip highlight reel, and one-tap outreach, all above the fold.",
+            "ru": "Ключевой сценарий — ==сигнал за 10 секунд== — вышел: оценка уровня, три клипа хайлайтов и связь в один тап, всё на первом экране."
+          }
+        },
+        {
+          "type": "list",
+          "title": {
+            "en": "Key decisions",
+            "ru": "Ключевые решения"
+          },
+          "items": [
+            {
+              "en": "Side-by-side compare for shortlists.",
+              "ru": "Сравнение шорт-листа бок о бок."
+            },
+            {
+              "en": "Instant upload feedback to push profile completion.",
+              "ru": "Мгновенная обратная связь при загрузке, чтобы профиль заполняли до конца."
+            }
+          ]
+        },
+        {
+          "type": "image",
+          "src": "/img/about/1.jpg",
+          "size": "wide",
+          "caption": {
+            "en": "Scouts began using Colozeo during live matches.",
+            "ru": "Скауты начали открывать Colozeo прямо во время матчей."
+          }
+        },
+        {
+          "type": "subheading",
+          "text": {
+            "en": "Phase 4 — 2024 · Polish & system",
+            "ru": "Фаза 4 — 2024 · Полировка и система"
+          }
+        },
+        {
+          "type": "paragraph",
+          "text": {
+            "en": "The last phase hardened the system and sanded the details — motion, empty states, accessibility — so the product could keep growing without me in every review.",
+            "ru": "Последняя фаза укрепила систему и отшлифовала детали — анимации, пустые состояния, доступность — чтобы продукт рос без меня на каждом ревью."
+          }
+        },
+        {
+          "type": "list",
+          "title": {
+            "en": "UI improvements",
+            "ru": "Улучшения интерфейса"
+          },
+          "items": [
+            {
+              "en": "Consistent motion language via GSAP.",
+              "ru": "Единый язык движения на GSAP."
+            },
+            {
+              "en": "Accessible contrast + focus states.",
+              "ru": "Доступный контраст и состояния фокуса."
+            },
+            {
+              "en": "A documented component library for the team.",
+              "ru": "Документированная библиотека компонентов для команды."
+            }
+          ]
+        },
+        {
+          "type": "section",
+          "name": {
+            "en": "Outcome",
+            "ru": "Результат"
+          },
+          "title": {
+            "en": "A platform that grew with the business",
+            "ru": "Платформа, выросшая вместе с бизнесом"
+          }
+        },
+        {
+          "type": "list",
+          "items": [
+            {
+              "en": "Click-through on player profiles rose **+20%**.",
+              "ru": "Переходы в профили игроков выросли на **+20%**."
+            },
+            {
+              "en": "Monthly active users grew **+10%** in three months.",
+              "ru": "Месячная аудитория выросла на **+10%** за три месяца."
+            },
+            {
+              "en": "Time per scout review dropped **−48%**.",
+              "ru": "Время одного просмотра скаутом упало на **−48%**."
+            }
+          ]
+        },
+        {
+          "type": "quote",
+          "text": {
+            "en": "The moment scouts started opening Colozeo *during* matches, we knew the product had earned a place in their day.",
+            "ru": "Когда скауты начали открывать Colozeo *во время* матчей, стало ясно: продукт занял место в их дне."
+          },
+          "author": {
+            "en": "Founder, Colozeo",
+            "ru": "Основатель, Colozeo"
+          },
+          "href": "#"
+        },
+        {
+          "type": "image",
+          "src": "/img/covers/cover1.png",
+          "size": "full",
+          "caption": {
+            "en": "The platform, two years and four phases later.",
+            "ru": "Платформа спустя два года и четыре фазы."
+          }
+        }
+      ]
+    },
+    {
+      "id": "spectratech",
+      "title": "SpectraTech",
+      "cover": "/img/covers/cover3.png",
+      "metrics": [
+        "AWARD",
+        "+25% CTR",
+        "+12% MAU"
+      ],
+      "intro": {
+        "en": "Colozeo turns raw match footage into scouted careers. Across two years I partnered with the team to design the scouting platform, build its design system, and craft the flows that make a player’s level legible in seconds.",
+        "ru": "Colozeo превращает сырое видео матчей в карьеры, замеченные скаутами. Два года я вместе с командой проектировал платформу, строил дизайн-систему и сценарии, где уровень игрока считывается за секунды."
+      },
+      "cta": {
+        "label": {
+          "en": "Visit live site",
+          "ru": "Открыть сайт"
+        },
+        "href": "#"
+      },
+      "meta": [
+        {
+          "k": {
+            "en": "Role",
+            "ru": "Роль"
+          },
+          "v": {
+            "en": "UX, UI Design, Design System, Creative Lead",
+            "ru": "UX, UI-дизайн, дизайн-система, креативный лид"
+          }
+        },
+        {
+          "k": {
+            "en": "Duration",
+            "ru": "Сроки"
+          },
+          "v": {
+            "en": "2 years (2023 to 2024)",
+            "ru": "2 года (2023–2024)"
+          }
+        },
+        {
+          "k": {
+            "en": "Platform",
+            "ru": "Платформа"
+          },
+          "v": {
+            "en": "Web & iOS, React, GSAP",
+            "ru": "Веб и iOS, React, GSAP"
+          }
+        }
+      ],
+      "blocks": [
+        {
+          "type": "section",
+          "name": {
+            "en": "Overview",
+            "ru": "Обзор"
+          },
+          "title": {
+            "en": "A startup inside the football industry",
+            "ru": "Стартап внутри футбольной индустрии"
+          }
+        },
+        {
+          "type": "paragraph",
+          "text": {
+            "en": "Colozeo set out to fix a broken discovery market: thousands of talented players never get seen, and scouts drown in unstructured footage. My job was to turn that ambition into a product people actually reach for — one that makes ability ==comparable and trustworthy== in a glance.",
+            "ru": "Colozeo взялся починить сломанный рынок поиска талантов: тысячи игроков остаются незамеченными, а скауты тонут в неструктурированном видео. Моя задача — превратить эту амбицию в продукт, к которому реально тянутся, где уровень игрока ==понятен и достоверен== с одного взгляда."
+          }
+        },
+        {
+          "type": "image",
+          "src": "/img/covers/cover1.png",
+          "size": "full",
+          "caption": {
+            "en": "The scouting home — level-first, evidence second.",
+            "ru": "Главный экран скаутинга — сначала уровень, потом доказательства."
+          }
+        },
+        {
+          "type": "section",
+          "name": {
+            "en": "The challenge",
+            "ru": "Задача"
+          },
+          "title": {
+            "en": "A technical product for a fragmented audience",
+            "ru": "Технический продукт для разрозненной аудитории"
+          }
+        },
+        {
+          "type": "paragraph",
+          "text": {
+            "en": "Two audiences, opposite needs. Scouts want a fast, defensible signal; players want a fair shot at being seen. Designing for both without diluting either was the core constraint.",
+            "ru": "Две аудитории с противоположными задачами. Скаутам нужен быстрый и обоснованный сигнал, игрокам — честный шанс быть замеченными. Спроектировать для обеих, не размыв ни одну, — главное ограничение."
+          }
+        },
+        {
+          "type": "subheading",
+          "text": {
+            "en": "User personas",
+            "ru": "Персоны"
+          }
+        },
+        {
+          "type": "paragraph",
+          "text": {
+            "en": "I built three personas from 14 interviews — the *time-pressed scout*, the *ambitious academy player*, and the *club analyst* — and used them to arbitrate every hard trade-off along the way.",
+            "ru": "На основе 14 интервью я собрал три персоны — *скаут в цейтноте*, *амбициозный игрок академии* и *аналитик клуба* — и через них разрешал каждый сложный компромисс."
+          }
+        },
+        {
+          "type": "image",
+          "src": "/img/about/2.jpg",
+          "size": "wide",
+          "caption": {
+            "en": "Persona synthesis from interviews and a two-club diary study.",
+            "ru": "Синтез персон по интервью и дневниковому исследованию в двух клубах."
+          }
+        },
+        {
+          "type": "section",
+          "name": {
+            "en": "My role",
+            "ru": "Моя роль"
+          },
+          "title": {
+            "en": "Leading design across the platform",
+            "ru": "Дизайн-лид всей платформы"
+          }
+        },
+        {
+          "type": "paragraph",
+          "text": {
+            "en": "I owned product design end-to-end and set the creative direction, then grew and guided a small team as the product scaled across web and iOS.",
+            "ru": "Я вёл продуктовый дизайн от начала до конца и задавал креативное направление, затем собрал и вёл небольшую команду, пока продукт рос на вебе и iOS."
+          }
+        },
+        {
+          "type": "image",
+          "src": "/img/covers/cover2.png",
+          "size": "full",
+          "caption": {
+            "en": "The design system that kept four phases coherent.",
+            "ru": "Дизайн-система, удержавшая четыре фазы в одном языке."
+          }
+        },
+        {
+          "type": "section",
+          "name": {
+            "en": "Phase breakdown",
+            "ru": "Фазы"
+          },
+          "title": {
+            "en": "Four phases. Two years. One evolving platform.",
+            "ru": "Четыре фазы. Два года. Одна растущая платформа."
+          }
+        },
+        {
+          "type": "subheading",
+          "text": {
+            "en": "Phase 1 — 2023 · Foundations",
+            "ru": "Фаза 1 — 2023 · Основа"
+          }
+        },
+        {
+          "type": "paragraph",
+          "text": {
+            "en": "We started by mapping the scout’s real decision path, not the data we happened to have. Paper sketches killed a “timeline of everything” direction fast.",
+            "ru": "Начали с карты реального пути принятия решения скаутом, а не с тех данных, что были под рукой. Бумажные скетчи быстро похоронили идею «ленты всего подряд»."
+          }
+        },
+        {
+          "type": "list",
+          "title": {
+            "en": "Key decisions",
+            "ru": "Ключевые решения"
+          },
+          "items": [
+            {
+              "en": "Lead every profile with a single, comparable level score.",
+              "ru": "Каждый профиль начинается с одной сравнимой оценки уровня."
+            },
+            {
+              "en": "Cut onboarding to three steps.",
+              "ru": "Онбординг сокращён до трёх шагов."
+            },
+            {
+              "en": "Design in the open with weekly scout reviews.",
+              "ru": "Открытый дизайн-процесс с еженедельными ревью со скаутами."
+            }
+          ]
+        },
+        {
+          "type": "subheading",
+          "text": {
+            "en": "Phase 2 — 2023 · IA & visual language",
+            "ru": "Фаза 2 — 2023 · Структура и визуальный язык"
+          }
+        },
+        {
+          "type": "paragraph",
+          "text": {
+            "en": "A restructured information architecture and a moodboard set the tone — confident, sporty, data-literate — before a pixel was polished.",
+            "ru": "Переработанная информационная архитектура и мудборд задали тон — уверенный, спортивный, дружелюбный к данным — ещё до полировки пикселей."
+          }
+        },
+        {
+          "type": "gallery",
+          "columns": 2,
+          "images": [
+            "/img/covers/cover3.png",
+            "/img/covers/cover4.png"
+          ],
+          "caption": {
+            "en": "Sitemap, moodboard, and the first component explorations.",
+            "ru": "Карта сайта, мудборд и первые поиски компонентов."
+          }
+        },
+        {
+          "type": "subheading",
+          "text": {
+            "en": "Phase 3 — 2024 · The scouting flow",
+            "ru": "Фаза 3 — 2024 · Сценарий скаутинга"
+          }
+        },
+        {
+          "type": "paragraph",
+          "text": {
+            "en": "The core flow — ==the 10-second signal== — shipped: a level read, a 3-clip highlight reel, and one-tap outreach, all above the fold.",
+            "ru": "Ключевой сценарий — ==сигнал за 10 секунд== — вышел: оценка уровня, три клипа хайлайтов и связь в один тап, всё на первом экране."
+          }
+        },
+        {
+          "type": "list",
+          "title": {
+            "en": "Key decisions",
+            "ru": "Ключевые решения"
+          },
+          "items": [
+            {
+              "en": "Side-by-side compare for shortlists.",
+              "ru": "Сравнение шорт-листа бок о бок."
+            },
+            {
+              "en": "Instant upload feedback to push profile completion.",
+              "ru": "Мгновенная обратная связь при загрузке, чтобы профиль заполняли до конца."
+            }
+          ]
+        },
+        {
+          "type": "image",
+          "src": "/img/about/1.jpg",
+          "size": "wide",
+          "caption": {
+            "en": "Scouts began using Colozeo during live matches.",
+            "ru": "Скауты начали открывать Colozeo прямо во время матчей."
+          }
+        },
+        {
+          "type": "subheading",
+          "text": {
+            "en": "Phase 4 — 2024 · Polish & system",
+            "ru": "Фаза 4 — 2024 · Полировка и система"
+          }
+        },
+        {
+          "type": "paragraph",
+          "text": {
+            "en": "The last phase hardened the system and sanded the details — motion, empty states, accessibility — so the product could keep growing without me in every review.",
+            "ru": "Последняя фаза укрепила систему и отшлифовала детали — анимации, пустые состояния, доступность — чтобы продукт рос без меня на каждом ревью."
+          }
+        },
+        {
+          "type": "list",
+          "title": {
+            "en": "UI improvements",
+            "ru": "Улучшения интерфейса"
+          },
+          "items": [
+            {
+              "en": "Consistent motion language via GSAP.",
+              "ru": "Единый язык движения на GSAP."
+            },
+            {
+              "en": "Accessible contrast + focus states.",
+              "ru": "Доступный контраст и состояния фокуса."
+            },
+            {
+              "en": "A documented component library for the team.",
+              "ru": "Документированная библиотека компонентов для команды."
+            }
+          ]
+        },
+        {
+          "type": "section",
+          "name": {
+            "en": "Outcome",
+            "ru": "Результат"
+          },
+          "title": {
+            "en": "A platform that grew with the business",
+            "ru": "Платформа, выросшая вместе с бизнесом"
+          }
+        },
+        {
+          "type": "list",
+          "items": [
+            {
+              "en": "Click-through on player profiles rose **+20%**.",
+              "ru": "Переходы в профили игроков выросли на **+20%**."
+            },
+            {
+              "en": "Monthly active users grew **+10%** in three months.",
+              "ru": "Месячная аудитория выросла на **+10%** за три месяца."
+            },
+            {
+              "en": "Time per scout review dropped **−48%**.",
+              "ru": "Время одного просмотра скаутом упало на **−48%**."
+            }
+          ]
+        },
+        {
+          "type": "quote",
+          "text": {
+            "en": "The moment scouts started opening Colozeo *during* matches, we knew the product had earned a place in their day.",
+            "ru": "Когда скауты начали открывать Colozeo *во время* матчей, стало ясно: продукт занял место в их дне."
+          },
+          "author": {
+            "en": "Founder, Colozeo",
+            "ru": "Основатель, Colozeo"
+          },
+          "href": "#"
+        },
+        {
+          "type": "image",
+          "src": "/img/covers/cover1.png",
+          "size": "full",
+          "caption": {
+            "en": "The platform, two years and four phases later.",
+            "ru": "Платформа спустя два года и четыре фазы."
+          }
+        }
+      ]
+    },
+    {
+      "id": "nexify",
+      "title": "Nexify",
+      "cover": "/img/covers/cover4.png",
+      "metrics": [
+        "FINALIST",
+        "+15% CTR",
+        "+8% MAU"
+      ],
+      "intro": {
+        "en": "Colozeo turns raw match footage into scouted careers. Across two years I partnered with the team to design the scouting platform, build its design system, and craft the flows that make a player’s level legible in seconds.",
+        "ru": "Colozeo превращает сырое видео матчей в карьеры, замеченные скаутами. Два года я вместе с командой проектировал платформу, строил дизайн-систему и сценарии, где уровень игрока считывается за секунды."
+      },
+      "cta": {
+        "label": {
+          "en": "Visit live site",
+          "ru": "Открыть сайт"
+        },
+        "href": "#"
+      },
+      "meta": [
+        {
+          "k": {
+            "en": "Role",
+            "ru": "Роль"
+          },
+          "v": {
+            "en": "UX, UI Design, Design System, Creative Lead",
+            "ru": "UX, UI-дизайн, дизайн-система, креативный лид"
+          }
+        },
+        {
+          "k": {
+            "en": "Duration",
+            "ru": "Сроки"
+          },
+          "v": {
+            "en": "2 years (2023 to 2024)",
+            "ru": "2 года (2023–2024)"
+          }
+        },
+        {
+          "k": {
+            "en": "Platform",
+            "ru": "Платформа"
+          },
+          "v": {
+            "en": "Web & iOS, React, GSAP",
+            "ru": "Веб и iOS, React, GSAP"
+          }
+        }
+      ],
+      "blocks": [
+        {
+          "type": "section",
+          "name": {
+            "en": "Overview",
+            "ru": "Обзор"
+          },
+          "title": {
+            "en": "A startup inside the football industry",
+            "ru": "Стартап внутри футбольной индустрии"
+          }
+        },
+        {
+          "type": "paragraph",
+          "text": {
+            "en": "Colozeo set out to fix a broken discovery market: thousands of talented players never get seen, and scouts drown in unstructured footage. My job was to turn that ambition into a product people actually reach for — one that makes ability ==comparable and trustworthy== in a glance.",
+            "ru": "Colozeo взялся починить сломанный рынок поиска талантов: тысячи игроков остаются незамеченными, а скауты тонут в неструктурированном видео. Моя задача — превратить эту амбицию в продукт, к которому реально тянутся, где уровень игрока ==понятен и достоверен== с одного взгляда."
+          }
+        },
+        {
+          "type": "image",
+          "src": "/img/covers/cover1.png",
+          "size": "full",
+          "caption": {
+            "en": "The scouting home — level-first, evidence second.",
+            "ru": "Главный экран скаутинга — сначала уровень, потом доказательства."
+          }
+        },
+        {
+          "type": "section",
+          "name": {
+            "en": "The challenge",
+            "ru": "Задача"
+          },
+          "title": {
+            "en": "A technical product for a fragmented audience",
+            "ru": "Технический продукт для разрозненной аудитории"
+          }
+        },
+        {
+          "type": "paragraph",
+          "text": {
+            "en": "Two audiences, opposite needs. Scouts want a fast, defensible signal; players want a fair shot at being seen. Designing for both without diluting either was the core constraint.",
+            "ru": "Две аудитории с противоположными задачами. Скаутам нужен быстрый и обоснованный сигнал, игрокам — честный шанс быть замеченными. Спроектировать для обеих, не размыв ни одну, — главное ограничение."
+          }
+        },
+        {
+          "type": "subheading",
+          "text": {
+            "en": "User personas",
+            "ru": "Персоны"
+          }
+        },
+        {
+          "type": "paragraph",
+          "text": {
+            "en": "I built three personas from 14 interviews — the *time-pressed scout*, the *ambitious academy player*, and the *club analyst* — and used them to arbitrate every hard trade-off along the way.",
+            "ru": "На основе 14 интервью я собрал три персоны — *скаут в цейтноте*, *амбициозный игрок академии* и *аналитик клуба* — и через них разрешал каждый сложный компромисс."
+          }
+        },
+        {
+          "type": "image",
+          "src": "/img/about/2.jpg",
+          "size": "wide",
+          "caption": {
+            "en": "Persona synthesis from interviews and a two-club diary study.",
+            "ru": "Синтез персон по интервью и дневниковому исследованию в двух клубах."
+          }
+        },
+        {
+          "type": "section",
+          "name": {
+            "en": "My role",
+            "ru": "Моя роль"
+          },
+          "title": {
+            "en": "Leading design across the platform",
+            "ru": "Дизайн-лид всей платформы"
+          }
+        },
+        {
+          "type": "paragraph",
+          "text": {
+            "en": "I owned product design end-to-end and set the creative direction, then grew and guided a small team as the product scaled across web and iOS.",
+            "ru": "Я вёл продуктовый дизайн от начала до конца и задавал креативное направление, затем собрал и вёл небольшую команду, пока продукт рос на вебе и iOS."
+          }
+        },
+        {
+          "type": "image",
+          "src": "/img/covers/cover2.png",
+          "size": "full",
+          "caption": {
+            "en": "The design system that kept four phases coherent.",
+            "ru": "Дизайн-система, удержавшая четыре фазы в одном языке."
+          }
+        },
+        {
+          "type": "section",
+          "name": {
+            "en": "Phase breakdown",
+            "ru": "Фазы"
+          },
+          "title": {
+            "en": "Four phases. Two years. One evolving platform.",
+            "ru": "Четыре фазы. Два года. Одна растущая платформа."
+          }
+        },
+        {
+          "type": "subheading",
+          "text": {
+            "en": "Phase 1 — 2023 · Foundations",
+            "ru": "Фаза 1 — 2023 · Основа"
+          }
+        },
+        {
+          "type": "paragraph",
+          "text": {
+            "en": "We started by mapping the scout’s real decision path, not the data we happened to have. Paper sketches killed a “timeline of everything” direction fast.",
+            "ru": "Начали с карты реального пути принятия решения скаутом, а не с тех данных, что были под рукой. Бумажные скетчи быстро похоронили идею «ленты всего подряд»."
+          }
+        },
+        {
+          "type": "list",
+          "title": {
+            "en": "Key decisions",
+            "ru": "Ключевые решения"
+          },
+          "items": [
+            {
+              "en": "Lead every profile with a single, comparable level score.",
+              "ru": "Каждый профиль начинается с одной сравнимой оценки уровня."
+            },
+            {
+              "en": "Cut onboarding to three steps.",
+              "ru": "Онбординг сокращён до трёх шагов."
+            },
+            {
+              "en": "Design in the open with weekly scout reviews.",
+              "ru": "Открытый дизайн-процесс с еженедельными ревью со скаутами."
+            }
+          ]
+        },
+        {
+          "type": "subheading",
+          "text": {
+            "en": "Phase 2 — 2023 · IA & visual language",
+            "ru": "Фаза 2 — 2023 · Структура и визуальный язык"
+          }
+        },
+        {
+          "type": "paragraph",
+          "text": {
+            "en": "A restructured information architecture and a moodboard set the tone — confident, sporty, data-literate — before a pixel was polished.",
+            "ru": "Переработанная информационная архитектура и мудборд задали тон — уверенный, спортивный, дружелюбный к данным — ещё до полировки пикселей."
+          }
+        },
+        {
+          "type": "gallery",
+          "columns": 2,
+          "images": [
+            "/img/covers/cover3.png",
+            "/img/covers/cover4.png"
+          ],
+          "caption": {
+            "en": "Sitemap, moodboard, and the first component explorations.",
+            "ru": "Карта сайта, мудборд и первые поиски компонентов."
+          }
+        },
+        {
+          "type": "subheading",
+          "text": {
+            "en": "Phase 3 — 2024 · The scouting flow",
+            "ru": "Фаза 3 — 2024 · Сценарий скаутинга"
+          }
+        },
+        {
+          "type": "paragraph",
+          "text": {
+            "en": "The core flow — ==the 10-second signal== — shipped: a level read, a 3-clip highlight reel, and one-tap outreach, all above the fold.",
+            "ru": "Ключевой сценарий — ==сигнал за 10 секунд== — вышел: оценка уровня, три клипа хайлайтов и связь в один тап, всё на первом экране."
+          }
+        },
+        {
+          "type": "list",
+          "title": {
+            "en": "Key decisions",
+            "ru": "Ключевые решения"
+          },
+          "items": [
+            {
+              "en": "Side-by-side compare for shortlists.",
+              "ru": "Сравнение шорт-листа бок о бок."
+            },
+            {
+              "en": "Instant upload feedback to push profile completion.",
+              "ru": "Мгновенная обратная связь при загрузке, чтобы профиль заполняли до конца."
+            }
+          ]
+        },
+        {
+          "type": "image",
+          "src": "/img/about/1.jpg",
+          "size": "wide",
+          "caption": {
+            "en": "Scouts began using Colozeo during live matches.",
+            "ru": "Скауты начали открывать Colozeo прямо во время матчей."
+          }
+        },
+        {
+          "type": "subheading",
+          "text": {
+            "en": "Phase 4 — 2024 · Polish & system",
+            "ru": "Фаза 4 — 2024 · Полировка и система"
+          }
+        },
+        {
+          "type": "paragraph",
+          "text": {
+            "en": "The last phase hardened the system and sanded the details — motion, empty states, accessibility — so the product could keep growing without me in every review.",
+            "ru": "Последняя фаза укрепила систему и отшлифовала детали — анимации, пустые состояния, доступность — чтобы продукт рос без меня на каждом ревью."
+          }
+        },
+        {
+          "type": "list",
+          "title": {
+            "en": "UI improvements",
+            "ru": "Улучшения интерфейса"
+          },
+          "items": [
+            {
+              "en": "Consistent motion language via GSAP.",
+              "ru": "Единый язык движения на GSAP."
+            },
+            {
+              "en": "Accessible contrast + focus states.",
+              "ru": "Доступный контраст и состояния фокуса."
+            },
+            {
+              "en": "A documented component library for the team.",
+              "ru": "Документированная библиотека компонентов для команды."
+            }
+          ]
+        },
+        {
+          "type": "section",
+          "name": {
+            "en": "Outcome",
+            "ru": "Результат"
+          },
+          "title": {
+            "en": "A platform that grew with the business",
+            "ru": "Платформа, выросшая вместе с бизнесом"
+          }
+        },
+        {
+          "type": "list",
+          "items": [
+            {
+              "en": "Click-through on player profiles rose **+20%**.",
+              "ru": "Переходы в профили игроков выросли на **+20%**."
+            },
+            {
+              "en": "Monthly active users grew **+10%** in three months.",
+              "ru": "Месячная аудитория выросла на **+10%** за три месяца."
+            },
+            {
+              "en": "Time per scout review dropped **−48%**.",
+              "ru": "Время одного просмотра скаутом упало на **−48%**."
+            }
+          ]
+        },
+        {
+          "type": "quote",
+          "text": {
+            "en": "The moment scouts started opening Colozeo *during* matches, we knew the product had earned a place in their day.",
+            "ru": "Когда скауты начали открывать Colozeo *во время* матчей, стало ясно: продукт занял место в их дне."
+          },
+          "author": {
+            "en": "Founder, Colozeo",
+            "ru": "Основатель, Colozeo"
+          },
+          "href": "#"
+        },
+        {
+          "type": "image",
+          "src": "/img/covers/cover1.png",
+          "size": "full",
+          "caption": {
+            "en": "The platform, two years and four phases later.",
+            "ru": "Платформа спустя два года и четыре фазы."
+          }
+        }
+      ]
+    },
+    {
+      "id": "trackfusion",
+      "title": "TrackFusion",
+      "cover": "/img/covers/cover1.png",
+      "metrics": [
+        "HONORABLE MENTION",
+        "+12% CTR",
+        "+5% MAU"
+      ],
+      "intro": {
+        "en": "Colozeo turns raw match footage into scouted careers. Across two years I partnered with the team to design the scouting platform, build its design system, and craft the flows that make a player’s level legible in seconds.",
+        "ru": "Colozeo превращает сырое видео матчей в карьеры, замеченные скаутами. Два года я вместе с командой проектировал платформу, строил дизайн-систему и сценарии, где уровень игрока считывается за секунды."
+      },
+      "cta": {
+        "label": {
+          "en": "Visit live site",
+          "ru": "Открыть сайт"
+        },
+        "href": "#"
+      },
+      "meta": [
+        {
+          "k": {
+            "en": "Role",
+            "ru": "Роль"
+          },
+          "v": {
+            "en": "UX, UI Design, Design System, Creative Lead",
+            "ru": "UX, UI-дизайн, дизайн-система, креативный лид"
+          }
+        },
+        {
+          "k": {
+            "en": "Duration",
+            "ru": "Сроки"
+          },
+          "v": {
+            "en": "2 years (2023 to 2024)",
+            "ru": "2 года (2023–2024)"
+          }
+        },
+        {
+          "k": {
+            "en": "Platform",
+            "ru": "Платформа"
+          },
+          "v": {
+            "en": "Web & iOS, React, GSAP",
+            "ru": "Веб и iOS, React, GSAP"
+          }
+        }
+      ],
+      "blocks": [
+        {
+          "type": "section",
+          "name": {
+            "en": "Overview",
+            "ru": "Обзор"
+          },
+          "title": {
+            "en": "A startup inside the football industry",
+            "ru": "Стартап внутри футбольной индустрии"
+          }
+        },
+        {
+          "type": "paragraph",
+          "text": {
+            "en": "Colozeo set out to fix a broken discovery market: thousands of talented players never get seen, and scouts drown in unstructured footage. My job was to turn that ambition into a product people actually reach for — one that makes ability ==comparable and trustworthy== in a glance.",
+            "ru": "Colozeo взялся починить сломанный рынок поиска талантов: тысячи игроков остаются незамеченными, а скауты тонут в неструктурированном видео. Моя задача — превратить эту амбицию в продукт, к которому реально тянутся, где уровень игрока ==понятен и достоверен== с одного взгляда."
+          }
+        },
+        {
+          "type": "image",
+          "src": "/img/covers/cover1.png",
+          "size": "full",
+          "caption": {
+            "en": "The scouting home — level-first, evidence second.",
+            "ru": "Главный экран скаутинга — сначала уровень, потом доказательства."
+          }
+        },
+        {
+          "type": "section",
+          "name": {
+            "en": "The challenge",
+            "ru": "Задача"
+          },
+          "title": {
+            "en": "A technical product for a fragmented audience",
+            "ru": "Технический продукт для разрозненной аудитории"
+          }
+        },
+        {
+          "type": "paragraph",
+          "text": {
+            "en": "Two audiences, opposite needs. Scouts want a fast, defensible signal; players want a fair shot at being seen. Designing for both without diluting either was the core constraint.",
+            "ru": "Две аудитории с противоположными задачами. Скаутам нужен быстрый и обоснованный сигнал, игрокам — честный шанс быть замеченными. Спроектировать для обеих, не размыв ни одну, — главное ограничение."
+          }
+        },
+        {
+          "type": "subheading",
+          "text": {
+            "en": "User personas",
+            "ru": "Персоны"
+          }
+        },
+        {
+          "type": "paragraph",
+          "text": {
+            "en": "I built three personas from 14 interviews — the *time-pressed scout*, the *ambitious academy player*, and the *club analyst* — and used them to arbitrate every hard trade-off along the way.",
+            "ru": "На основе 14 интервью я собрал три персоны — *скаут в цейтноте*, *амбициозный игрок академии* и *аналитик клуба* — и через них разрешал каждый сложный компромисс."
+          }
+        },
+        {
+          "type": "image",
+          "src": "/img/about/2.jpg",
+          "size": "wide",
+          "caption": {
+            "en": "Persona synthesis from interviews and a two-club diary study.",
+            "ru": "Синтез персон по интервью и дневниковому исследованию в двух клубах."
+          }
+        },
+        {
+          "type": "section",
+          "name": {
+            "en": "My role",
+            "ru": "Моя роль"
+          },
+          "title": {
+            "en": "Leading design across the platform",
+            "ru": "Дизайн-лид всей платформы"
+          }
+        },
+        {
+          "type": "paragraph",
+          "text": {
+            "en": "I owned product design end-to-end and set the creative direction, then grew and guided a small team as the product scaled across web and iOS.",
+            "ru": "Я вёл продуктовый дизайн от начала до конца и задавал креативное направление, затем собрал и вёл небольшую команду, пока продукт рос на вебе и iOS."
+          }
+        },
+        {
+          "type": "image",
+          "src": "/img/covers/cover2.png",
+          "size": "full",
+          "caption": {
+            "en": "The design system that kept four phases coherent.",
+            "ru": "Дизайн-система, удержавшая четыре фазы в одном языке."
+          }
+        },
+        {
+          "type": "section",
+          "name": {
+            "en": "Phase breakdown",
+            "ru": "Фазы"
+          },
+          "title": {
+            "en": "Four phases. Two years. One evolving platform.",
+            "ru": "Четыре фазы. Два года. Одна растущая платформа."
+          }
+        },
+        {
+          "type": "subheading",
+          "text": {
+            "en": "Phase 1 — 2023 · Foundations",
+            "ru": "Фаза 1 — 2023 · Основа"
+          }
+        },
+        {
+          "type": "paragraph",
+          "text": {
+            "en": "We started by mapping the scout’s real decision path, not the data we happened to have. Paper sketches killed a “timeline of everything” direction fast.",
+            "ru": "Начали с карты реального пути принятия решения скаутом, а не с тех данных, что были под рукой. Бумажные скетчи быстро похоронили идею «ленты всего подряд»."
+          }
+        },
+        {
+          "type": "list",
+          "title": {
+            "en": "Key decisions",
+            "ru": "Ключевые решения"
+          },
+          "items": [
+            {
+              "en": "Lead every profile with a single, comparable level score.",
+              "ru": "Каждый профиль начинается с одной сравнимой оценки уровня."
+            },
+            {
+              "en": "Cut onboarding to three steps.",
+              "ru": "Онбординг сокращён до трёх шагов."
+            },
+            {
+              "en": "Design in the open with weekly scout reviews.",
+              "ru": "Открытый дизайн-процесс с еженедельными ревью со скаутами."
+            }
+          ]
+        },
+        {
+          "type": "subheading",
+          "text": {
+            "en": "Phase 2 — 2023 · IA & visual language",
+            "ru": "Фаза 2 — 2023 · Структура и визуальный язык"
+          }
+        },
+        {
+          "type": "paragraph",
+          "text": {
+            "en": "A restructured information architecture and a moodboard set the tone — confident, sporty, data-literate — before a pixel was polished.",
+            "ru": "Переработанная информационная архитектура и мудборд задали тон — уверенный, спортивный, дружелюбный к данным — ещё до полировки пикселей."
+          }
+        },
+        {
+          "type": "gallery",
+          "columns": 2,
+          "images": [
+            "/img/covers/cover3.png",
+            "/img/covers/cover4.png"
+          ],
+          "caption": {
+            "en": "Sitemap, moodboard, and the first component explorations.",
+            "ru": "Карта сайта, мудборд и первые поиски компонентов."
+          }
+        },
+        {
+          "type": "subheading",
+          "text": {
+            "en": "Phase 3 — 2024 · The scouting flow",
+            "ru": "Фаза 3 — 2024 · Сценарий скаутинга"
+          }
+        },
+        {
+          "type": "paragraph",
+          "text": {
+            "en": "The core flow — ==the 10-second signal== — shipped: a level read, a 3-clip highlight reel, and one-tap outreach, all above the fold.",
+            "ru": "Ключевой сценарий — ==сигнал за 10 секунд== — вышел: оценка уровня, три клипа хайлайтов и связь в один тап, всё на первом экране."
+          }
+        },
+        {
+          "type": "list",
+          "title": {
+            "en": "Key decisions",
+            "ru": "Ключевые решения"
+          },
+          "items": [
+            {
+              "en": "Side-by-side compare for shortlists.",
+              "ru": "Сравнение шорт-листа бок о бок."
+            },
+            {
+              "en": "Instant upload feedback to push profile completion.",
+              "ru": "Мгновенная обратная связь при загрузке, чтобы профиль заполняли до конца."
+            }
+          ]
+        },
+        {
+          "type": "image",
+          "src": "/img/about/1.jpg",
+          "size": "wide",
+          "caption": {
+            "en": "Scouts began using Colozeo during live matches.",
+            "ru": "Скауты начали открывать Colozeo прямо во время матчей."
+          }
+        },
+        {
+          "type": "subheading",
+          "text": {
+            "en": "Phase 4 — 2024 · Polish & system",
+            "ru": "Фаза 4 — 2024 · Полировка и система"
+          }
+        },
+        {
+          "type": "paragraph",
+          "text": {
+            "en": "The last phase hardened the system and sanded the details — motion, empty states, accessibility — so the product could keep growing without me in every review.",
+            "ru": "Последняя фаза укрепила систему и отшлифовала детали — анимации, пустые состояния, доступность — чтобы продукт рос без меня на каждом ревью."
+          }
+        },
+        {
+          "type": "list",
+          "title": {
+            "en": "UI improvements",
+            "ru": "Улучшения интерфейса"
+          },
+          "items": [
+            {
+              "en": "Consistent motion language via GSAP.",
+              "ru": "Единый язык движения на GSAP."
+            },
+            {
+              "en": "Accessible contrast + focus states.",
+              "ru": "Доступный контраст и состояния фокуса."
+            },
+            {
+              "en": "A documented component library for the team.",
+              "ru": "Документированная библиотека компонентов для команды."
+            }
+          ]
+        },
+        {
+          "type": "section",
+          "name": {
+            "en": "Outcome",
+            "ru": "Результат"
+          },
+          "title": {
+            "en": "A platform that grew with the business",
+            "ru": "Платформа, выросшая вместе с бизнесом"
+          }
+        },
+        {
+          "type": "list",
+          "items": [
+            {
+              "en": "Click-through on player profiles rose **+20%**.",
+              "ru": "Переходы в профили игроков выросли на **+20%**."
+            },
+            {
+              "en": "Monthly active users grew **+10%** in three months.",
+              "ru": "Месячная аудитория выросла на **+10%** за три месяца."
+            },
+            {
+              "en": "Time per scout review dropped **−48%**.",
+              "ru": "Время одного просмотра скаутом упало на **−48%**."
+            }
+          ]
+        },
+        {
+          "type": "quote",
+          "text": {
+            "en": "The moment scouts started opening Colozeo *during* matches, we knew the product had earned a place in their day.",
+            "ru": "Когда скауты начали открывать Colozeo *во время* матчей, стало ясно: продукт занял место в их дне."
+          },
+          "author": {
+            "en": "Founder, Colozeo",
+            "ru": "Основатель, Colozeo"
+          },
+          "href": "#"
+        },
+        {
+          "type": "image",
+          "src": "/img/covers/cover1.png",
+          "size": "full",
+          "caption": {
+            "en": "The platform, two years and four phases later.",
+            "ru": "Платформа спустя два года и четыре фазы."
+          }
+        }
+      ]
+    },
+    {
+      "id": "pulsewave",
+      "title": "PulseWave",
+      "cover": "/img/covers/cover2.png",
+      "metrics": [
+        "HONORABLE MENTION",
+        "+14% CTR",
+        "+7% MAU"
+      ],
+      "intro": {
+        "en": "Colozeo turns raw match footage into scouted careers. Across two years I partnered with the team to design the scouting platform, build its design system, and craft the flows that make a player’s level legible in seconds.",
+        "ru": "Colozeo превращает сырое видео матчей в карьеры, замеченные скаутами. Два года я вместе с командой проектировал платформу, строил дизайн-систему и сценарии, где уровень игрока считывается за секунды."
+      },
+      "cta": {
+        "label": {
+          "en": "Visit live site",
+          "ru": "Открыть сайт"
+        },
+        "href": "#"
+      },
+      "meta": [
+        {
+          "k": {
+            "en": "Role",
+            "ru": "Роль"
+          },
+          "v": {
+            "en": "UX, UI Design, Design System, Creative Lead",
+            "ru": "UX, UI-дизайн, дизайн-система, креативный лид"
+          }
+        },
+        {
+          "k": {
+            "en": "Duration",
+            "ru": "Сроки"
+          },
+          "v": {
+            "en": "2 years (2023 to 2024)",
+            "ru": "2 года (2023–2024)"
+          }
+        },
+        {
+          "k": {
+            "en": "Platform",
+            "ru": "Платформа"
+          },
+          "v": {
+            "en": "Web & iOS, React, GSAP",
+            "ru": "Веб и iOS, React, GSAP"
+          }
+        }
+      ],
+      "blocks": [
+        {
+          "type": "section",
+          "name": {
+            "en": "Overview",
+            "ru": "Обзор"
+          },
+          "title": {
+            "en": "A startup inside the football industry",
+            "ru": "Стартап внутри футбольной индустрии"
+          }
+        },
+        {
+          "type": "paragraph",
+          "text": {
+            "en": "Colozeo set out to fix a broken discovery market: thousands of talented players never get seen, and scouts drown in unstructured footage. My job was to turn that ambition into a product people actually reach for — one that makes ability ==comparable and trustworthy== in a glance.",
+            "ru": "Colozeo взялся починить сломанный рынок поиска талантов: тысячи игроков остаются незамеченными, а скауты тонут в неструктурированном видео. Моя задача — превратить эту амбицию в продукт, к которому реально тянутся, где уровень игрока ==понятен и достоверен== с одного взгляда."
+          }
+        },
+        {
+          "type": "image",
+          "src": "/img/covers/cover1.png",
+          "size": "full",
+          "caption": {
+            "en": "The scouting home — level-first, evidence second.",
+            "ru": "Главный экран скаутинга — сначала уровень, потом доказательства."
+          }
+        },
+        {
+          "type": "section",
+          "name": {
+            "en": "The challenge",
+            "ru": "Задача"
+          },
+          "title": {
+            "en": "A technical product for a fragmented audience",
+            "ru": "Технический продукт для разрозненной аудитории"
+          }
+        },
+        {
+          "type": "paragraph",
+          "text": {
+            "en": "Two audiences, opposite needs. Scouts want a fast, defensible signal; players want a fair shot at being seen. Designing for both without diluting either was the core constraint.",
+            "ru": "Две аудитории с противоположными задачами. Скаутам нужен быстрый и обоснованный сигнал, игрокам — честный шанс быть замеченными. Спроектировать для обеих, не размыв ни одну, — главное ограничение."
+          }
+        },
+        {
+          "type": "subheading",
+          "text": {
+            "en": "User personas",
+            "ru": "Персоны"
+          }
+        },
+        {
+          "type": "paragraph",
+          "text": {
+            "en": "I built three personas from 14 interviews — the *time-pressed scout*, the *ambitious academy player*, and the *club analyst* — and used them to arbitrate every hard trade-off along the way.",
+            "ru": "На основе 14 интервью я собрал три персоны — *скаут в цейтноте*, *амбициозный игрок академии* и *аналитик клуба* — и через них разрешал каждый сложный компромисс."
+          }
+        },
+        {
+          "type": "image",
+          "src": "/img/about/2.jpg",
+          "size": "wide",
+          "caption": {
+            "en": "Persona synthesis from interviews and a two-club diary study.",
+            "ru": "Синтез персон по интервью и дневниковому исследованию в двух клубах."
+          }
+        },
+        {
+          "type": "section",
+          "name": {
+            "en": "My role",
+            "ru": "Моя роль"
+          },
+          "title": {
+            "en": "Leading design across the platform",
+            "ru": "Дизайн-лид всей платформы"
+          }
+        },
+        {
+          "type": "paragraph",
+          "text": {
+            "en": "I owned product design end-to-end and set the creative direction, then grew and guided a small team as the product scaled across web and iOS.",
+            "ru": "Я вёл продуктовый дизайн от начала до конца и задавал креативное направление, затем собрал и вёл небольшую команду, пока продукт рос на вебе и iOS."
+          }
+        },
+        {
+          "type": "image",
+          "src": "/img/covers/cover2.png",
+          "size": "full",
+          "caption": {
+            "en": "The design system that kept four phases coherent.",
+            "ru": "Дизайн-система, удержавшая четыре фазы в одном языке."
+          }
+        },
+        {
+          "type": "section",
+          "name": {
+            "en": "Phase breakdown",
+            "ru": "Фазы"
+          },
+          "title": {
+            "en": "Four phases. Two years. One evolving platform.",
+            "ru": "Четыре фазы. Два года. Одна растущая платформа."
+          }
+        },
+        {
+          "type": "subheading",
+          "text": {
+            "en": "Phase 1 — 2023 · Foundations",
+            "ru": "Фаза 1 — 2023 · Основа"
+          }
+        },
+        {
+          "type": "paragraph",
+          "text": {
+            "en": "We started by mapping the scout’s real decision path, not the data we happened to have. Paper sketches killed a “timeline of everything” direction fast.",
+            "ru": "Начали с карты реального пути принятия решения скаутом, а не с тех данных, что были под рукой. Бумажные скетчи быстро похоронили идею «ленты всего подряд»."
+          }
+        },
+        {
+          "type": "list",
+          "title": {
+            "en": "Key decisions",
+            "ru": "Ключевые решения"
+          },
+          "items": [
+            {
+              "en": "Lead every profile with a single, comparable level score.",
+              "ru": "Каждый профиль начинается с одной сравнимой оценки уровня."
+            },
+            {
+              "en": "Cut onboarding to three steps.",
+              "ru": "Онбординг сокращён до трёх шагов."
+            },
+            {
+              "en": "Design in the open with weekly scout reviews.",
+              "ru": "Открытый дизайн-процесс с еженедельными ревью со скаутами."
+            }
+          ]
+        },
+        {
+          "type": "subheading",
+          "text": {
+            "en": "Phase 2 — 2023 · IA & visual language",
+            "ru": "Фаза 2 — 2023 · Структура и визуальный язык"
+          }
+        },
+        {
+          "type": "paragraph",
+          "text": {
+            "en": "A restructured information architecture and a moodboard set the tone — confident, sporty, data-literate — before a pixel was polished.",
+            "ru": "Переработанная информационная архитектура и мудборд задали тон — уверенный, спортивный, дружелюбный к данным — ещё до полировки пикселей."
+          }
+        },
+        {
+          "type": "gallery",
+          "columns": 2,
+          "images": [
+            "/img/covers/cover3.png",
+            "/img/covers/cover4.png"
+          ],
+          "caption": {
+            "en": "Sitemap, moodboard, and the first component explorations.",
+            "ru": "Карта сайта, мудборд и первые поиски компонентов."
+          }
+        },
+        {
+          "type": "subheading",
+          "text": {
+            "en": "Phase 3 — 2024 · The scouting flow",
+            "ru": "Фаза 3 — 2024 · Сценарий скаутинга"
+          }
+        },
+        {
+          "type": "paragraph",
+          "text": {
+            "en": "The core flow — ==the 10-second signal== — shipped: a level read, a 3-clip highlight reel, and one-tap outreach, all above the fold.",
+            "ru": "Ключевой сценарий — ==сигнал за 10 секунд== — вышел: оценка уровня, три клипа хайлайтов и связь в один тап, всё на первом экране."
+          }
+        },
+        {
+          "type": "list",
+          "title": {
+            "en": "Key decisions",
+            "ru": "Ключевые решения"
+          },
+          "items": [
+            {
+              "en": "Side-by-side compare for shortlists.",
+              "ru": "Сравнение шорт-листа бок о бок."
+            },
+            {
+              "en": "Instant upload feedback to push profile completion.",
+              "ru": "Мгновенная обратная связь при загрузке, чтобы профиль заполняли до конца."
+            }
+          ]
+        },
+        {
+          "type": "image",
+          "src": "/img/about/1.jpg",
+          "size": "wide",
+          "caption": {
+            "en": "Scouts began using Colozeo during live matches.",
+            "ru": "Скауты начали открывать Colozeo прямо во время матчей."
+          }
+        },
+        {
+          "type": "subheading",
+          "text": {
+            "en": "Phase 4 — 2024 · Polish & system",
+            "ru": "Фаза 4 — 2024 · Полировка и система"
+          }
+        },
+        {
+          "type": "paragraph",
+          "text": {
+            "en": "The last phase hardened the system and sanded the details — motion, empty states, accessibility — so the product could keep growing without me in every review.",
+            "ru": "Последняя фаза укрепила систему и отшлифовала детали — анимации, пустые состояния, доступность — чтобы продукт рос без меня на каждом ревью."
+          }
+        },
+        {
+          "type": "list",
+          "title": {
+            "en": "UI improvements",
+            "ru": "Улучшения интерфейса"
+          },
+          "items": [
+            {
+              "en": "Consistent motion language via GSAP.",
+              "ru": "Единый язык движения на GSAP."
+            },
+            {
+              "en": "Accessible contrast + focus states.",
+              "ru": "Доступный контраст и состояния фокуса."
+            },
+            {
+              "en": "A documented component library for the team.",
+              "ru": "Документированная библиотека компонентов для команды."
+            }
+          ]
+        },
+        {
+          "type": "section",
+          "name": {
+            "en": "Outcome",
+            "ru": "Результат"
+          },
+          "title": {
+            "en": "A platform that grew with the business",
+            "ru": "Платформа, выросшая вместе с бизнесом"
+          }
+        },
+        {
+          "type": "list",
+          "items": [
+            {
+              "en": "Click-through on player profiles rose **+20%**.",
+              "ru": "Переходы в профили игроков выросли на **+20%**."
+            },
+            {
+              "en": "Monthly active users grew **+10%** in three months.",
+              "ru": "Месячная аудитория выросла на **+10%** за три месяца."
+            },
+            {
+              "en": "Time per scout review dropped **−48%**.",
+              "ru": "Время одного просмотра скаутом упало на **−48%**."
+            }
+          ]
+        },
+        {
+          "type": "quote",
+          "text": {
+            "en": "The moment scouts started opening Colozeo *during* matches, we knew the product had earned a place in their day.",
+            "ru": "Когда скауты начали открывать Colozeo *во время* матчей, стало ясно: продукт занял место в их дне."
+          },
+          "author": {
+            "en": "Founder, Colozeo",
+            "ru": "Основатель, Colozeo"
+          },
+          "href": "#"
+        },
+        {
+          "type": "image",
+          "src": "/img/covers/cover1.png",
+          "size": "full",
+          "caption": {
+            "en": "The platform, two years and four phases later.",
+            "ru": "Платформа спустя два года и четыре фазы."
+          }
+        }
+      ]
+    },
+    {
+      "id": "echostream",
+      "title": "EchoStream",
+      "cover": "/img/covers/cover3.png",
+      "metrics": [
+        "AWARD",
+        "+30% CTR",
+        "+15% MAU"
+      ],
+      "intro": {
+        "en": "Colozeo turns raw match footage into scouted careers. Across two years I partnered with the team to design the scouting platform, build its design system, and craft the flows that make a player’s level legible in seconds.",
+        "ru": "Colozeo превращает сырое видео матчей в карьеры, замеченные скаутами. Два года я вместе с командой проектировал платформу, строил дизайн-систему и сценарии, где уровень игрока считывается за секунды."
+      },
+      "cta": {
+        "label": {
+          "en": "Visit live site",
+          "ru": "Открыть сайт"
+        },
+        "href": "#"
+      },
+      "meta": [
+        {
+          "k": {
+            "en": "Role",
+            "ru": "Роль"
+          },
+          "v": {
+            "en": "UX, UI Design, Design System, Creative Lead",
+            "ru": "UX, UI-дизайн, дизайн-система, креативный лид"
+          }
+        },
+        {
+          "k": {
+            "en": "Duration",
+            "ru": "Сроки"
+          },
+          "v": {
+            "en": "2 years (2023 to 2024)",
+            "ru": "2 года (2023–2024)"
+          }
+        },
+        {
+          "k": {
+            "en": "Platform",
+            "ru": "Платформа"
+          },
+          "v": {
+            "en": "Web & iOS, React, GSAP",
+            "ru": "Веб и iOS, React, GSAP"
+          }
+        }
+      ],
+      "blocks": [
+        {
+          "type": "section",
+          "name": {
+            "en": "Overview",
+            "ru": "Обзор"
+          },
+          "title": {
+            "en": "A startup inside the football industry",
+            "ru": "Стартап внутри футбольной индустрии"
+          }
+        },
+        {
+          "type": "paragraph",
+          "text": {
+            "en": "Colozeo set out to fix a broken discovery market: thousands of talented players never get seen, and scouts drown in unstructured footage. My job was to turn that ambition into a product people actually reach for — one that makes ability ==comparable and trustworthy== in a glance.",
+            "ru": "Colozeo взялся починить сломанный рынок поиска талантов: тысячи игроков остаются незамеченными, а скауты тонут в неструктурированном видео. Моя задача — превратить эту амбицию в продукт, к которому реально тянутся, где уровень игрока ==понятен и достоверен== с одного взгляда."
+          }
+        },
+        {
+          "type": "image",
+          "src": "/img/covers/cover1.png",
+          "size": "full",
+          "caption": {
+            "en": "The scouting home — level-first, evidence second.",
+            "ru": "Главный экран скаутинга — сначала уровень, потом доказательства."
+          }
+        },
+        {
+          "type": "section",
+          "name": {
+            "en": "The challenge",
+            "ru": "Задача"
+          },
+          "title": {
+            "en": "A technical product for a fragmented audience",
+            "ru": "Технический продукт для разрозненной аудитории"
+          }
+        },
+        {
+          "type": "paragraph",
+          "text": {
+            "en": "Two audiences, opposite needs. Scouts want a fast, defensible signal; players want a fair shot at being seen. Designing for both without diluting either was the core constraint.",
+            "ru": "Две аудитории с противоположными задачами. Скаутам нужен быстрый и обоснованный сигнал, игрокам — честный шанс быть замеченными. Спроектировать для обеих, не размыв ни одну, — главное ограничение."
+          }
+        },
+        {
+          "type": "subheading",
+          "text": {
+            "en": "User personas",
+            "ru": "Персоны"
+          }
+        },
+        {
+          "type": "paragraph",
+          "text": {
+            "en": "I built three personas from 14 interviews — the *time-pressed scout*, the *ambitious academy player*, and the *club analyst* — and used them to arbitrate every hard trade-off along the way.",
+            "ru": "На основе 14 интервью я собрал три персоны — *скаут в цейтноте*, *амбициозный игрок академии* и *аналитик клуба* — и через них разрешал каждый сложный компромисс."
+          }
+        },
+        {
+          "type": "image",
+          "src": "/img/about/2.jpg",
+          "size": "wide",
+          "caption": {
+            "en": "Persona synthesis from interviews and a two-club diary study.",
+            "ru": "Синтез персон по интервью и дневниковому исследованию в двух клубах."
+          }
+        },
+        {
+          "type": "section",
+          "name": {
+            "en": "My role",
+            "ru": "Моя роль"
+          },
+          "title": {
+            "en": "Leading design across the platform",
+            "ru": "Дизайн-лид всей платформы"
+          }
+        },
+        {
+          "type": "paragraph",
+          "text": {
+            "en": "I owned product design end-to-end and set the creative direction, then grew and guided a small team as the product scaled across web and iOS.",
+            "ru": "Я вёл продуктовый дизайн от начала до конца и задавал креативное направление, затем собрал и вёл небольшую команду, пока продукт рос на вебе и iOS."
+          }
+        },
+        {
+          "type": "image",
+          "src": "/img/covers/cover2.png",
+          "size": "full",
+          "caption": {
+            "en": "The design system that kept four phases coherent.",
+            "ru": "Дизайн-система, удержавшая четыре фазы в одном языке."
+          }
+        },
+        {
+          "type": "section",
+          "name": {
+            "en": "Phase breakdown",
+            "ru": "Фазы"
+          },
+          "title": {
+            "en": "Four phases. Two years. One evolving platform.",
+            "ru": "Четыре фазы. Два года. Одна растущая платформа."
+          }
+        },
+        {
+          "type": "subheading",
+          "text": {
+            "en": "Phase 1 — 2023 · Foundations",
+            "ru": "Фаза 1 — 2023 · Основа"
+          }
+        },
+        {
+          "type": "paragraph",
+          "text": {
+            "en": "We started by mapping the scout’s real decision path, not the data we happened to have. Paper sketches killed a “timeline of everything” direction fast.",
+            "ru": "Начали с карты реального пути принятия решения скаутом, а не с тех данных, что были под рукой. Бумажные скетчи быстро похоронили идею «ленты всего подряд»."
+          }
+        },
+        {
+          "type": "list",
+          "title": {
+            "en": "Key decisions",
+            "ru": "Ключевые решения"
+          },
+          "items": [
+            {
+              "en": "Lead every profile with a single, comparable level score.",
+              "ru": "Каждый профиль начинается с одной сравнимой оценки уровня."
+            },
+            {
+              "en": "Cut onboarding to three steps.",
+              "ru": "Онбординг сокращён до трёх шагов."
+            },
+            {
+              "en": "Design in the open with weekly scout reviews.",
+              "ru": "Открытый дизайн-процесс с еженедельными ревью со скаутами."
+            }
+          ]
+        },
+        {
+          "type": "subheading",
+          "text": {
+            "en": "Phase 2 — 2023 · IA & visual language",
+            "ru": "Фаза 2 — 2023 · Структура и визуальный язык"
+          }
+        },
+        {
+          "type": "paragraph",
+          "text": {
+            "en": "A restructured information architecture and a moodboard set the tone — confident, sporty, data-literate — before a pixel was polished.",
+            "ru": "Переработанная информационная архитектура и мудборд задали тон — уверенный, спортивный, дружелюбный к данным — ещё до полировки пикселей."
+          }
+        },
+        {
+          "type": "gallery",
+          "columns": 2,
+          "images": [
+            "/img/covers/cover3.png",
+            "/img/covers/cover4.png"
+          ],
+          "caption": {
+            "en": "Sitemap, moodboard, and the first component explorations.",
+            "ru": "Карта сайта, мудборд и первые поиски компонентов."
+          }
+        },
+        {
+          "type": "subheading",
+          "text": {
+            "en": "Phase 3 — 2024 · The scouting flow",
+            "ru": "Фаза 3 — 2024 · Сценарий скаутинга"
+          }
+        },
+        {
+          "type": "paragraph",
+          "text": {
+            "en": "The core flow — ==the 10-second signal== — shipped: a level read, a 3-clip highlight reel, and one-tap outreach, all above the fold.",
+            "ru": "Ключевой сценарий — ==сигнал за 10 секунд== — вышел: оценка уровня, три клипа хайлайтов и связь в один тап, всё на первом экране."
+          }
+        },
+        {
+          "type": "list",
+          "title": {
+            "en": "Key decisions",
+            "ru": "Ключевые решения"
+          },
+          "items": [
+            {
+              "en": "Side-by-side compare for shortlists.",
+              "ru": "Сравнение шорт-листа бок о бок."
+            },
+            {
+              "en": "Instant upload feedback to push profile completion.",
+              "ru": "Мгновенная обратная связь при загрузке, чтобы профиль заполняли до конца."
+            }
+          ]
+        },
+        {
+          "type": "image",
+          "src": "/img/about/1.jpg",
+          "size": "wide",
+          "caption": {
+            "en": "Scouts began using Colozeo during live matches.",
+            "ru": "Скауты начали открывать Colozeo прямо во время матчей."
+          }
+        },
+        {
+          "type": "subheading",
+          "text": {
+            "en": "Phase 4 — 2024 · Polish & system",
+            "ru": "Фаза 4 — 2024 · Полировка и система"
+          }
+        },
+        {
+          "type": "paragraph",
+          "text": {
+            "en": "The last phase hardened the system and sanded the details — motion, empty states, accessibility — so the product could keep growing without me in every review.",
+            "ru": "Последняя фаза укрепила систему и отшлифовала детали — анимации, пустые состояния, доступность — чтобы продукт рос без меня на каждом ревью."
+          }
+        },
+        {
+          "type": "list",
+          "title": {
+            "en": "UI improvements",
+            "ru": "Улучшения интерфейса"
+          },
+          "items": [
+            {
+              "en": "Consistent motion language via GSAP.",
+              "ru": "Единый язык движения на GSAP."
+            },
+            {
+              "en": "Accessible contrast + focus states.",
+              "ru": "Доступный контраст и состояния фокуса."
+            },
+            {
+              "en": "A documented component library for the team.",
+              "ru": "Документированная библиотека компонентов для команды."
+            }
+          ]
+        },
+        {
+          "type": "section",
+          "name": {
+            "en": "Outcome",
+            "ru": "Результат"
+          },
+          "title": {
+            "en": "A platform that grew with the business",
+            "ru": "Платформа, выросшая вместе с бизнесом"
+          }
+        },
+        {
+          "type": "list",
+          "items": [
+            {
+              "en": "Click-through on player profiles rose **+20%**.",
+              "ru": "Переходы в профили игроков выросли на **+20%**."
+            },
+            {
+              "en": "Monthly active users grew **+10%** in three months.",
+              "ru": "Месячная аудитория выросла на **+10%** за три месяца."
+            },
+            {
+              "en": "Time per scout review dropped **−48%**.",
+              "ru": "Время одного просмотра скаутом упало на **−48%**."
+            }
+          ]
+        },
+        {
+          "type": "quote",
+          "text": {
+            "en": "The moment scouts started opening Colozeo *during* matches, we knew the product had earned a place in their day.",
+            "ru": "Когда скауты начали открывать Colozeo *во время* матчей, стало ясно: продукт занял место в их дне."
+          },
+          "author": {
+            "en": "Founder, Colozeo",
+            "ru": "Основатель, Colozeo"
+          },
+          "href": "#"
+        },
+        {
+          "type": "image",
+          "src": "/img/covers/cover1.png",
+          "size": "full",
+          "caption": {
+            "en": "The platform, two years and four phases later.",
+            "ru": "Платформа спустя два года и четыре фазы."
+          }
+        }
+      ]
+    },
+    {
+      "id": "visionarygrid",
+      "title": "VisionaryGrid",
+      "cover": "/img/covers/cover4.png",
+      "metrics": [
+        "FINALIST",
+        "+10% CTR",
+        "+6% MAU"
+      ],
+      "intro": {
+        "en": "Colozeo turns raw match footage into scouted careers. Across two years I partnered with the team to design the scouting platform, build its design system, and craft the flows that make a player’s level legible in seconds.",
+        "ru": "Colozeo превращает сырое видео матчей в карьеры, замеченные скаутами. Два года я вместе с командой проектировал платформу, строил дизайн-систему и сценарии, где уровень игрока считывается за секунды."
+      },
+      "cta": {
+        "label": {
+          "en": "Visit live site",
+          "ru": "Открыть сайт"
+        },
+        "href": "#"
+      },
+      "meta": [
+        {
+          "k": {
+            "en": "Role",
+            "ru": "Роль"
+          },
+          "v": {
+            "en": "UX, UI Design, Design System, Creative Lead",
+            "ru": "UX, UI-дизайн, дизайн-система, креативный лид"
+          }
+        },
+        {
+          "k": {
+            "en": "Duration",
+            "ru": "Сроки"
+          },
+          "v": {
+            "en": "2 years (2023 to 2024)",
+            "ru": "2 года (2023–2024)"
+          }
+        },
+        {
+          "k": {
+            "en": "Platform",
+            "ru": "Платформа"
+          },
+          "v": {
+            "en": "Web & iOS, React, GSAP",
+            "ru": "Веб и iOS, React, GSAP"
+          }
+        }
+      ],
+      "blocks": [
+        {
+          "type": "section",
+          "name": {
+            "en": "Overview",
+            "ru": "Обзор"
+          },
+          "title": {
+            "en": "A startup inside the football industry",
+            "ru": "Стартап внутри футбольной индустрии"
+          }
+        },
+        {
+          "type": "paragraph",
+          "text": {
+            "en": "Colozeo set out to fix a broken discovery market: thousands of talented players never get seen, and scouts drown in unstructured footage. My job was to turn that ambition into a product people actually reach for — one that makes ability ==comparable and trustworthy== in a glance.",
+            "ru": "Colozeo взялся починить сломанный рынок поиска талантов: тысячи игроков остаются незамеченными, а скауты тонут в неструктурированном видео. Моя задача — превратить эту амбицию в продукт, к которому реально тянутся, где уровень игрока ==понятен и достоверен== с одного взгляда."
+          }
+        },
+        {
+          "type": "image",
+          "src": "/img/covers/cover1.png",
+          "size": "full",
+          "caption": {
+            "en": "The scouting home — level-first, evidence second.",
+            "ru": "Главный экран скаутинга — сначала уровень, потом доказательства."
+          }
+        },
+        {
+          "type": "section",
+          "name": {
+            "en": "The challenge",
+            "ru": "Задача"
+          },
+          "title": {
+            "en": "A technical product for a fragmented audience",
+            "ru": "Технический продукт для разрозненной аудитории"
+          }
+        },
+        {
+          "type": "paragraph",
+          "text": {
+            "en": "Two audiences, opposite needs. Scouts want a fast, defensible signal; players want a fair shot at being seen. Designing for both without diluting either was the core constraint.",
+            "ru": "Две аудитории с противоположными задачами. Скаутам нужен быстрый и обоснованный сигнал, игрокам — честный шанс быть замеченными. Спроектировать для обеих, не размыв ни одну, — главное ограничение."
+          }
+        },
+        {
+          "type": "subheading",
+          "text": {
+            "en": "User personas",
+            "ru": "Персоны"
+          }
+        },
+        {
+          "type": "paragraph",
+          "text": {
+            "en": "I built three personas from 14 interviews — the *time-pressed scout*, the *ambitious academy player*, and the *club analyst* — and used them to arbitrate every hard trade-off along the way.",
+            "ru": "На основе 14 интервью я собрал три персоны — *скаут в цейтноте*, *амбициозный игрок академии* и *аналитик клуба* — и через них разрешал каждый сложный компромисс."
+          }
+        },
+        {
+          "type": "image",
+          "src": "/img/about/2.jpg",
+          "size": "wide",
+          "caption": {
+            "en": "Persona synthesis from interviews and a two-club diary study.",
+            "ru": "Синтез персон по интервью и дневниковому исследованию в двух клубах."
+          }
+        },
+        {
+          "type": "section",
+          "name": {
+            "en": "My role",
+            "ru": "Моя роль"
+          },
+          "title": {
+            "en": "Leading design across the platform",
+            "ru": "Дизайн-лид всей платформы"
+          }
+        },
+        {
+          "type": "paragraph",
+          "text": {
+            "en": "I owned product design end-to-end and set the creative direction, then grew and guided a small team as the product scaled across web and iOS.",
+            "ru": "Я вёл продуктовый дизайн от начала до конца и задавал креативное направление, затем собрал и вёл небольшую команду, пока продукт рос на вебе и iOS."
+          }
+        },
+        {
+          "type": "image",
+          "src": "/img/covers/cover2.png",
+          "size": "full",
+          "caption": {
+            "en": "The design system that kept four phases coherent.",
+            "ru": "Дизайн-система, удержавшая четыре фазы в одном языке."
+          }
+        },
+        {
+          "type": "section",
+          "name": {
+            "en": "Phase breakdown",
+            "ru": "Фазы"
+          },
+          "title": {
+            "en": "Four phases. Two years. One evolving platform.",
+            "ru": "Четыре фазы. Два года. Одна растущая платформа."
+          }
+        },
+        {
+          "type": "subheading",
+          "text": {
+            "en": "Phase 1 — 2023 · Foundations",
+            "ru": "Фаза 1 — 2023 · Основа"
+          }
+        },
+        {
+          "type": "paragraph",
+          "text": {
+            "en": "We started by mapping the scout’s real decision path, not the data we happened to have. Paper sketches killed a “timeline of everything” direction fast.",
+            "ru": "Начали с карты реального пути принятия решения скаутом, а не с тех данных, что были под рукой. Бумажные скетчи быстро похоронили идею «ленты всего подряд»."
+          }
+        },
+        {
+          "type": "list",
+          "title": {
+            "en": "Key decisions",
+            "ru": "Ключевые решения"
+          },
+          "items": [
+            {
+              "en": "Lead every profile with a single, comparable level score.",
+              "ru": "Каждый профиль начинается с одной сравнимой оценки уровня."
+            },
+            {
+              "en": "Cut onboarding to three steps.",
+              "ru": "Онбординг сокращён до трёх шагов."
+            },
+            {
+              "en": "Design in the open with weekly scout reviews.",
+              "ru": "Открытый дизайн-процесс с еженедельными ревью со скаутами."
+            }
+          ]
+        },
+        {
+          "type": "subheading",
+          "text": {
+            "en": "Phase 2 — 2023 · IA & visual language",
+            "ru": "Фаза 2 — 2023 · Структура и визуальный язык"
+          }
+        },
+        {
+          "type": "paragraph",
+          "text": {
+            "en": "A restructured information architecture and a moodboard set the tone — confident, sporty, data-literate — before a pixel was polished.",
+            "ru": "Переработанная информационная архитектура и мудборд задали тон — уверенный, спортивный, дружелюбный к данным — ещё до полировки пикселей."
+          }
+        },
+        {
+          "type": "gallery",
+          "columns": 2,
+          "images": [
+            "/img/covers/cover3.png",
+            "/img/covers/cover4.png"
+          ],
+          "caption": {
+            "en": "Sitemap, moodboard, and the first component explorations.",
+            "ru": "Карта сайта, мудборд и первые поиски компонентов."
+          }
+        },
+        {
+          "type": "subheading",
+          "text": {
+            "en": "Phase 3 — 2024 · The scouting flow",
+            "ru": "Фаза 3 — 2024 · Сценарий скаутинга"
+          }
+        },
+        {
+          "type": "paragraph",
+          "text": {
+            "en": "The core flow — ==the 10-second signal== — shipped: a level read, a 3-clip highlight reel, and one-tap outreach, all above the fold.",
+            "ru": "Ключевой сценарий — ==сигнал за 10 секунд== — вышел: оценка уровня, три клипа хайлайтов и связь в один тап, всё на первом экране."
+          }
+        },
+        {
+          "type": "list",
+          "title": {
+            "en": "Key decisions",
+            "ru": "Ключевые решения"
+          },
+          "items": [
+            {
+              "en": "Side-by-side compare for shortlists.",
+              "ru": "Сравнение шорт-листа бок о бок."
+            },
+            {
+              "en": "Instant upload feedback to push profile completion.",
+              "ru": "Мгновенная обратная связь при загрузке, чтобы профиль заполняли до конца."
+            }
+          ]
+        },
+        {
+          "type": "image",
+          "src": "/img/about/1.jpg",
+          "size": "wide",
+          "caption": {
+            "en": "Scouts began using Colozeo during live matches.",
+            "ru": "Скауты начали открывать Colozeo прямо во время матчей."
+          }
+        },
+        {
+          "type": "subheading",
+          "text": {
+            "en": "Phase 4 — 2024 · Polish & system",
+            "ru": "Фаза 4 — 2024 · Полировка и система"
+          }
+        },
+        {
+          "type": "paragraph",
+          "text": {
+            "en": "The last phase hardened the system and sanded the details — motion, empty states, accessibility — so the product could keep growing without me in every review.",
+            "ru": "Последняя фаза укрепила систему и отшлифовала детали — анимации, пустые состояния, доступность — чтобы продукт рос без меня на каждом ревью."
+          }
+        },
+        {
+          "type": "list",
+          "title": {
+            "en": "UI improvements",
+            "ru": "Улучшения интерфейса"
+          },
+          "items": [
+            {
+              "en": "Consistent motion language via GSAP.",
+              "ru": "Единый язык движения на GSAP."
+            },
+            {
+              "en": "Accessible contrast + focus states.",
+              "ru": "Доступный контраст и состояния фокуса."
+            },
+            {
+              "en": "A documented component library for the team.",
+              "ru": "Документированная библиотека компонентов для команды."
+            }
+          ]
+        },
+        {
+          "type": "section",
+          "name": {
+            "en": "Outcome",
+            "ru": "Результат"
+          },
+          "title": {
+            "en": "A platform that grew with the business",
+            "ru": "Платформа, выросшая вместе с бизнесом"
+          }
+        },
+        {
+          "type": "list",
+          "items": [
+            {
+              "en": "Click-through on player profiles rose **+20%**.",
+              "ru": "Переходы в профили игроков выросли на **+20%**."
+            },
+            {
+              "en": "Monthly active users grew **+10%** in three months.",
+              "ru": "Месячная аудитория выросла на **+10%** за три месяца."
+            },
+            {
+              "en": "Time per scout review dropped **−48%**.",
+              "ru": "Время одного просмотра скаутом упало на **−48%**."
+            }
+          ]
+        },
+        {
+          "type": "quote",
+          "text": {
+            "en": "The moment scouts started opening Colozeo *during* matches, we knew the product had earned a place in their day.",
+            "ru": "Когда скауты начали открывать Colozeo *во время* матчей, стало ясно: продукт занял место в их дне."
+          },
+          "author": {
+            "en": "Founder, Colozeo",
+            "ru": "Основатель, Colozeo"
+          },
+          "href": "#"
+        },
+        {
+          "type": "image",
+          "src": "/img/covers/cover1.png",
+          "size": "full",
+          "caption": {
+            "en": "The platform, two years and four phases later.",
+            "ru": "Платформа спустя два года и четыре фазы."
+          }
+        }
+      ]
+    },
+    {
+      "id": "brightminds",
+      "title": "BrightMinds",
+      "cover": "/img/covers/cover1.png",
+      "metrics": [
+        "HONORABLE MENTION",
+        "+22% CTR",
+        "+11% MAU"
+      ],
+      "intro": {
+        "en": "Colozeo turns raw match footage into scouted careers. Across two years I partnered with the team to design the scouting platform, build its design system, and craft the flows that make a player’s level legible in seconds.",
+        "ru": "Colozeo превращает сырое видео матчей в карьеры, замеченные скаутами. Два года я вместе с командой проектировал платформу, строил дизайн-систему и сценарии, где уровень игрока считывается за секунды."
+      },
+      "cta": {
+        "label": {
+          "en": "Visit live site",
+          "ru": "Открыть сайт"
+        },
+        "href": "#"
+      },
+      "meta": [
+        {
+          "k": {
+            "en": "Role",
+            "ru": "Роль"
+          },
+          "v": {
+            "en": "UX, UI Design, Design System, Creative Lead",
+            "ru": "UX, UI-дизайн, дизайн-система, креативный лид"
+          }
+        },
+        {
+          "k": {
+            "en": "Duration",
+            "ru": "Сроки"
+          },
+          "v": {
+            "en": "2 years (2023 to 2024)",
+            "ru": "2 года (2023–2024)"
+          }
+        },
+        {
+          "k": {
+            "en": "Platform",
+            "ru": "Платформа"
+          },
+          "v": {
+            "en": "Web & iOS, React, GSAP",
+            "ru": "Веб и iOS, React, GSAP"
+          }
+        }
+      ],
+      "blocks": [
+        {
+          "type": "section",
+          "name": {
+            "en": "Overview",
+            "ru": "Обзор"
+          },
+          "title": {
+            "en": "A startup inside the football industry",
+            "ru": "Стартап внутри футбольной индустрии"
+          }
+        },
+        {
+          "type": "paragraph",
+          "text": {
+            "en": "Colozeo set out to fix a broken discovery market: thousands of talented players never get seen, and scouts drown in unstructured footage. My job was to turn that ambition into a product people actually reach for — one that makes ability ==comparable and trustworthy== in a glance.",
+            "ru": "Colozeo взялся починить сломанный рынок поиска талантов: тысячи игроков остаются незамеченными, а скауты тонут в неструктурированном видео. Моя задача — превратить эту амбицию в продукт, к которому реально тянутся, где уровень игрока ==понятен и достоверен== с одного взгляда."
+          }
+        },
+        {
+          "type": "image",
+          "src": "/img/covers/cover1.png",
+          "size": "full",
+          "caption": {
+            "en": "The scouting home — level-first, evidence second.",
+            "ru": "Главный экран скаутинга — сначала уровень, потом доказательства."
+          }
+        },
+        {
+          "type": "section",
+          "name": {
+            "en": "The challenge",
+            "ru": "Задача"
+          },
+          "title": {
+            "en": "A technical product for a fragmented audience",
+            "ru": "Технический продукт для разрозненной аудитории"
+          }
+        },
+        {
+          "type": "paragraph",
+          "text": {
+            "en": "Two audiences, opposite needs. Scouts want a fast, defensible signal; players want a fair shot at being seen. Designing for both without diluting either was the core constraint.",
+            "ru": "Две аудитории с противоположными задачами. Скаутам нужен быстрый и обоснованный сигнал, игрокам — честный шанс быть замеченными. Спроектировать для обеих, не размыв ни одну, — главное ограничение."
+          }
+        },
+        {
+          "type": "subheading",
+          "text": {
+            "en": "User personas",
+            "ru": "Персоны"
+          }
+        },
+        {
+          "type": "paragraph",
+          "text": {
+            "en": "I built three personas from 14 interviews — the *time-pressed scout*, the *ambitious academy player*, and the *club analyst* — and used them to arbitrate every hard trade-off along the way.",
+            "ru": "На основе 14 интервью я собрал три персоны — *скаут в цейтноте*, *амбициозный игрок академии* и *аналитик клуба* — и через них разрешал каждый сложный компромисс."
+          }
+        },
+        {
+          "type": "image",
+          "src": "/img/about/2.jpg",
+          "size": "wide",
+          "caption": {
+            "en": "Persona synthesis from interviews and a two-club diary study.",
+            "ru": "Синтез персон по интервью и дневниковому исследованию в двух клубах."
+          }
+        },
+        {
+          "type": "section",
+          "name": {
+            "en": "My role",
+            "ru": "Моя роль"
+          },
+          "title": {
+            "en": "Leading design across the platform",
+            "ru": "Дизайн-лид всей платформы"
+          }
+        },
+        {
+          "type": "paragraph",
+          "text": {
+            "en": "I owned product design end-to-end and set the creative direction, then grew and guided a small team as the product scaled across web and iOS.",
+            "ru": "Я вёл продуктовый дизайн от начала до конца и задавал креативное направление, затем собрал и вёл небольшую команду, пока продукт рос на вебе и iOS."
+          }
+        },
+        {
+          "type": "image",
+          "src": "/img/covers/cover2.png",
+          "size": "full",
+          "caption": {
+            "en": "The design system that kept four phases coherent.",
+            "ru": "Дизайн-система, удержавшая четыре фазы в одном языке."
+          }
+        },
+        {
+          "type": "section",
+          "name": {
+            "en": "Phase breakdown",
+            "ru": "Фазы"
+          },
+          "title": {
+            "en": "Four phases. Two years. One evolving platform.",
+            "ru": "Четыре фазы. Два года. Одна растущая платформа."
+          }
+        },
+        {
+          "type": "subheading",
+          "text": {
+            "en": "Phase 1 — 2023 · Foundations",
+            "ru": "Фаза 1 — 2023 · Основа"
+          }
+        },
+        {
+          "type": "paragraph",
+          "text": {
+            "en": "We started by mapping the scout’s real decision path, not the data we happened to have. Paper sketches killed a “timeline of everything” direction fast.",
+            "ru": "Начали с карты реального пути принятия решения скаутом, а не с тех данных, что были под рукой. Бумажные скетчи быстро похоронили идею «ленты всего подряд»."
+          }
+        },
+        {
+          "type": "list",
+          "title": {
+            "en": "Key decisions",
+            "ru": "Ключевые решения"
+          },
+          "items": [
+            {
+              "en": "Lead every profile with a single, comparable level score.",
+              "ru": "Каждый профиль начинается с одной сравнимой оценки уровня."
+            },
+            {
+              "en": "Cut onboarding to three steps.",
+              "ru": "Онбординг сокращён до трёх шагов."
+            },
+            {
+              "en": "Design in the open with weekly scout reviews.",
+              "ru": "Открытый дизайн-процесс с еженедельными ревью со скаутами."
+            }
+          ]
+        },
+        {
+          "type": "subheading",
+          "text": {
+            "en": "Phase 2 — 2023 · IA & visual language",
+            "ru": "Фаза 2 — 2023 · Структура и визуальный язык"
+          }
+        },
+        {
+          "type": "paragraph",
+          "text": {
+            "en": "A restructured information architecture and a moodboard set the tone — confident, sporty, data-literate — before a pixel was polished.",
+            "ru": "Переработанная информационная архитектура и мудборд задали тон — уверенный, спортивный, дружелюбный к данным — ещё до полировки пикселей."
+          }
+        },
+        {
+          "type": "gallery",
+          "columns": 2,
+          "images": [
+            "/img/covers/cover3.png",
+            "/img/covers/cover4.png"
+          ],
+          "caption": {
+            "en": "Sitemap, moodboard, and the first component explorations.",
+            "ru": "Карта сайта, мудборд и первые поиски компонентов."
+          }
+        },
+        {
+          "type": "subheading",
+          "text": {
+            "en": "Phase 3 — 2024 · The scouting flow",
+            "ru": "Фаза 3 — 2024 · Сценарий скаутинга"
+          }
+        },
+        {
+          "type": "paragraph",
+          "text": {
+            "en": "The core flow — ==the 10-second signal== — shipped: a level read, a 3-clip highlight reel, and one-tap outreach, all above the fold.",
+            "ru": "Ключевой сценарий — ==сигнал за 10 секунд== — вышел: оценка уровня, три клипа хайлайтов и связь в один тап, всё на первом экране."
+          }
+        },
+        {
+          "type": "list",
+          "title": {
+            "en": "Key decisions",
+            "ru": "Ключевые решения"
+          },
+          "items": [
+            {
+              "en": "Side-by-side compare for shortlists.",
+              "ru": "Сравнение шорт-листа бок о бок."
+            },
+            {
+              "en": "Instant upload feedback to push profile completion.",
+              "ru": "Мгновенная обратная связь при загрузке, чтобы профиль заполняли до конца."
+            }
+          ]
+        },
+        {
+          "type": "image",
+          "src": "/img/about/1.jpg",
+          "size": "wide",
+          "caption": {
+            "en": "Scouts began using Colozeo during live matches.",
+            "ru": "Скауты начали открывать Colozeo прямо во время матчей."
+          }
+        },
+        {
+          "type": "subheading",
+          "text": {
+            "en": "Phase 4 — 2024 · Polish & system",
+            "ru": "Фаза 4 — 2024 · Полировка и система"
+          }
+        },
+        {
+          "type": "paragraph",
+          "text": {
+            "en": "The last phase hardened the system and sanded the details — motion, empty states, accessibility — so the product could keep growing without me in every review.",
+            "ru": "Последняя фаза укрепила систему и отшлифовала детали — анимации, пустые состояния, доступность — чтобы продукт рос без меня на каждом ревью."
+          }
+        },
+        {
+          "type": "list",
+          "title": {
+            "en": "UI improvements",
+            "ru": "Улучшения интерфейса"
+          },
+          "items": [
+            {
+              "en": "Consistent motion language via GSAP.",
+              "ru": "Единый язык движения на GSAP."
+            },
+            {
+              "en": "Accessible contrast + focus states.",
+              "ru": "Доступный контраст и состояния фокуса."
+            },
+            {
+              "en": "A documented component library for the team.",
+              "ru": "Документированная библиотека компонентов для команды."
+            }
+          ]
+        },
+        {
+          "type": "section",
+          "name": {
+            "en": "Outcome",
+            "ru": "Результат"
+          },
+          "title": {
+            "en": "A platform that grew with the business",
+            "ru": "Платформа, выросшая вместе с бизнесом"
+          }
+        },
+        {
+          "type": "list",
+          "items": [
+            {
+              "en": "Click-through on player profiles rose **+20%**.",
+              "ru": "Переходы в профили игроков выросли на **+20%**."
+            },
+            {
+              "en": "Monthly active users grew **+10%** in three months.",
+              "ru": "Месячная аудитория выросла на **+10%** за три месяца."
+            },
+            {
+              "en": "Time per scout review dropped **−48%**.",
+              "ru": "Время одного просмотра скаутом упало на **−48%**."
+            }
+          ]
+        },
+        {
+          "type": "quote",
+          "text": {
+            "en": "The moment scouts started opening Colozeo *during* matches, we knew the product had earned a place in their day.",
+            "ru": "Когда скауты начали открывать Colozeo *во время* матчей, стало ясно: продукт занял место в их дне."
+          },
+          "author": {
+            "en": "Founder, Colozeo",
+            "ru": "Основатель, Colozeo"
+          },
+          "href": "#"
+        },
+        {
+          "type": "image",
+          "src": "/img/covers/cover1.png",
+          "size": "full",
+          "caption": {
+            "en": "The platform, two years and four phases later.",
+            "ru": "Платформа спустя два года и четыре фазы."
+          }
+        }
+      ]
+    },
+    {
+      "id": "orbitx",
+      "title": "OrbitX",
+      "cover": "/img/covers/cover2.png",
+      "metrics": [
+        "AWARD",
+        "+27% CTR",
+        "+13% MAU"
+      ],
+      "intro": {
+        "en": "Colozeo turns raw match footage into scouted careers. Across two years I partnered with the team to design the scouting platform, build its design system, and craft the flows that make a player’s level legible in seconds.",
+        "ru": "Colozeo превращает сырое видео матчей в карьеры, замеченные скаутами. Два года я вместе с командой проектировал платформу, строил дизайн-систему и сценарии, где уровень игрока считывается за секунды."
+      },
+      "cta": {
+        "label": {
+          "en": "Visit live site",
+          "ru": "Открыть сайт"
+        },
+        "href": "#"
+      },
+      "meta": [
+        {
+          "k": {
+            "en": "Role",
+            "ru": "Роль"
+          },
+          "v": {
+            "en": "UX, UI Design, Design System, Creative Lead",
+            "ru": "UX, UI-дизайн, дизайн-система, креативный лид"
+          }
+        },
+        {
+          "k": {
+            "en": "Duration",
+            "ru": "Сроки"
+          },
+          "v": {
+            "en": "2 years (2023 to 2024)",
+            "ru": "2 года (2023–2024)"
+          }
+        },
+        {
+          "k": {
+            "en": "Platform",
+            "ru": "Платформа"
+          },
+          "v": {
+            "en": "Web & iOS, React, GSAP",
+            "ru": "Веб и iOS, React, GSAP"
+          }
+        }
+      ],
+      "blocks": [
+        {
+          "type": "section",
+          "name": {
+            "en": "Overview",
+            "ru": "Обзор"
+          },
+          "title": {
+            "en": "A startup inside the football industry",
+            "ru": "Стартап внутри футбольной индустрии"
+          }
+        },
+        {
+          "type": "paragraph",
+          "text": {
+            "en": "Colozeo set out to fix a broken discovery market: thousands of talented players never get seen, and scouts drown in unstructured footage. My job was to turn that ambition into a product people actually reach for — one that makes ability ==comparable and trustworthy== in a glance.",
+            "ru": "Colozeo взялся починить сломанный рынок поиска талантов: тысячи игроков остаются незамеченными, а скауты тонут в неструктурированном видео. Моя задача — превратить эту амбицию в продукт, к которому реально тянутся, где уровень игрока ==понятен и достоверен== с одного взгляда."
+          }
+        },
+        {
+          "type": "image",
+          "src": "/img/covers/cover1.png",
+          "size": "full",
+          "caption": {
+            "en": "The scouting home — level-first, evidence second.",
+            "ru": "Главный экран скаутинга — сначала уровень, потом доказательства."
+          }
+        },
+        {
+          "type": "section",
+          "name": {
+            "en": "The challenge",
+            "ru": "Задача"
+          },
+          "title": {
+            "en": "A technical product for a fragmented audience",
+            "ru": "Технический продукт для разрозненной аудитории"
+          }
+        },
+        {
+          "type": "paragraph",
+          "text": {
+            "en": "Two audiences, opposite needs. Scouts want a fast, defensible signal; players want a fair shot at being seen. Designing for both without diluting either was the core constraint.",
+            "ru": "Две аудитории с противоположными задачами. Скаутам нужен быстрый и обоснованный сигнал, игрокам — честный шанс быть замеченными. Спроектировать для обеих, не размыв ни одну, — главное ограничение."
+          }
+        },
+        {
+          "type": "subheading",
+          "text": {
+            "en": "User personas",
+            "ru": "Персоны"
+          }
+        },
+        {
+          "type": "paragraph",
+          "text": {
+            "en": "I built three personas from 14 interviews — the *time-pressed scout*, the *ambitious academy player*, and the *club analyst* — and used them to arbitrate every hard trade-off along the way.",
+            "ru": "На основе 14 интервью я собрал три персоны — *скаут в цейтноте*, *амбициозный игрок академии* и *аналитик клуба* — и через них разрешал каждый сложный компромисс."
+          }
+        },
+        {
+          "type": "image",
+          "src": "/img/about/2.jpg",
+          "size": "wide",
+          "caption": {
+            "en": "Persona synthesis from interviews and a two-club diary study.",
+            "ru": "Синтез персон по интервью и дневниковому исследованию в двух клубах."
+          }
+        },
+        {
+          "type": "section",
+          "name": {
+            "en": "My role",
+            "ru": "Моя роль"
+          },
+          "title": {
+            "en": "Leading design across the platform",
+            "ru": "Дизайн-лид всей платформы"
+          }
+        },
+        {
+          "type": "paragraph",
+          "text": {
+            "en": "I owned product design end-to-end and set the creative direction, then grew and guided a small team as the product scaled across web and iOS.",
+            "ru": "Я вёл продуктовый дизайн от начала до конца и задавал креативное направление, затем собрал и вёл небольшую команду, пока продукт рос на вебе и iOS."
+          }
+        },
+        {
+          "type": "image",
+          "src": "/img/covers/cover2.png",
+          "size": "full",
+          "caption": {
+            "en": "The design system that kept four phases coherent.",
+            "ru": "Дизайн-система, удержавшая четыре фазы в одном языке."
+          }
+        },
+        {
+          "type": "section",
+          "name": {
+            "en": "Phase breakdown",
+            "ru": "Фазы"
+          },
+          "title": {
+            "en": "Four phases. Two years. One evolving platform.",
+            "ru": "Четыре фазы. Два года. Одна растущая платформа."
+          }
+        },
+        {
+          "type": "subheading",
+          "text": {
+            "en": "Phase 1 — 2023 · Foundations",
+            "ru": "Фаза 1 — 2023 · Основа"
+          }
+        },
+        {
+          "type": "paragraph",
+          "text": {
+            "en": "We started by mapping the scout’s real decision path, not the data we happened to have. Paper sketches killed a “timeline of everything” direction fast.",
+            "ru": "Начали с карты реального пути принятия решения скаутом, а не с тех данных, что были под рукой. Бумажные скетчи быстро похоронили идею «ленты всего подряд»."
+          }
+        },
+        {
+          "type": "list",
+          "title": {
+            "en": "Key decisions",
+            "ru": "Ключевые решения"
+          },
+          "items": [
+            {
+              "en": "Lead every profile with a single, comparable level score.",
+              "ru": "Каждый профиль начинается с одной сравнимой оценки уровня."
+            },
+            {
+              "en": "Cut onboarding to three steps.",
+              "ru": "Онбординг сокращён до трёх шагов."
+            },
+            {
+              "en": "Design in the open with weekly scout reviews.",
+              "ru": "Открытый дизайн-процесс с еженедельными ревью со скаутами."
+            }
+          ]
+        },
+        {
+          "type": "subheading",
+          "text": {
+            "en": "Phase 2 — 2023 · IA & visual language",
+            "ru": "Фаза 2 — 2023 · Структура и визуальный язык"
+          }
+        },
+        {
+          "type": "paragraph",
+          "text": {
+            "en": "A restructured information architecture and a moodboard set the tone — confident, sporty, data-literate — before a pixel was polished.",
+            "ru": "Переработанная информационная архитектура и мудборд задали тон — уверенный, спортивный, дружелюбный к данным — ещё до полировки пикселей."
+          }
+        },
+        {
+          "type": "gallery",
+          "columns": 2,
+          "images": [
+            "/img/covers/cover3.png",
+            "/img/covers/cover4.png"
+          ],
+          "caption": {
+            "en": "Sitemap, moodboard, and the first component explorations.",
+            "ru": "Карта сайта, мудборд и первые поиски компонентов."
+          }
+        },
+        {
+          "type": "subheading",
+          "text": {
+            "en": "Phase 3 — 2024 · The scouting flow",
+            "ru": "Фаза 3 — 2024 · Сценарий скаутинга"
+          }
+        },
+        {
+          "type": "paragraph",
+          "text": {
+            "en": "The core flow — ==the 10-second signal== — shipped: a level read, a 3-clip highlight reel, and one-tap outreach, all above the fold.",
+            "ru": "Ключевой сценарий — ==сигнал за 10 секунд== — вышел: оценка уровня, три клипа хайлайтов и связь в один тап, всё на первом экране."
+          }
+        },
+        {
+          "type": "list",
+          "title": {
+            "en": "Key decisions",
+            "ru": "Ключевые решения"
+          },
+          "items": [
+            {
+              "en": "Side-by-side compare for shortlists.",
+              "ru": "Сравнение шорт-листа бок о бок."
+            },
+            {
+              "en": "Instant upload feedback to push profile completion.",
+              "ru": "Мгновенная обратная связь при загрузке, чтобы профиль заполняли до конца."
+            }
+          ]
+        },
+        {
+          "type": "image",
+          "src": "/img/about/1.jpg",
+          "size": "wide",
+          "caption": {
+            "en": "Scouts began using Colozeo during live matches.",
+            "ru": "Скауты начали открывать Colozeo прямо во время матчей."
+          }
+        },
+        {
+          "type": "subheading",
+          "text": {
+            "en": "Phase 4 — 2024 · Polish & system",
+            "ru": "Фаза 4 — 2024 · Полировка и система"
+          }
+        },
+        {
+          "type": "paragraph",
+          "text": {
+            "en": "The last phase hardened the system and sanded the details — motion, empty states, accessibility — so the product could keep growing without me in every review.",
+            "ru": "Последняя фаза укрепила систему и отшлифовала детали — анимации, пустые состояния, доступность — чтобы продукт рос без меня на каждом ревью."
+          }
+        },
+        {
+          "type": "list",
+          "title": {
+            "en": "UI improvements",
+            "ru": "Улучшения интерфейса"
+          },
+          "items": [
+            {
+              "en": "Consistent motion language via GSAP.",
+              "ru": "Единый язык движения на GSAP."
+            },
+            {
+              "en": "Accessible contrast + focus states.",
+              "ru": "Доступный контраст и состояния фокуса."
+            },
+            {
+              "en": "A documented component library for the team.",
+              "ru": "Документированная библиотека компонентов для команды."
+            }
+          ]
+        },
+        {
+          "type": "section",
+          "name": {
+            "en": "Outcome",
+            "ru": "Результат"
+          },
+          "title": {
+            "en": "A platform that grew with the business",
+            "ru": "Платформа, выросшая вместе с бизнесом"
+          }
+        },
+        {
+          "type": "list",
+          "items": [
+            {
+              "en": "Click-through on player profiles rose **+20%**.",
+              "ru": "Переходы в профили игроков выросли на **+20%**."
+            },
+            {
+              "en": "Monthly active users grew **+10%** in three months.",
+              "ru": "Месячная аудитория выросла на **+10%** за три месяца."
+            },
+            {
+              "en": "Time per scout review dropped **−48%**.",
+              "ru": "Время одного просмотра скаутом упало на **−48%**."
+            }
+          ]
+        },
+        {
+          "type": "quote",
+          "text": {
+            "en": "The moment scouts started opening Colozeo *during* matches, we knew the product had earned a place in their day.",
+            "ru": "Когда скауты начали открывать Colozeo *во время* матчей, стало ясно: продукт занял место в их дне."
+          },
+          "author": {
+            "en": "Founder, Colozeo",
+            "ru": "Основатель, Colozeo"
+          },
+          "href": "#"
+        },
+        {
+          "type": "image",
+          "src": "/img/covers/cover1.png",
+          "size": "full",
+          "caption": {
+            "en": "The platform, two years and four phases later.",
+            "ru": "Платформа спустя два года и четыре фазы."
+          }
+        }
+      ]
+    },
+    {
+      "id": "catalyst90",
+      "title": "Catalyst90",
+      "cover": "/img/covers/cover3.png",
+      "metrics": [
+        "FINALIST",
+        "+16% CTR",
+        "+8% MAU"
+      ],
+      "intro": {
+        "en": "Colozeo turns raw match footage into scouted careers. Across two years I partnered with the team to design the scouting platform, build its design system, and craft the flows that make a player’s level legible in seconds.",
+        "ru": "Colozeo превращает сырое видео матчей в карьеры, замеченные скаутами. Два года я вместе с командой проектировал платформу, строил дизайн-систему и сценарии, где уровень игрока считывается за секунды."
+      },
+      "cta": {
+        "label": {
+          "en": "Visit live site",
+          "ru": "Открыть сайт"
+        },
+        "href": "#"
+      },
+      "meta": [
+        {
+          "k": {
+            "en": "Role",
+            "ru": "Роль"
+          },
+          "v": {
+            "en": "UX, UI Design, Design System, Creative Lead",
+            "ru": "UX, UI-дизайн, дизайн-система, креативный лид"
+          }
+        },
+        {
+          "k": {
+            "en": "Duration",
+            "ru": "Сроки"
+          },
+          "v": {
+            "en": "2 years (2023 to 2024)",
+            "ru": "2 года (2023–2024)"
+          }
+        },
+        {
+          "k": {
+            "en": "Platform",
+            "ru": "Платформа"
+          },
+          "v": {
+            "en": "Web & iOS, React, GSAP",
+            "ru": "Веб и iOS, React, GSAP"
+          }
+        }
+      ],
+      "blocks": [
+        {
+          "type": "section",
+          "name": {
+            "en": "Overview",
+            "ru": "Обзор"
+          },
+          "title": {
+            "en": "A startup inside the football industry",
+            "ru": "Стартап внутри футбольной индустрии"
+          }
+        },
+        {
+          "type": "paragraph",
+          "text": {
+            "en": "Colozeo set out to fix a broken discovery market: thousands of talented players never get seen, and scouts drown in unstructured footage. My job was to turn that ambition into a product people actually reach for — one that makes ability ==comparable and trustworthy== in a glance.",
+            "ru": "Colozeo взялся починить сломанный рынок поиска талантов: тысячи игроков остаются незамеченными, а скауты тонут в неструктурированном видео. Моя задача — превратить эту амбицию в продукт, к которому реально тянутся, где уровень игрока ==понятен и достоверен== с одного взгляда."
+          }
+        },
+        {
+          "type": "image",
+          "src": "/img/covers/cover1.png",
+          "size": "full",
+          "caption": {
+            "en": "The scouting home — level-first, evidence second.",
+            "ru": "Главный экран скаутинга — сначала уровень, потом доказательства."
+          }
+        },
+        {
+          "type": "section",
+          "name": {
+            "en": "The challenge",
+            "ru": "Задача"
+          },
+          "title": {
+            "en": "A technical product for a fragmented audience",
+            "ru": "Технический продукт для разрозненной аудитории"
+          }
+        },
+        {
+          "type": "paragraph",
+          "text": {
+            "en": "Two audiences, opposite needs. Scouts want a fast, defensible signal; players want a fair shot at being seen. Designing for both without diluting either was the core constraint.",
+            "ru": "Две аудитории с противоположными задачами. Скаутам нужен быстрый и обоснованный сигнал, игрокам — честный шанс быть замеченными. Спроектировать для обеих, не размыв ни одну, — главное ограничение."
+          }
+        },
+        {
+          "type": "subheading",
+          "text": {
+            "en": "User personas",
+            "ru": "Персоны"
+          }
+        },
+        {
+          "type": "paragraph",
+          "text": {
+            "en": "I built three personas from 14 interviews — the *time-pressed scout*, the *ambitious academy player*, and the *club analyst* — and used them to arbitrate every hard trade-off along the way.",
+            "ru": "На основе 14 интервью я собрал три персоны — *скаут в цейтноте*, *амбициозный игрок академии* и *аналитик клуба* — и через них разрешал каждый сложный компромисс."
+          }
+        },
+        {
+          "type": "image",
+          "src": "/img/about/2.jpg",
+          "size": "wide",
+          "caption": {
+            "en": "Persona synthesis from interviews and a two-club diary study.",
+            "ru": "Синтез персон по интервью и дневниковому исследованию в двух клубах."
+          }
+        },
+        {
+          "type": "section",
+          "name": {
+            "en": "My role",
+            "ru": "Моя роль"
+          },
+          "title": {
+            "en": "Leading design across the platform",
+            "ru": "Дизайн-лид всей платформы"
+          }
+        },
+        {
+          "type": "paragraph",
+          "text": {
+            "en": "I owned product design end-to-end and set the creative direction, then grew and guided a small team as the product scaled across web and iOS.",
+            "ru": "Я вёл продуктовый дизайн от начала до конца и задавал креативное направление, затем собрал и вёл небольшую команду, пока продукт рос на вебе и iOS."
+          }
+        },
+        {
+          "type": "image",
+          "src": "/img/covers/cover2.png",
+          "size": "full",
+          "caption": {
+            "en": "The design system that kept four phases coherent.",
+            "ru": "Дизайн-система, удержавшая четыре фазы в одном языке."
+          }
+        },
+        {
+          "type": "section",
+          "name": {
+            "en": "Phase breakdown",
+            "ru": "Фазы"
+          },
+          "title": {
+            "en": "Four phases. Two years. One evolving platform.",
+            "ru": "Четыре фазы. Два года. Одна растущая платформа."
+          }
+        },
+        {
+          "type": "subheading",
+          "text": {
+            "en": "Phase 1 — 2023 · Foundations",
+            "ru": "Фаза 1 — 2023 · Основа"
+          }
+        },
+        {
+          "type": "paragraph",
+          "text": {
+            "en": "We started by mapping the scout’s real decision path, not the data we happened to have. Paper sketches killed a “timeline of everything” direction fast.",
+            "ru": "Начали с карты реального пути принятия решения скаутом, а не с тех данных, что были под рукой. Бумажные скетчи быстро похоронили идею «ленты всего подряд»."
+          }
+        },
+        {
+          "type": "list",
+          "title": {
+            "en": "Key decisions",
+            "ru": "Ключевые решения"
+          },
+          "items": [
+            {
+              "en": "Lead every profile with a single, comparable level score.",
+              "ru": "Каждый профиль начинается с одной сравнимой оценки уровня."
+            },
+            {
+              "en": "Cut onboarding to three steps.",
+              "ru": "Онбординг сокращён до трёх шагов."
+            },
+            {
+              "en": "Design in the open with weekly scout reviews.",
+              "ru": "Открытый дизайн-процесс с еженедельными ревью со скаутами."
+            }
+          ]
+        },
+        {
+          "type": "subheading",
+          "text": {
+            "en": "Phase 2 — 2023 · IA & visual language",
+            "ru": "Фаза 2 — 2023 · Структура и визуальный язык"
+          }
+        },
+        {
+          "type": "paragraph",
+          "text": {
+            "en": "A restructured information architecture and a moodboard set the tone — confident, sporty, data-literate — before a pixel was polished.",
+            "ru": "Переработанная информационная архитектура и мудборд задали тон — уверенный, спортивный, дружелюбный к данным — ещё до полировки пикселей."
+          }
+        },
+        {
+          "type": "gallery",
+          "columns": 2,
+          "images": [
+            "/img/covers/cover3.png",
+            "/img/covers/cover4.png"
+          ],
+          "caption": {
+            "en": "Sitemap, moodboard, and the first component explorations.",
+            "ru": "Карта сайта, мудборд и первые поиски компонентов."
+          }
+        },
+        {
+          "type": "subheading",
+          "text": {
+            "en": "Phase 3 — 2024 · The scouting flow",
+            "ru": "Фаза 3 — 2024 · Сценарий скаутинга"
+          }
+        },
+        {
+          "type": "paragraph",
+          "text": {
+            "en": "The core flow — ==the 10-second signal== — shipped: a level read, a 3-clip highlight reel, and one-tap outreach, all above the fold.",
+            "ru": "Ключевой сценарий — ==сигнал за 10 секунд== — вышел: оценка уровня, три клипа хайлайтов и связь в один тап, всё на первом экране."
+          }
+        },
+        {
+          "type": "list",
+          "title": {
+            "en": "Key decisions",
+            "ru": "Ключевые решения"
+          },
+          "items": [
+            {
+              "en": "Side-by-side compare for shortlists.",
+              "ru": "Сравнение шорт-листа бок о бок."
+            },
+            {
+              "en": "Instant upload feedback to push profile completion.",
+              "ru": "Мгновенная обратная связь при загрузке, чтобы профиль заполняли до конца."
+            }
+          ]
+        },
+        {
+          "type": "image",
+          "src": "/img/about/1.jpg",
+          "size": "wide",
+          "caption": {
+            "en": "Scouts began using Colozeo during live matches.",
+            "ru": "Скауты начали открывать Colozeo прямо во время матчей."
+          }
+        },
+        {
+          "type": "subheading",
+          "text": {
+            "en": "Phase 4 — 2024 · Polish & system",
+            "ru": "Фаза 4 — 2024 · Полировка и система"
+          }
+        },
+        {
+          "type": "paragraph",
+          "text": {
+            "en": "The last phase hardened the system and sanded the details — motion, empty states, accessibility — so the product could keep growing without me in every review.",
+            "ru": "Последняя фаза укрепила систему и отшлифовала детали — анимации, пустые состояния, доступность — чтобы продукт рос без меня на каждом ревью."
+          }
+        },
+        {
+          "type": "list",
+          "title": {
+            "en": "UI improvements",
+            "ru": "Улучшения интерфейса"
+          },
+          "items": [
+            {
+              "en": "Consistent motion language via GSAP.",
+              "ru": "Единый язык движения на GSAP."
+            },
+            {
+              "en": "Accessible contrast + focus states.",
+              "ru": "Доступный контраст и состояния фокуса."
+            },
+            {
+              "en": "A documented component library for the team.",
+              "ru": "Документированная библиотека компонентов для команды."
+            }
+          ]
+        },
+        {
+          "type": "section",
+          "name": {
+            "en": "Outcome",
+            "ru": "Результат"
+          },
+          "title": {
+            "en": "A platform that grew with the business",
+            "ru": "Платформа, выросшая вместе с бизнесом"
+          }
+        },
+        {
+          "type": "list",
+          "items": [
+            {
+              "en": "Click-through on player profiles rose **+20%**.",
+              "ru": "Переходы в профили игроков выросли на **+20%**."
+            },
+            {
+              "en": "Monthly active users grew **+10%** in three months.",
+              "ru": "Месячная аудитория выросла на **+10%** за три месяца."
+            },
+            {
+              "en": "Time per scout review dropped **−48%**.",
+              "ru": "Время одного просмотра скаутом упало на **−48%**."
+            }
+          ]
+        },
+        {
+          "type": "quote",
+          "text": {
+            "en": "The moment scouts started opening Colozeo *during* matches, we knew the product had earned a place in their day.",
+            "ru": "Когда скауты начали открывать Colozeo *во время* матчей, стало ясно: продукт занял место в их дне."
+          },
+          "author": {
+            "en": "Founder, Colozeo",
+            "ru": "Основатель, Colozeo"
+          },
+          "href": "#"
+        },
+        {
+          "type": "image",
+          "src": "/img/covers/cover1.png",
+          "size": "full",
+          "caption": {
+            "en": "The platform, two years and four phases later.",
+            "ru": "Платформа спустя два года и четыре фазы."
+          }
+        }
+      ]
+    },
+    {
+      "id": "devpulse",
+      "title": "DevPulse",
+      "cover": "/img/covers/cover4.png",
+      "metrics": [
+        "HONORABLE MENTION",
+        "+19% CTR",
+        "+10% MAU"
+      ],
+      "intro": {
+        "en": "Colozeo turns raw match footage into scouted careers. Across two years I partnered with the team to design the scouting platform, build its design system, and craft the flows that make a player’s level legible in seconds.",
+        "ru": "Colozeo превращает сырое видео матчей в карьеры, замеченные скаутами. Два года я вместе с командой проектировал платформу, строил дизайн-систему и сценарии, где уровень игрока считывается за секунды."
+      },
+      "cta": {
+        "label": {
+          "en": "Visit live site",
+          "ru": "Открыть сайт"
+        },
+        "href": "#"
+      },
+      "meta": [
+        {
+          "k": {
+            "en": "Role",
+            "ru": "Роль"
+          },
+          "v": {
+            "en": "UX, UI Design, Design System, Creative Lead",
+            "ru": "UX, UI-дизайн, дизайн-система, креативный лид"
+          }
+        },
+        {
+          "k": {
+            "en": "Duration",
+            "ru": "Сроки"
+          },
+          "v": {
+            "en": "2 years (2023 to 2024)",
+            "ru": "2 года (2023–2024)"
+          }
+        },
+        {
+          "k": {
+            "en": "Platform",
+            "ru": "Платформа"
+          },
+          "v": {
+            "en": "Web & iOS, React, GSAP",
+            "ru": "Веб и iOS, React, GSAP"
+          }
+        }
+      ],
+      "blocks": [
+        {
+          "type": "section",
+          "name": {
+            "en": "Overview",
+            "ru": "Обзор"
+          },
+          "title": {
+            "en": "A startup inside the football industry",
+            "ru": "Стартап внутри футбольной индустрии"
+          }
+        },
+        {
+          "type": "paragraph",
+          "text": {
+            "en": "Colozeo set out to fix a broken discovery market: thousands of talented players never get seen, and scouts drown in unstructured footage. My job was to turn that ambition into a product people actually reach for — one that makes ability ==comparable and trustworthy== in a glance.",
+            "ru": "Colozeo взялся починить сломанный рынок поиска талантов: тысячи игроков остаются незамеченными, а скауты тонут в неструктурированном видео. Моя задача — превратить эту амбицию в продукт, к которому реально тянутся, где уровень игрока ==понятен и достоверен== с одного взгляда."
+          }
+        },
+        {
+          "type": "image",
+          "src": "/img/covers/cover1.png",
+          "size": "full",
+          "caption": {
+            "en": "The scouting home — level-first, evidence second.",
+            "ru": "Главный экран скаутинга — сначала уровень, потом доказательства."
+          }
+        },
+        {
+          "type": "section",
+          "name": {
+            "en": "The challenge",
+            "ru": "Задача"
+          },
+          "title": {
+            "en": "A technical product for a fragmented audience",
+            "ru": "Технический продукт для разрозненной аудитории"
+          }
+        },
+        {
+          "type": "paragraph",
+          "text": {
+            "en": "Two audiences, opposite needs. Scouts want a fast, defensible signal; players want a fair shot at being seen. Designing for both without diluting either was the core constraint.",
+            "ru": "Две аудитории с противоположными задачами. Скаутам нужен быстрый и обоснованный сигнал, игрокам — честный шанс быть замеченными. Спроектировать для обеих, не размыв ни одну, — главное ограничение."
+          }
+        },
+        {
+          "type": "subheading",
+          "text": {
+            "en": "User personas",
+            "ru": "Персоны"
+          }
+        },
+        {
+          "type": "paragraph",
+          "text": {
+            "en": "I built three personas from 14 interviews — the *time-pressed scout*, the *ambitious academy player*, and the *club analyst* — and used them to arbitrate every hard trade-off along the way.",
+            "ru": "На основе 14 интервью я собрал три персоны — *скаут в цейтноте*, *амбициозный игрок академии* и *аналитик клуба* — и через них разрешал каждый сложный компромисс."
+          }
+        },
+        {
+          "type": "image",
+          "src": "/img/about/2.jpg",
+          "size": "wide",
+          "caption": {
+            "en": "Persona synthesis from interviews and a two-club diary study.",
+            "ru": "Синтез персон по интервью и дневниковому исследованию в двух клубах."
+          }
+        },
+        {
+          "type": "section",
+          "name": {
+            "en": "My role",
+            "ru": "Моя роль"
+          },
+          "title": {
+            "en": "Leading design across the platform",
+            "ru": "Дизайн-лид всей платформы"
+          }
+        },
+        {
+          "type": "paragraph",
+          "text": {
+            "en": "I owned product design end-to-end and set the creative direction, then grew and guided a small team as the product scaled across web and iOS.",
+            "ru": "Я вёл продуктовый дизайн от начала до конца и задавал креативное направление, затем собрал и вёл небольшую команду, пока продукт рос на вебе и iOS."
+          }
+        },
+        {
+          "type": "image",
+          "src": "/img/covers/cover2.png",
+          "size": "full",
+          "caption": {
+            "en": "The design system that kept four phases coherent.",
+            "ru": "Дизайн-система, удержавшая четыре фазы в одном языке."
+          }
+        },
+        {
+          "type": "section",
+          "name": {
+            "en": "Phase breakdown",
+            "ru": "Фазы"
+          },
+          "title": {
+            "en": "Four phases. Two years. One evolving platform.",
+            "ru": "Четыре фазы. Два года. Одна растущая платформа."
+          }
+        },
+        {
+          "type": "subheading",
+          "text": {
+            "en": "Phase 1 — 2023 · Foundations",
+            "ru": "Фаза 1 — 2023 · Основа"
+          }
+        },
+        {
+          "type": "paragraph",
+          "text": {
+            "en": "We started by mapping the scout’s real decision path, not the data we happened to have. Paper sketches killed a “timeline of everything” direction fast.",
+            "ru": "Начали с карты реального пути принятия решения скаутом, а не с тех данных, что были под рукой. Бумажные скетчи быстро похоронили идею «ленты всего подряд»."
+          }
+        },
+        {
+          "type": "list",
+          "title": {
+            "en": "Key decisions",
+            "ru": "Ключевые решения"
+          },
+          "items": [
+            {
+              "en": "Lead every profile with a single, comparable level score.",
+              "ru": "Каждый профиль начинается с одной сравнимой оценки уровня."
+            },
+            {
+              "en": "Cut onboarding to three steps.",
+              "ru": "Онбординг сокращён до трёх шагов."
+            },
+            {
+              "en": "Design in the open with weekly scout reviews.",
+              "ru": "Открытый дизайн-процесс с еженедельными ревью со скаутами."
+            }
+          ]
+        },
+        {
+          "type": "subheading",
+          "text": {
+            "en": "Phase 2 — 2023 · IA & visual language",
+            "ru": "Фаза 2 — 2023 · Структура и визуальный язык"
+          }
+        },
+        {
+          "type": "paragraph",
+          "text": {
+            "en": "A restructured information architecture and a moodboard set the tone — confident, sporty, data-literate — before a pixel was polished.",
+            "ru": "Переработанная информационная архитектура и мудборд задали тон — уверенный, спортивный, дружелюбный к данным — ещё до полировки пикселей."
+          }
+        },
+        {
+          "type": "gallery",
+          "columns": 2,
+          "images": [
+            "/img/covers/cover3.png",
+            "/img/covers/cover4.png"
+          ],
+          "caption": {
+            "en": "Sitemap, moodboard, and the first component explorations.",
+            "ru": "Карта сайта, мудборд и первые поиски компонентов."
+          }
+        },
+        {
+          "type": "subheading",
+          "text": {
+            "en": "Phase 3 — 2024 · The scouting flow",
+            "ru": "Фаза 3 — 2024 · Сценарий скаутинга"
+          }
+        },
+        {
+          "type": "paragraph",
+          "text": {
+            "en": "The core flow — ==the 10-second signal== — shipped: a level read, a 3-clip highlight reel, and one-tap outreach, all above the fold.",
+            "ru": "Ключевой сценарий — ==сигнал за 10 секунд== — вышел: оценка уровня, три клипа хайлайтов и связь в один тап, всё на первом экране."
+          }
+        },
+        {
+          "type": "list",
+          "title": {
+            "en": "Key decisions",
+            "ru": "Ключевые решения"
+          },
+          "items": [
+            {
+              "en": "Side-by-side compare for shortlists.",
+              "ru": "Сравнение шорт-листа бок о бок."
+            },
+            {
+              "en": "Instant upload feedback to push profile completion.",
+              "ru": "Мгновенная обратная связь при загрузке, чтобы профиль заполняли до конца."
+            }
+          ]
+        },
+        {
+          "type": "image",
+          "src": "/img/about/1.jpg",
+          "size": "wide",
+          "caption": {
+            "en": "Scouts began using Colozeo during live matches.",
+            "ru": "Скауты начали открывать Colozeo прямо во время матчей."
+          }
+        },
+        {
+          "type": "subheading",
+          "text": {
+            "en": "Phase 4 — 2024 · Polish & system",
+            "ru": "Фаза 4 — 2024 · Полировка и система"
+          }
+        },
+        {
+          "type": "paragraph",
+          "text": {
+            "en": "The last phase hardened the system and sanded the details — motion, empty states, accessibility — so the product could keep growing without me in every review.",
+            "ru": "Последняя фаза укрепила систему и отшлифовала детали — анимации, пустые состояния, доступность — чтобы продукт рос без меня на каждом ревью."
+          }
+        },
+        {
+          "type": "list",
+          "title": {
+            "en": "UI improvements",
+            "ru": "Улучшения интерфейса"
+          },
+          "items": [
+            {
+              "en": "Consistent motion language via GSAP.",
+              "ru": "Единый язык движения на GSAP."
+            },
+            {
+              "en": "Accessible contrast + focus states.",
+              "ru": "Доступный контраст и состояния фокуса."
+            },
+            {
+              "en": "A documented component library for the team.",
+              "ru": "Документированная библиотека компонентов для команды."
+            }
+          ]
+        },
+        {
+          "type": "section",
+          "name": {
+            "en": "Outcome",
+            "ru": "Результат"
+          },
+          "title": {
+            "en": "A platform that grew with the business",
+            "ru": "Платформа, выросшая вместе с бизнесом"
+          }
+        },
+        {
+          "type": "list",
+          "items": [
+            {
+              "en": "Click-through on player profiles rose **+20%**.",
+              "ru": "Переходы в профили игроков выросли на **+20%**."
+            },
+            {
+              "en": "Monthly active users grew **+10%** in three months.",
+              "ru": "Месячная аудитория выросла на **+10%** за три месяца."
+            },
+            {
+              "en": "Time per scout review dropped **−48%**.",
+              "ru": "Время одного просмотра скаутом упало на **−48%**."
+            }
+          ]
+        },
+        {
+          "type": "quote",
+          "text": {
+            "en": "The moment scouts started opening Colozeo *during* matches, we knew the product had earned a place in their day.",
+            "ru": "Когда скауты начали открывать Colozeo *во время* матчей, стало ясно: продукт занял место в их дне."
+          },
+          "author": {
+            "en": "Founder, Colozeo",
+            "ru": "Основатель, Colozeo"
+          },
+          "href": "#"
+        },
+        {
+          "type": "image",
+          "src": "/img/covers/cover1.png",
+          "size": "full",
+          "caption": {
+            "en": "The platform, two years and four phases later.",
+            "ru": "Платформа спустя два года и четыре фазы."
+          }
+        }
+      ]
+    }
+  ]
+}

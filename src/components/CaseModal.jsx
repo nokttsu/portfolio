@@ -1,46 +1,33 @@
 import { useEffect, useRef, useState, useMemo, useCallback } from 'react'
 import { asset } from '../asset.js'
 import gsap from 'gsap'
-import { CASE, rich } from '../data/caseData.jsx'
+import { rich } from '../rich.jsx'
 import WorksTable from './WorksTable.jsx'
 import useSmoothWheel from '../hooks/useSmoothWheel.js'
 import Scrollbar from './Scrollbar.jsx'
+import { useLang } from '../i18n.jsx'
 
-const SECTIONS = CASE.blocks.filter((b) => b.type === 'section')
-
-const READ_ALSO_POOL = [
-  { name: 'InnovaFlow', metrics: ['FINALIST', '+18% CTR', '+9% MAU'] },
-  { name: 'SpectraTech', metrics: ['AWARD', '+25% CTR', '+12% MAU'] },
-  { name: 'Nexify', metrics: ['FINALIST', '+15% CTR', '+8% MAU'] },
-  { name: 'TrackFusion', metrics: ['HONORABLE MENTION', '+12% CTR', '+5% MAU'] },
-  { name: 'PulseWave', metrics: ['HONORABLE MENTION', '+14% CTR', '+7% MAU'] },
-  { name: 'EchoStream', metrics: ['AWARD', '+30% CTR', '+15% MAU'] },
-  { name: 'VisionaryGrid', metrics: ['FINALIST', '+10% CTR', '+6% MAU'] },
-  { name: 'OrbitX', metrics: ['AWARD', '+27% CTR', '+13% MAU'] },
-]
-const pickReadAlso = () => [...READ_ALSO_POOL].sort(() => Math.random() - 0.5).slice(0, 4)
-
-function Block({ b }) {
+function Block({ b, tr }) {
   switch (b.type) {
     case 'section':
       return (
         <div className="cs-section">
           <div className="cs-section__eyebrow">
-            <span className="cs-section__name">{b.name}</span>
+            <span className="cs-section__name">{tr(b.name)}</span>
           </div>
-          <h2 className="cs-section__title">{b.title}</h2>
+          <h2 className="cs-section__title">{tr(b.title)}</h2>
         </div>
       )
     case 'lead':
-      return <p className="cs-lead">{rich(b.text)}</p>
+      return <p className="cs-lead">{rich(tr(b.text))}</p>
     case 'heading':
-      return <h2 className="cs-h2">{b.text}</h2>
+      return <h2 className="cs-h2">{tr(b.text)}</h2>
     case 'subheading':
-      return <h3 className="cs-h3">{b.text}</h3>
+      return <h3 className="cs-h3">{tr(b.text)}</h3>
     case 'paragraph':
-      return <p className="cs-p">{rich(b.text)}</p>
+      return <p className="cs-p">{rich(tr(b.text))}</p>
     case 'list': {
-      const items = b.items.map((it, i) => <li key={i}>{rich(it)}</li>)
+      const items = (b.items || []).map((it, i) => <li key={i}>{rich(tr(it))}</li>)
       const list = b.ordered ? (
         <ol className="cs-list cs-list--ol">{items}</ol>
       ) : (
@@ -49,58 +36,36 @@ function Block({ b }) {
       return b.title ? (
         <div className="cs-listblock">
           {/* lead-in line before a list always ends with a colon */}
-          <p className="cs-label">{String(b.title).replace(/\s*:\s*$/, '')}:</p>
+          <p className="cs-label">{String(tr(b.title)).replace(/\s*:\s*$/, '')}:</p>
           {list}
         </div>
       ) : (
         list
       )
     }
-    case 'people':
-      return (
-        <ul className="cs-people">
-          {b.items.map((p, i) => (
-            <li key={i}>
-              <span className="cs-people__role">{p.role}</span>
-              {p.href ? <a href={p.href}>{p.name}</a> : <span>{p.name}</span>}
-            </li>
-          ))}
-        </ul>
-      )
     case 'quote':
       return (
         <blockquote className="cs-quote">
-          <p>{rich(b.text)}</p>
+          <p>{rich(tr(b.text))}</p>
           {b.author && (
-            <cite>
-              {b.href ? <a href={b.href}>{b.author}</a> : b.author}
-              {b.role ? `, ${b.role}` : ''}
-            </cite>
+            <cite>{b.href ? <a href={b.href}>{tr(b.author)}</a> : tr(b.author)}</cite>
           )}
         </blockquote>
-      )
-    case 'cta':
-      return (
-        <div className="cs-endcta">
-          <h2 className="cs-endcta__title">{b.title}</h2>
-          <p className="cs-endcta__text">{b.text}</p>
-          <a className="pill pill--white" href={b.href}>{b.button}</a>
-        </div>
       )
     case 'callout':
       return (
         <div className="cs-callout">
           {b.icon && <span className="cs-callout__icon">{b.icon}</span>}
-          <p>{rich(b.text)}</p>
+          <p>{rich(tr(b.text))}</p>
         </div>
       )
     case 'metrics':
       return (
         <div className="cs-metrics">
-          {b.items.map((m, i) => (
+          {(b.items || []).map((m, i) => (
             <div className="cs-metric" key={i}>
-              <div className="cs-metric__val">{m.value}</div>
-              <div className="cs-metric__label">{m.label}</div>
+              <div className="cs-metric__val">{tr(m.value)}</div>
+              <div className="cs-metric__label">{tr(m.label)}</div>
             </div>
           ))}
         </div>
@@ -108,24 +73,24 @@ function Block({ b }) {
     case 'image':
       return (
         <figure className={`cs-figure cs-figure--${b.size || 'wide'}`}>
-          <img src={b.src} alt="" />
-          {b.caption && <figcaption>{b.caption}</figcaption>}
+          <img src={asset(b.src)} alt="" />
+          {b.caption && <figcaption>{tr(b.caption)}</figcaption>}
         </figure>
       )
     case 'gallery':
       return (
         <figure className="cs-figure cs-figure--wide">
           <div className="cs-gallery" style={{ gridTemplateColumns: `repeat(${b.columns || 3}, 1fr)` }}>
-            {b.images.map((src, i) => <img src={src} alt="" key={i} />)}
+            {(b.images || []).map((src, i) => <img src={asset(src)} alt="" key={i} />)}
           </div>
-          {b.caption && <figcaption>{b.caption}</figcaption>}
+          {b.caption && <figcaption>{tr(b.caption)}</figcaption>}
         </figure>
       )
     case 'columns':
       return (
         <div className="cs-columns">
-          <p>{rich(b.left)}</p>
-          <p>{rich(b.right)}</p>
+          <p>{rich(tr(b.left))}</p>
+          <p>{rich(tr(b.right))}</p>
         </div>
       )
     case 'divider':
@@ -135,11 +100,19 @@ function Block({ b }) {
   }
 }
 
-export default function CaseModal({ cover, onClose }) {
+export default function CaseModal({ cover, data, onClose }) {
+  const { content, t, tr } = useLang()
+  const CASE = data || content.cases[0]
+  const SECTIONS = (CASE.blocks || []).filter((b) => b.type === 'section')
+
   const scrollRef = useRef(null)
   const [active, setActive] = useState(0)
   const [navOn, setNavOn] = useState(false)
-  const readAlso = useMemo(pickReadAlso, [])
+  // four other cases, shuffled
+  const readAlso = useMemo(
+    () => content.cases.filter((c) => c.id !== CASE.id).sort(() => Math.random() - 0.5).slice(0, 4),
+    [content.cases, CASE.id]
+  )
 
   // eased wheel scrolling inside the case
   const getScroller = useCallback(() => scrollRef.current, [])
@@ -269,18 +242,18 @@ export default function CaseModal({ cover, onClose }) {
       onClick={(e) => e.target === e.currentTarget && onClose()}
     >
       <div className="case-modal__panel">
-        <button className="case-modal__close header__icon-btn" onClick={onClose} aria-label="Close">
+        <button className="case-modal__close header__icon-btn" onClick={onClose} aria-label={t('close')}>
           <img src={asset('/img/close.svg')} alt="" width="24" height="24" />
         </button>
 
         <nav className={`cs-nav${navOn ? ' is-visible' : ''}`} aria-label="Sections">
           {SECTIONS.map((s, i) => (
             <button
-              key={s.num}
+              key={i}
               className={`cs-nav__item${i === active ? ' is-active' : ''}`}
               onClick={() => goTo(i)}
             >
-              <span className="cs-nav__name">{s.name}</span>
+              <span className="cs-nav__name">{tr(s.name)}</span>
               <span className="cs-nav__tick" />
             </button>
           ))}
@@ -294,26 +267,26 @@ export default function CaseModal({ cover, onClose }) {
           <article className="case-modal__article">
           <header className="cs-head">
             <h1 className="cs-title">{CASE.title}</h1>
-            {CASE.intro && <p className="cs-subtitle">{CASE.intro}</p>}
+            {CASE.intro && <p className="cs-subtitle">{tr(CASE.intro)}</p>}
             {CASE.cta && (
-              <a className="cs-head__cta pill pill--white" href={CASE.cta.href}>{CASE.cta.label}</a>
+              <a className="cs-head__cta pill pill--white" href={CASE.cta.href}>{tr(CASE.cta.label)}</a>
             )}
             <dl className="cs-meta">
-              {CASE.meta.map((m) => (
-                <div className="cs-meta__item" key={m.k}>
-                  <dt>{m.k}</dt>
-                  <dd>{m.v}</dd>
+              {(CASE.meta || []).map((m, i) => (
+                <div className="cs-meta__item" key={i}>
+                  <dt>{tr(m.k)}</dt>
+                  <dd>{tr(m.v)}</dd>
                 </div>
               ))}
             </dl>
           </header>
 
             <div className="cs-body">
-              {CASE.blocks.map((b, i) => <Block key={i} b={b} />)}
+              {(CASE.blocks || []).map((b, i) => <Block key={i} b={b} tr={tr} />)}
             </div>
 
             <section className="cs-readalso">
-              <h2 className="cs-readalso__title">Read also</h2>
+              <h2 className="cs-readalso__title">{t('readAlso')}</h2>
               <WorksTable
                 rows={readAlso}
                 onOpenCase={() => scrollRef.current?.scrollTo({ top: 0, behavior: 'smooth' })}

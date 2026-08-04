@@ -7,13 +7,12 @@ import { useLang } from '../i18n.jsx'
 gsap.registerPlugin(ScrollToPlugin)
 
 export default function Header() {
-  const { t, toggleLang } = useLang()
+  const { content, t, toggleLang } = useLang()
+  const site = content.site
 
   const LINKS = [
-    { label: t('email'), copy: true },
-    { label: 'LinkedIn', href: '#' },
-    { label: 'Cosmos', href: '#' },
-    { label: 'Are.na', href: '#' },
+    { label: site.email, copy: true },
+    ...(site.links || []),
     { label: t('langToggle'), lang: true },
   ]
 
@@ -98,7 +97,7 @@ export default function Header() {
 
   const handleCopy = async () => {
     try {
-      await navigator.clipboard.writeText('nokttsu@mail.ru')
+      await navigator.clipboard.writeText(site.email)
       setCopied(true)
       setTimeout(() => setCopied(false), 1400)
     } catch {
@@ -127,7 +126,7 @@ export default function Header() {
         aria-label={t('backToTop')}
       >
         <span className="header__avatar">
-          <img src={asset('/img/avatar.png')} alt="Vadim Prisyachev" width="40" height="40" />
+          <img src={asset(site.avatar)} alt={site.name} width="40" height="40" />
           <span className="header__totop" aria-hidden="true">
             <svg viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
               <path d="M12 19V6" />
@@ -135,7 +134,7 @@ export default function Header() {
             </svg>
           </span>
         </span>
-        <span className="header__name">Vadim Prisyachev</span>
+        <span className="header__name">{site.name}</span>
       </button>
 
       <div className="header__actions">
@@ -172,8 +171,8 @@ export default function Header() {
           </div>
         </div>
 
-        <a className="pill pill--grey" href="#">{t('openCV')}</a>
-        <a className="pill pill--white" href="#">{t('contact')}</a>
+        <a className="pill pill--grey" href={site.cvUrl} target="_blank" rel="noreferrer">{t('openCV')}</a>
+        <a className="pill pill--white" href={site.telegram} target="_blank" rel="noreferrer">{t('contact')}</a>
       </div>
     </header>
   )

@@ -1,4 +1,4 @@
-import { useRef, useEffect } from 'react'
+import { useRef, useEffect, useMemo } from 'react'
 import { asset } from '../asset.js'
 import gsap from 'gsap'
 
@@ -9,23 +9,27 @@ const MAX_EXTRA = 150 // max extra radius from fast spinning
 const TILE_W = 168 // widest tile — kept inside the band edges
 const TILE_H = 168 // tallest tile
 
-// landscape photos -> 4:3 tiles, portrait photo -> 3:4 tiles (duplicated to fill).
-// Placeholder set for now; real ones come later via the admin.
-const LANDSCAPE = [asset('/img/about/1.jpg'), asset('/img/about/3.jpg'), asset('/img/about/4.jpg')]
-const PORTRAIT = asset('/img/about/2.jpg')
-const TILES = Array.from({ length: N }, (_, i) => {
-  const tall = i % 2 === 1
-  const wideIndex = Math.floor(i / 2)
-  return { tall, src: tall ? PORTRAIT : LANDSCAPE[wideIndex % LANDSCAPE.length] }
-})
-
 /**
  * Draggable 3D orbit wheel (madewithgsap tutorial106 vibe): tiles orbit a
  * central point; drag to spin — the faster you spin, the wider the gap grows.
+ * Photos come from the CMS (`about.photos`) and repeat to fill the ring.
  */
-export default function AboutWheel() {
+export default function AboutWheel({ photos = [] }) {
   const bandRef = useRef(null)
   const ringRef = useRef(null)
+
+  // landscape photos -> 4:3 tiles, portrait -> 3:4, repeated around the ring
+  const tilesData = useMemo(() => {
+    const list = photos.length ? photos : [{ src: '/img/about/1.jpg' }]
+    const wide = list.filter((p) => !p.tall)
+    const tall = list.filter((p) => p.tall)
+    const pick = (arr, i) => (arr.length ? arr[i % arr.length] : list[i % list.length])
+    return Array.from({ length: N }, (_, i) => {
+      const isTall = i % 2 === 1
+      const p = pick(isTall ? tall : wide, Math.floor(i / 2))
+      return { tall: isTall, src: asset(p.src) }
+    })
+  }, [photos])
 
   useEffect(() => {
     const band = bandRef.current
@@ -121,12 +125,12 @@ export default function AboutWheel() {
       band.removeEventListener('pointerleave', onLeave)
       window.removeEventListener('resize', measure)
     }
-  }, [])
+  }, [tilesData])
 
   return (
     <div className="about__wheel" data-anim="fade" ref={bandRef}>
       <div className="wheel__ring" ref={ringRef}>
-        {TILES.map((t, i) => (
+        {tilesData.map((t, i) => (
           <div key={i} className={`wheel__tile ${t.tall ? 'wheel__tile--tall' : 'wheel__tile--wide'}`}>
             <img src={t.src} alt="" draggable="false" />
           </div>

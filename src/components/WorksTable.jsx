@@ -3,25 +3,7 @@ import { asset } from '../asset.js'
 import gsap from 'gsap'
 import { useLang } from '../i18n.jsx'
 
-const COVERS = [asset('/img/covers/cover1.png'), asset('/img/covers/cover2.png'), asset('/img/covers/cover3.png'), asset('/img/covers/cover4.png')]
-
-const ROWS = [
-  { name: 'InnovaFlow', metrics: ['FINALIST', '+18% CTR', '+9% MAU'] },
-  { name: 'SpectraTech', metrics: ['AWARD', '+25% CTR', '+12% MAU'] },
-  { name: 'Nexify', metrics: ['FINALIST', '+15% CTR', '+8% MAU'] },
-  { name: 'TrackFusion', metrics: ['HONORABLE MENTION', '+12% CTR', '+5% MAU'] },
-  { name: 'Colozeo', metrics: ['AWARD', '+20% CTR', '+10% MAU'] },
-  { name: 'PulseWave', metrics: ['HONORABLE MENTION', '+14% CTR', '+7% MAU'] },
-  { name: 'EchoStream', metrics: ['AWARD', '+30% CTR', '+15% MAU'] },
-  { name: 'VisionaryGrid', metrics: ['FINALIST', '+10% CTR', '+6% MAU'] },
-  { name: 'BrightMinds', metrics: ['HONORABLE MENTION', '+22% CTR', '+11% MAU'] },
-  { name: 'OrbitX', metrics: ['AWARD', '+27% CTR', '+13% MAU'] },
-  { name: 'Catalyst90', metrics: ['FINALIST', '+16% CTR', '+8% MAU'] },
-  { name: 'DevPulse', metrics: ['HONORABLE MENTION', '+19% CTR', '+10% MAU'] },
-  { name: 'SkyMetrics', metrics: ['AWARD', '+23% CTR', '+14% MAU'] },
-]
-
-export default function WorksTable({ onOpenCase, rows = ROWS }) {
+export default function WorksTable({ onOpenCase, rows = [] }) {
   const { t } = useLang()
   const tableRef = useRef(null)
   const highlightRef = useRef(null)
@@ -83,13 +65,13 @@ export default function WorksTable({ onOpenCase, rows = ROWS }) {
       {rows.map((row, i) => (
         <div
           className="wt-row"
-          key={row.name}
-          data-cover={COVERS[i % COVERS.length]}
-          onClick={() => onOpenCase(thumbRef.current)}
+          key={row.id || row.title || i}
+          data-cover={asset(row.cover)}
+          onClick={() => onOpenCase(thumbRef.current, row)}
         >
-          <div className="wt-name">{row.name}</div>
+          <div className="wt-name">{row.title}</div>
           <div className="wt-metrics">
-            {row.metrics.map((m) => (
+            {(row.metrics || []).map((m) => (
               <span key={m}>{t(m)}</span>
             ))}
           </div>
@@ -97,7 +79,7 @@ export default function WorksTable({ onOpenCase, rows = ROWS }) {
       ))}
 
       <div className="wt-thumb" ref={thumbRef} aria-hidden="true">
-        <img src={COVERS[0]} alt="" />
+        <img src={asset(rows[0]?.cover || '/img/covers/cover1.png')} alt="" />
       </div>
     </div>
   )
