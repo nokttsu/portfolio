@@ -30,6 +30,11 @@ input,textarea{font:inherit;color:var(--text);background:none;border:none;width:
 .ws .st{width:6px;height:6px;border-radius:50%;background:#eb5757;margin-left:auto}
 .ws .st.ok{background:#4dab6d}
 .sec{padding:14px 16px 4px;font-size:11px;font-weight:600;color:var(--faint);letter-spacing:.02em}
+#nav{flex:1;min-height:0;overflow-y:auto;scrollbar-width:thin;scrollbar-color:rgba(255,255,255,.16) transparent}
+#nav::-webkit-scrollbar{width:8px}
+#nav::-webkit-scrollbar-thumb{background:rgba(255,255,255,.14);border-radius:99px;border:2px solid transparent;background-clip:content-box}
+.item .caret{width:16px;flex:none;text-align:center;font-size:9px;color:var(--faint);transition:transform .12s}
+.item .caret.open{transform:rotate(90deg)}
 .item{display:flex;align-items:center;gap:7px;height:28px;margin:0 8px;padding:0 8px;border-radius:4px;font-size:14px;color:var(--dim);cursor:pointer;white-space:nowrap;overflow:hidden}
 .item:hover{background:var(--hover);color:var(--text)}
 .item.on{background:var(--hover2);color:var(--text);font-weight:500}
@@ -69,7 +74,8 @@ input,textarea{font:inherit;color:var(--text);background:none;border:none;width:
 .props{display:flex;flex-direction:column;gap:1px;margin-bottom:26px}
 .prop{display:flex;align-items:flex-start;gap:6px;border-radius:4px;padding:5px 6px;min-height:34px}
 .prop:hover{background:var(--hover)}
-.prop>.k{display:flex;align-items:center;gap:7px;width:180px;flex:none;color:var(--dim);font-size:14px;padding-top:3px}
+.prop>.k{display:flex;align-items:center;gap:7px;width:168px;flex:none;color:var(--dim);font-size:14px;padding-top:3px}
+.prop .mini,.prop button.del{flex:none}
 .prop>.k .ic{opacity:.6;width:16px;text-align:center}
 .prop>.v{flex:1;min-width:0;font-size:14px}
 .prop .v input,.prop .v textarea{font-size:14px;padding:3px 4px;border-radius:4px}
@@ -101,9 +107,10 @@ input,textarea{font:inherit;color:var(--text);background:none;border:none;width:
 .li .bullet{color:var(--dim);line-height:1.55;user-select:none;flex:none;width:14px;text-align:center}
 .li .del{opacity:0;color:var(--faint);font-size:12px;padding:0 4px}
 .li:hover .del{opacity:1}
-.imgbox{border-radius:4px;overflow:hidden;background:rgba(255,255,255,.03);position:relative}
-.imgbox img{width:100%;display:block;aspect-ratio:16/9;object-fit:cover}
-.imgbox .empty{aspect-ratio:16/9;display:grid;place-items:center;color:var(--faint);font-size:14px;gap:6px}
+.imgbox{border-radius:4px;overflow:hidden;background:rgba(255,255,255,.03);position:relative;display:flex;justify-content:center;max-height:260px}
+.imgbox img{max-width:100%;max-height:260px;display:block;object-fit:contain}
+.imgbox .empty{width:100%;height:132px;display:grid;place-items:center;align-content:center;color:var(--faint);font-size:14px;gap:6px}
+.grid2 .imgbox img{width:100%;aspect-ratio:16/9;object-fit:cover}
 .imgtools{display:flex;gap:6px;margin-top:6px}
 .cap input{font-size:13px;color:var(--dim);text-align:center}
 .grid2{display:grid;gap:8px}
@@ -148,8 +155,7 @@ a{color:#5e9ee8}
     <div class="ws" id="ws"><span class="ava">V</span><span>Портфолио</span><span class="st" id="st"></span></div>
     <div class="sec">Страницы</div>
     <div id="nav"></div>
-    <div class="grow"></div>
-    <div class="item" data-p="settings"><span class="ic">⚙</span><span class="lbl">Настройки</span></div>
+    <div class="item" data-p="settings" style="margin-top:6px"><span class="ic">⚙</span><span class="lbl">Настройки</span></div>
     <a class="item" href="./" target="_blank"><span class="ic">↗</span><span class="lbl">Открыть сайт</span></a>
   </div>
 
@@ -171,12 +177,15 @@ a{color:#5e9ee8}
 
 <script>
 const REPO="nokttsu/portfolio", BRANCH="main";
-let C=null, L=localStorage.getItem("cms-lang")||"ru", P="site", CASE=null, dirty=false;
+let C=null, L=localStorage.getItem("cms-lang")||"ru", P="site", CASE=null, dirty=false, casesOpen=false;
 
 const $=(s,r=document)=>r.querySelector(s);
 const el=h=>{const d=document.createElement("div");d.innerHTML=h.trim();return d.firstElementChild};
 const token=()=>localStorage.getItem("gh-token")||"";
 const toast=(m,t)=>{const e=$("#toast");e.textContent=m;e.className="toast on"+(t==="err"?" err":"");setTimeout(()=>e.className="toast",2400)};
+// content paths are site-absolute ("/img/x.png") but the admin lives at
+// /<repo>/admin.html — resolve them relative to this page instead
+const src=p=>!p?"":/^(https?:|data:)/.test(p)?p:"."+(p.startsWith("/")?p:"/"+p);
 const mark=()=>{dirty=true;const b=$("#pub");b.textContent="Опубликовать";b.classList.remove("clean")};
 const bi=()=>({en:"",ru:""});
 
@@ -230,7 +239,7 @@ function imageField(obj,key,label){
   const draw=()=>{
     wrap.innerHTML="";
     const box=el(`<div class="imgbox"></div>`);
-    if(obj[key])box.append(el(`<img src="${obj[key]}" alt="">`));
+    if(obj[key])box.append(el(`<img src="${src(obj[key])}" alt="">`));
     else box.append(el(`<div class="empty"><span>🖼</span><span>${label||"Нет изображения"}</span></div>`));
     const tools=el(`<div class="imgtools"></div>`);
     const up=el(`<button class="mini">Загрузить</button>`);
@@ -437,8 +446,8 @@ function blockNode(list,i,redraw){
   if(b.type==="gallery"){
     const g=el(`<div class="grid2"></div>`);
     g.style.gridTemplateColumns=`repeat(${b.columns||2},1fr)`;
-    (b.images||[]).forEach((src,j)=>{
-      const c=el(`<div class="imgbox"><img src="${src}" alt=""></div>`);
+    (b.images||[]).forEach((im,j)=>{
+      const c=el(`<div class="imgbox"><img src="${src(im)}" alt=""></div>`);
       const x=el(`<button class="mini danger" style="position:absolute;top:6px;right:6px">✕</button>`);
       x.onclick=()=>{b.images.splice(j,1);mark();redraw()};c.append(x);g.append(c);
     });
@@ -558,11 +567,11 @@ const PAGES={
     const list=el(`<div class="props" style="margin-top:20px"></div>`);
     C.cases.forEach((cs,i)=>{
       const r=el(`<div class="prop" style="cursor:pointer"><div class="k" style="width:auto;gap:9px"><span class="ic">📄</span><span style="color:var(--text)">${cs.title||"Без названия"}</span></div><div class="v" style="text-align:right;color:var(--faint);font-size:13px">${(cs.blocks||[]).length} блоков</div></div>`);
-      r.onclick=()=>{CASE=i;draw()};list.append(r);
+      r.onclick=()=>{CASE=i;casesOpen=true;draw()};list.append(r);
     });
     out.push(list);
     const a=el(`<div class="addblock">＋ Новый кейс</div>`);
-    a.onclick=()=>{C.cases.push({id:"case-"+Date.now(),title:"Новый кейс",cover:"",metrics:[],intro:bi(),cta:{label:bi(),href:"#"},meta:[],blocks:[newBlock("section"),newBlock("paragraph")]});mark();CASE=C.cases.length-1;draw()};
+    a.onclick=()=>{C.cases.push({id:"case-"+Date.now(),title:"Новый кейс",cover:"",metrics:[],intro:bi(),cta:{label:bi(),href:"#"},meta:[],blocks:[newBlock("section"),newBlock("paragraph")]});mark();CASE=C.cases.length-1;casesOpen=true;draw()};
     out.push(a);return out;
   }},
   about:{icon:"🙂",name:"Обо мне",render:()=>{
@@ -650,10 +659,15 @@ function drawNav(){
   const nav=$("#nav");nav.innerHTML="";
   ["site","hero","experience","works","about","footer","ui"].forEach(k=>{
     const pg=PAGES[k];
-    const it=el(`<div class="item${P===k&&CASE==null?" on":""}"><span class="ic">${pg.icon}</span><span class="lbl">${pg.name}</span></div>`);
+    const caret=k==="works"?`<span class="caret${casesOpen?" open":""}">▶</span>`:"";
+    const it=el(`<div class="item${P===k&&CASE==null?" on":""}">${caret}<span class="ic">${pg.icon}</span><span class="lbl">${pg.name}</span></div>`);
     it.onclick=()=>{P=k;CASE=null;draw()};
+    if(k==="works"){
+      const cr=$(".caret",it);
+      cr.onclick=e=>{e.stopPropagation();casesOpen=!casesOpen;drawNav()};
+    }
     nav.append(it);
-    if(k==="works"&&C){
+    if(k==="works"&&C&&casesOpen){
       C.cases.forEach((cs,i)=>{
         const s=el(`<div class="item sub${P==="works"&&CASE===i?" on":""}"><span class="ic">📄</span><span class="lbl">${cs.title||"Без названия"}</span></div>`);
         s.onclick=()=>{P="works";CASE=i;draw()};nav.append(s);
