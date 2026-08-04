@@ -393,8 +393,9 @@ button { font: inherit; color: inherit; background: none; border: none; cursor: 
   min-width: 0;
   display: flex;
   flex-direction: column;
-  gap: 32px;
-  justify-content: center;
+  gap: 24px;
+  /* pin the period to the bottom so a two-line role (RU) can't shift it */
+  justify-content: space-between;
   padding: 12px;
   border-radius: 12px;
 }
