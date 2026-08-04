@@ -1,8 +1,9 @@
 import { useRef, useEffect } from 'react'
+import { asset } from '../asset.js'
 import gsap from 'gsap'
 import { useLang } from '../i18n.jsx'
 
-const COVERS = ['/img/covers/cover1.png', '/img/covers/cover2.png', '/img/covers/cover3.png', '/img/covers/cover4.png']
+const COVERS = [asset('/img/covers/cover1.png'), asset('/img/covers/cover2.png'), asset('/img/covers/cover3.png'), asset('/img/covers/cover4.png')]
 
 const ROWS = [
   { name: 'InnovaFlow', metrics: ['FINALIST', '+18% CTR', '+9% MAU'] },

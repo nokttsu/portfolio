@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState, useMemo, useCallback } from 'react'
+import { asset } from '../asset.js'
 import gsap from 'gsap'
 import { CASE, rich } from '../data/caseData.jsx'
 import WorksTable from './WorksTable.jsx'
@@ -269,7 +270,7 @@ export default function CaseModal({ cover, onClose }) {
     >
       <div className="case-modal__panel">
         <button className="case-modal__close header__icon-btn" onClick={onClose} aria-label="Close">
-          <img src="/img/close.svg" alt="" width="24" height="24" />
+          <img src={asset('/img/close.svg')} alt="" width="24" height="24" />
         </button>
 
         <nav className={`cs-nav${navOn ? ' is-visible' : ''}`} aria-label="Sections">

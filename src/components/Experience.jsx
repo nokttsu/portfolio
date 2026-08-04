@@ -1,4 +1,5 @@
 import MaskedHeading from './MaskedHeading.jsx'
+import { asset } from '../asset.js'
 import { useLang } from '../i18n.jsx'
 
 export default function Experience() {
@@ -17,7 +18,7 @@ export default function Experience() {
                 <div className="exp__role">{t('roleArt')}</div>
               </div>
               <div className="exp__logo">
-                <img src="/img/exp-aeroflot.svg" alt="Aeroflot" />
+                <img src={asset('/img/exp-aeroflot.svg')} alt="Aeroflot" />
               </div>
             </div>
             <div className="exp__meta">{t('currentlyAt')}</div>
@@ -30,7 +31,7 @@ export default function Experience() {
                 <div className="exp__role">{t('roleSenior')}</div>
               </div>
               <div className="exp__logo exp__logo--round">
-                <img src="/img/exp-plan9.png" alt="Plan9" />
+                <img src={asset('/img/exp-plan9.png')} alt="Plan9" />
               </div>
             </div>
             <div className="exp__meta">2023-2024</div>
@@ -45,7 +46,7 @@ export default function Experience() {
                 <div className="exp__role">{t('roleLead')}</div>
               </div>
               <div className="exp__logo">
-                <img src="/img/exp-div.svg" alt="div." />
+                <img src={asset('/img/exp-div.svg')} alt="div." />
               </div>
             </div>
             <div className="exp__meta">2023-2024</div>

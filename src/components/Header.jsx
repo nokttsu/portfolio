@@ -1,4 +1,5 @@
 import { useState, useRef, useLayoutEffect, useEffect } from 'react'
+import { asset } from '../asset.js'
 import gsap from 'gsap'
 import { ScrollToPlugin } from 'gsap/ScrollToPlugin'
 import { useLang } from '../i18n.jsx'
@@ -126,7 +127,7 @@ export default function Header() {
         aria-label={t('backToTop')}
       >
         <span className="header__avatar">
-          <img src="/img/avatar.png" alt="Vadim Prisyachev" width="40" height="40" />
+          <img src={asset('/img/avatar.png')} alt="Vadim Prisyachev" width="40" height="40" />
           <span className="header__totop" aria-hidden="true">
             <svg viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
               <path d="M12 19V6" />
@@ -146,8 +147,8 @@ export default function Header() {
             onClick={() => setOpen((v) => !v)}
           >
             <span className="kebab__icon">
-              <img className="kebab__icon-dots" src="/img/menu.svg" alt="" width="24" height="24" />
-              <img className="kebab__icon-x" src="/img/close.svg" alt="" width="24" height="24" />
+              <img className="kebab__icon-dots" src={asset('/img/menu.svg')} alt="" width="24" height="24" />
+              <img className="kebab__icon-x" src={asset('/img/close.svg')} alt="" width="24" height="24" />
             </span>
           </button>
 
@@ -156,7 +157,7 @@ export default function Header() {
               l.copy ? (
                 <button className="kebab__pill kebab__pill--copy" key="copy" onClick={handleCopy}>
                   <span>{copied ? t('copied') : l.label}</span>
-                  <img src="/img/copy.svg" alt="Copy" width="16" height="16" />
+                  <img src={asset('/img/copy.svg')} alt="Copy" width="16" height="16" />
                 </button>
               ) : l.lang ? (
                 <button className="kebab__pill" key="lang" onClick={handleLang}>

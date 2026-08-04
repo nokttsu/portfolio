@@ -1,4 +1,5 @@
 import { Fragment } from 'react'
+import { asset } from '../asset.js'
 
 // tiny inline formatter: **bold**, *italic* and ==highlight==
 export function rich(text) {
@@ -11,8 +12,8 @@ export function rich(text) {
   })
 }
 
-const IMG = (n) => `/img/covers/cover${n}.png`
-const PHOTO = (n) => `/img/about/${n}.jpg`
+const IMG = (n) => asset(`/img/covers/cover${n}.png`)
+const PHOTO = (n) => asset(`/img/about/${n}.jpg`)
 
 // Structured after the Marimba "Mercer Mass Timber" case study: hero + at-a-glance
 // meta, then numbered sections (Overview, Challenge, My Role, Phase Breakdown,

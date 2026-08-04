@@ -1,4 +1,5 @@
 import { useMemo, useRef, useState, useLayoutEffect } from 'react'
+import { asset } from '../asset.js'
 import gsap from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
 import MaskedHeading from './MaskedHeading.jsx'
@@ -20,7 +21,7 @@ const WORKS = [
   { id: 'devpulse', title: 'DevPulse', metrics: ['HONORABLE MENTION', '+19% CTR', '+10% MAU'] },
 ]
 
-const COVERS = ['/img/covers/cover1.png', '/img/covers/cover2.png', '/img/covers/cover3.png', '/img/covers/cover4.png']
+const COVERS = [asset('/img/covers/cover1.png'), asset('/img/covers/cover2.png'), asset('/img/covers/cover3.png'), asset('/img/covers/cover4.png')]
 const STEP = 4
 
 function shuffle(arr) {

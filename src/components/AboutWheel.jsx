@@ -1,4 +1,5 @@
 import { useRef, useEffect } from 'react'
+import { asset } from '../asset.js'
 import gsap from 'gsap'
 
 const N = 12
@@ -10,8 +11,8 @@ const TILE_H = 168 // tallest tile
 
 // landscape photos -> 4:3 tiles, portrait photo -> 3:4 tiles (duplicated to fill).
 // Placeholder set for now; real ones come later via the admin.
-const LANDSCAPE = ['/img/about/1.jpg', '/img/about/3.jpg', '/img/about/4.jpg']
-const PORTRAIT = '/img/about/2.jpg'
+const LANDSCAPE = [asset('/img/about/1.jpg'), asset('/img/about/3.jpg'), asset('/img/about/4.jpg')]
+const PORTRAIT = asset('/img/about/2.jpg')
 const TILES = Array.from({ length: N }, (_, i) => {
   const tall = i % 2 === 1
   const wideIndex = Math.floor(i / 2)

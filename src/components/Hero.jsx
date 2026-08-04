@@ -1,4 +1,5 @@
 import gsap from 'gsap'
+import { asset } from '../asset.js'
 import { ScrollToPlugin } from 'gsap/ScrollToPlugin'
 import MaskedHeading from './MaskedHeading.jsx'
 import { useLang } from '../i18n.jsx'
@@ -21,8 +22,8 @@ export default function Hero() {
     <section className="hero" id="top">
       <video
         className="hero__bg"
-        src="/img/hero.mp4"
-        poster="/img/hero.png"
+        src={asset('/img/hero.mp4')}
+        poster={asset('/img/hero.png')}
         autoPlay
         muted
         loop
