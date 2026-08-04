@@ -23,6 +23,10 @@ export default function MaskedHeading({ as: Tag = 'h2', text, className = '', on
 
     document.fonts.ready.then(() => {
       if (cancelled || !el) return
+      // The previous effect's split.revert() restores the text captured when it
+      // split — i.e. the old language — clobbering React's update. Re-assert the
+      // current text before splitting again.
+      if (el.textContent !== text) el.textContent = text
       split = new SplitText(el, {
         type: 'lines,words',
         mask: 'lines',
