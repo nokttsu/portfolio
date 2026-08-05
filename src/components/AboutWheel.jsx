@@ -132,7 +132,7 @@ export default function AboutWheel({ photos = [] }) {
       <div className="wheel__ring" ref={ringRef}>
         {tilesData.map((t, i) => (
           <div key={i} className={`wheel__tile ${t.tall ? 'wheel__tile--tall' : 'wheel__tile--wide'}`}>
-            <img src={t.src} alt="" draggable="false" />
+            <img src={t.src} alt="" draggable="false" loading="lazy" decoding="async" />
           </div>
         ))}
       </div>

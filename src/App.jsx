@@ -1,4 +1,4 @@
-import { useRef, useState, useCallback, useEffect } from 'react'
+import { useRef, useState, useCallback, useEffect, lazy, Suspense } from 'react'
 import gsap from 'gsap'
 import Header from './components/Header.jsx'
 import Hero from './components/Hero.jsx'
@@ -6,15 +6,18 @@ import Experience from './components/Experience.jsx'
 import Works from './components/Works.jsx'
 import About from './components/About.jsx'
 import Footer from './components/Footer.jsx'
-import CaseModal from './components/CaseModal.jsx'
+import Preloader from './components/Preloader.jsx'
 import Scrollbar from './components/Scrollbar.jsx'
 import useHomeAnimation from './hooks/useHomeAnimation.js'
 import useButtonHover from './hooks/useButtonHover.js'
 import useSmoothWheel from './hooks/useSmoothWheel.js'
+import { useLang } from './i18n.jsx'
 
-// Lock the page behind the modal (so there's only one scrollbar). No width
-// compensation needed: html reserves the scrollbar gutter permanently
-// (`scrollbar-gutter: stable`), so hiding the scrollbar can't shift the layout.
+// the case reader is a separate chunk — nothing needs it until the first click
+const CaseModal = lazy(() => import('./components/CaseModal.jsx'))
+
+// Lock the page behind the modal (so there's only one scrollbar). Native
+// scrollbars are hidden site-wide, so hiding the page scroll can't shift layout.
 function lockPageScroll() {
   document.documentElement.style.overflow = 'hidden'
 }
@@ -23,13 +26,19 @@ function unlockPageScroll() {
 }
 
 const getWindow = () => window
+const caseUrl = (id) => `${location.pathname}?case=${encodeURIComponent(id)}`
+const readCaseId = () => new URLSearchParams(location.search).get('case')
 
 export default function App() {
   const scope = useRef(null)
+  const { content } = useLang()
   const [caseOpen, setCaseOpen] = useState(false)
   const [caseCover, setCaseCover] = useState(null)
   const [caseData, setCaseData] = useState(null)
+  // deep links open without a morph, so the modal must not wait for staging
+  const [caseInstant, setCaseInstant] = useState(false)
   const originRef = useRef(null) // the clicked cover element
+  const openRef = useRef(false) // popstate handler needs the live value, not a closure
 
   useHomeAnimation(scope)
   useButtonHover()
@@ -38,83 +47,133 @@ export default function App() {
 
   // safety net: never leave the page locked if a close animation is interrupted
   useEffect(() => {
+    openRef.current = caseOpen
     if (!caseOpen) unlockPageScroll()
   }, [caseOpen])
 
-  // open the full-screen case modal; the clicked cover FLIP-expands into the hero
-  const openCase = useCallback((coverEl, data) => {
-    originRef.current = coverEl
-    const img = coverEl.querySelector('img')
-    setCaseCover(img ? img.src : null)
-    if (data) setCaseData(data)
-    const first = coverEl.getBoundingClientRect()
+  // open a case with no origin element (deep link / back-forward): no morph
+  const showCase = useCallback((data) => {
+    originRef.current = null
+    setCaseData(data)
+    setCaseCover(data.cover)
+    setCaseInstant(true)
     setCaseOpen(true)
     lockPageScroll()
+  }, [])
 
-    requestAnimationFrame(() => {
-      const heroImg = document.querySelector('.case-modal__hero-img')
+  // open the case modal; the clicked cover FLIP-expands into the hero image
+  const openCase = useCallback(
+    (coverEl, data, { push = true } = {}) => {
+      const already = caseOpen
+      originRef.current = coverEl
+      const img = coverEl?.querySelector('img')
+      if (img) setCaseCover(img.src)
+      if (data) setCaseData(data)
+      setCaseInstant(!coverEl)
+      if (push && data?.id) history.pushState({ case: data.id }, '', caseUrl(data.id))
+
+      const first = coverEl?.getBoundingClientRect()
+      setCaseOpen(true)
+      lockPageScroll()
+
+      requestAnimationFrame(() => {
+        const heroImg = document.querySelector('.case-modal__hero-img')
+        const modal = document.querySelector('.case-modal')
+        const scroller = document.querySelector('.case-modal__scroll')
+        if (!heroImg || !modal) return
+        // switching between cases: start the next one from the top
+        if (already && scroller) scroller.scrollTop = 0
+        if (!first) {
+          gsap.set(modal, { autoAlpha: 1 })
+          return
+        }
+        const last = heroImg.getBoundingClientRect()
+
+        // stage everything *before* the modal becomes visible, so the first
+        // painted frame already has the hero sitting exactly on the card
+        gsap.set(heroImg, {
+          x: first.left - last.left,
+          y: first.top - last.top,
+          scaleX: first.width / last.width,
+          scaleY: first.height / last.height,
+          transformOrigin: 'top left',
+        })
+        gsap.set(coverEl, { autoAlpha: 0 })
+        gsap.set(modal, { autoAlpha: 1 })
+        gsap.set('.case-modal__article, .cs-nav, .case-modal__tools', { clearProps: 'visibility' })
+
+        // pure morph — no cross-fade
+        gsap.to(heroImg, { x: 0, y: 0, scaleX: 1, scaleY: 1, duration: 0.7, ease: 'power3.inOut' })
+      })
+    },
+    [caseOpen]
+  )
+
+  const closeCase = useCallback(
+    (opts) => {
+      // may be called straight from onClick, where the arg is an event
+      const pop = opts && typeof opts === 'object' && 'pop' in opts ? opts.pop : true
       const modal = document.querySelector('.case-modal')
-      if (!heroImg || !modal) return
-      const last = heroImg.getBoundingClientRect()
+      const heroImg = document.querySelector('.case-modal__hero-img')
+      const coverEl = originRef.current
+      if (pop && readCaseId()) history.pushState({}, '', location.pathname)
 
-      // stage everything *before* the modal becomes visible, so the first
-      // painted frame already has the hero sitting exactly on the card
-      gsap.set(heroImg, {
+      const finish = () => {
+        unlockPageScroll()
+        if (coverEl) gsap.set(coverEl, { autoAlpha: 1 })
+        setCaseOpen(false)
+      }
+      if (!modal || !heroImg || !coverEl) {
+        finish()
+        return
+      }
+
+      // If the hero is still on screen, morph it back into the card. If the
+      // reader scrolled deep into the article, snapping to the top would flash —
+      // fade out instead.
+      const heroVisible = heroImg.getBoundingClientRect().bottom > 0
+      if (!heroVisible) {
+        finish()
+        return
+      }
+
+      // clear the page instantly (no fade), then morph the hero back into the card
+      gsap.set('.case-modal__article, .cs-nav, .case-modal__tools', { visibility: 'hidden' })
+      const first = coverEl.getBoundingClientRect() // where the card sits
+      const last = heroImg.getBoundingClientRect() // current hero on screen
+      gsap.to(heroImg, {
         x: first.left - last.left,
         y: first.top - last.top,
         scaleX: first.width / last.width,
         scaleY: first.height / last.height,
         transformOrigin: 'top left',
+        duration: 0.6,
+        ease: 'power3.inOut',
+        onComplete: finish,
       })
-      gsap.set(coverEl, { autoAlpha: 0 })
-      gsap.set(modal, { autoAlpha: 1 })
+    },
+    []
+  )
 
-      // pure morph — no cross-fade
-      gsap.to(heroImg, { x: 0, y: 0, scaleX: 1, scaleY: 1, duration: 0.7, ease: 'power3.inOut' })
-    })
-  }, [])
-
-  const closeCase = useCallback(() => {
-    const modal = document.querySelector('.case-modal')
-    const heroImg = document.querySelector('.case-modal__hero-img')
-    const coverEl = originRef.current
-    const finish = () => {
-      unlockPageScroll()
-      if (coverEl) gsap.set(coverEl, { autoAlpha: 1 })
-      setCaseOpen(false)
+  // ?case=<id> makes a case shareable: deep links, new tabs and the back button
+  useEffect(() => {
+    if (!content.cases?.length) return
+    const sync = () => {
+      const id = readCaseId()
+      const found = id && content.cases.find((c) => c.id === id)
+      if (found) {
+        if (!openRef.current || readCaseId() !== caseData?.id) showCase(found)
+      } else if (openRef.current) closeCase({ pop: false })
     }
-    if (!modal || !heroImg || !coverEl) {
-      finish()
-      return
-    }
-
-    // If the hero is still on screen, morph it back into the card. If the
-    // reader scrolled deep into the article, snapping to the top would flash —
-    // fade out instead.
-    const heroVisible = heroImg.getBoundingClientRect().bottom > 0
-    if (!heroVisible) {
-      finish()
-      return
-    }
-
-    // clear the page instantly (no fade), then morph the hero back into the card
-    gsap.set('.case-modal__article, .cs-nav, .case-modal__close', { visibility: 'hidden' })
-    const first = coverEl.getBoundingClientRect() // where the card sits
-    const last = heroImg.getBoundingClientRect() // current hero on screen
-    gsap.to(heroImg, {
-      x: first.left - last.left,
-      y: first.top - last.top,
-      scaleX: first.width / last.width,
-      scaleY: first.height / last.height,
-      transformOrigin: 'top left',
-      duration: 0.6,
-      ease: 'power3.inOut',
-      onComplete: finish,
-    })
-  }, [])
+    sync()
+    window.addEventListener('popstate', sync)
+    return () => window.removeEventListener('popstate', sync)
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [content.cases])
 
   return (
     <div className="site" ref={scope}>
+      <Preloader />
       <Header />
       <Hero />
       <main className="content">
@@ -126,7 +185,17 @@ export default function App() {
 
       <Scrollbar hidden={caseOpen} />
 
-      {caseOpen && <CaseModal cover={caseCover} data={caseData} onClose={closeCase} />}
+      {caseOpen && (
+        <Suspense fallback={null}>
+          <CaseModal
+            cover={caseCover}
+            data={caseData}
+            instant={caseInstant}
+            onClose={closeCase}
+            onOpenCase={openCase}
+          />
+        </Suspense>
+      )}
     </div>
   )
 }

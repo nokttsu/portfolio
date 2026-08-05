@@ -61,6 +61,10 @@
       "en": "Close",
       "ru": "Закрыть"
     },
+    "copyLink": {
+      "en": "Copy link to this case",
+      "ru": "Скопировать ссылку на кейс"
+    },
     "AWARD": {
       "en": "AWARD",
       "ru": "НАГРАДА"

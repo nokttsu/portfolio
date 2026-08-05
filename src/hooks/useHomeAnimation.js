@@ -16,12 +16,13 @@ export default function useHomeAnimation(scopeRef) {
       const q = self.selector
 
       // ---- Hero intro (on load) ----
-      const tl = gsap.timeline({ defaults: { ease: 'power3.out' } })
+      // starts as the preloader panel clears the screen
+      const tl = gsap.timeline({ defaults: { ease: 'power3.out' }, delay: 0.9 })
 
       tl.from(q('[data-anim="header"]'), { y: -20, autoAlpha: 0, duration: 0.8 }, 0)
       // (the hero title uses the SplitText masked reveal set up below, after fonts load)
-      tl.from(q('[data-anim="intro"]'), { y: 24, autoAlpha: 0, duration: 0.9 }, 1.0)
-      tl.from(q('[data-anim="hero-nav"]'), { y: 16, autoAlpha: 0, duration: 0.8 }, 1.2)
+      tl.from(q('[data-anim="intro"]'), { y: 24, autoAlpha: 0, duration: 0.9 }, 0.35)
+      tl.from(q('[data-anim="hero-nav"]'), { y: 16, autoAlpha: 0, duration: 0.8 }, 0.5)
 
       // ---- Hero scroll-out transition ----
       // The hero is fixed behind the page. As the black content slides up over
@@ -82,6 +83,16 @@ export default function useHomeAnimation(scopeRef) {
           y: 60,
           autoAlpha: 0,
           duration: 1,
+          ease: 'power3.out',
+          scrollTrigger: { trigger: el, start: START, once: true },
+        })
+      })
+
+      // covers uncover themselves instead of fading in
+      q('[data-reveal="clip"]').forEach((el) => {
+        gsap.to(el, {
+          clipPath: 'inset(0% 0 0 0)',
+          duration: 1.1,
           ease: 'power3.out',
           scrollTrigger: { trigger: el, start: START, once: true },
         })

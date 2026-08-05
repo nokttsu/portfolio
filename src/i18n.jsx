@@ -20,6 +20,11 @@ export function LangProvider({ children }) {
   const [lang, setLang] = useState('en')
   const [content, setContent] = useState(DEFAULTS)
 
+  // keep the document language in sync for screen readers and hyphenation
+  useEffect(() => {
+    document.documentElement.lang = lang
+  }, [lang])
+
   // content.json is written by admin.html; fall back to the bundled defaults
   useEffect(() => {
     let alive = true

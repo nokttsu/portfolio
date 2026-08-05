@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState, useMemo, useCallback } from 'react'
 import { asset } from '../asset.js'
 import gsap from 'gsap'
+import { ScrollTrigger } from 'gsap/ScrollTrigger'
 import { rich } from '../rich.jsx'
 import WorksTable from './WorksTable.jsx'
 import useSmoothWheel from '../hooks/useSmoothWheel.js'
@@ -73,7 +74,7 @@ function Block({ b, tr }) {
     case 'image':
       return (
         <figure className={`cs-figure cs-figure--${b.size || 'wide'}`}>
-          <img src={asset(b.src)} alt="" />
+          <img src={asset(b.src)} alt="" loading="lazy" decoding="async" />
           {b.caption && <figcaption>{tr(b.caption)}</figcaption>}
         </figure>
       )
@@ -81,7 +82,9 @@ function Block({ b, tr }) {
       return (
         <figure className="cs-figure cs-figure--wide">
           <div className="cs-gallery" style={{ gridTemplateColumns: `repeat(${b.columns || 3}, 1fr)` }}>
-            {(b.images || []).map((src, i) => <img src={asset(src)} alt="" key={i} />)}
+            {(b.images || []).map((im, i) => (
+              <img src={asset(im)} alt="" key={i} loading="lazy" decoding="async" />
+            ))}
           </div>
           {b.caption && <figcaption>{tr(b.caption)}</figcaption>}
         </figure>
@@ -100,7 +103,7 @@ function Block({ b, tr }) {
   }
 }
 
-export default function CaseModal({ cover, data, onClose }) {
+export default function CaseModal({ cover, data, instant = false, onClose, onOpenCase }) {
   const { content, t, tr } = useLang()
   const CASE = data || content.cases[0]
   const SECTIONS = (CASE.blocks || []).filter((b) => b.type === 'section')
@@ -114,6 +117,19 @@ export default function CaseModal({ cover, data, onClose }) {
     [content.cases, CASE.id]
   )
 
+  // share: copy a direct link to this case
+  const [copied, setCopied] = useState(false)
+  const copyLink = useCallback(async () => {
+    const url = `${location.origin}${location.pathname}?case=${encodeURIComponent(CASE.id)}`
+    try {
+      await navigator.clipboard.writeText(url)
+      setCopied(true)
+      setTimeout(() => setCopied(false), 1600)
+    } catch {
+      /* clipboard blocked */
+    }
+  }, [CASE.id])
+
   // eased wheel scrolling inside the case
   const getScroller = useCallback(() => scrollRef.current, [])
   useSmoothWheel(getScroller, { ignore: '.cs-lightbox' })
@@ -123,6 +139,72 @@ export default function CaseModal({ cover, data, onClose }) {
     document.addEventListener('keydown', onKey)
     return () => document.removeEventListener('keydown', onKey)
   }, [onClose])
+
+  // keep keyboard focus inside the modal and hand it back on close
+  const panelRef = useRef(null)
+  useEffect(() => {
+    const panel = panelRef.current
+    if (!panel) return
+    const active = document.activeElement
+    const opener = active && active !== document.body ? active : null
+    const sel =
+      'a[href], button:not([disabled]), input, textarea, select, [tabindex]:not([tabindex="-1"])'
+    panel.querySelector('.case-modal__close')?.focus()
+    const onKey = (e) => {
+      if (e.key !== 'Tab') return
+      const items = [...panel.querySelectorAll(sel)].filter((n) => n.offsetParent !== null)
+      if (!items.length) return
+      const first = items[0]
+      const last = items[items.length - 1]
+      if (e.shiftKey && document.activeElement === first) {
+        e.preventDefault()
+        last.focus()
+      } else if (!e.shiftKey && document.activeElement === last) {
+        e.preventDefault()
+        first.focus()
+      } else if (!panel.contains(document.activeElement)) {
+        e.preventDefault()
+        first.focus()
+      }
+    }
+    document.addEventListener('keydown', onKey)
+    return () => {
+      document.removeEventListener('keydown', onKey)
+      if (opener instanceof HTMLElement && opener.isConnected) opener.focus()
+    }
+  }, [])
+
+  // article blocks appear on scroll, like the sections on the home page
+  useEffect(() => {
+    const root = scrollRef.current
+    if (!root) return
+    const ctx = gsap.context(() => {
+      const blocks = root.querySelectorAll('.cs-body > *, .cs-readalso')
+      blocks.forEach((el) => {
+        gsap.from(el, {
+          y: 24,
+          autoAlpha: 0,
+          duration: 0.7,
+          ease: 'power3.out',
+          scrollTrigger: { scroller: root, trigger: el, start: 'top bottom-=40', once: true },
+        })
+      })
+      root.querySelectorAll('.cs-figure img, .cs-gallery img').forEach((img) => {
+        gsap.fromTo(
+          img,
+          { clipPath: 'inset(100% 0 0 0)' },
+          {
+            clipPath: 'inset(0% 0 0 0)',
+            duration: 1.1,
+            ease: 'power3.out',
+            scrollTrigger: { scroller: root, trigger: img, start: 'top bottom-=20', once: true },
+          }
+        )
+      })
+      ScrollTrigger.refresh()
+    }, root)
+    return () => ctx.revert()
+  }, [CASE])
 
   // scroll-spy: highlight the section currently in view
   useEffect(() => {
@@ -237,14 +319,36 @@ export default function CaseModal({ cover, data, onClose }) {
       className="case-modal"
       role="dialog"
       aria-modal="true"
-      /* hidden on first paint so the FLIP can be staged before anything shows */
-      style={{ opacity: 0, visibility: 'hidden' }}
+      /* hidden on first paint so the FLIP can be staged before anything shows;
+         a deep link has nothing to morph from, so it shows straight away */
+      style={instant ? undefined : { opacity: 0, visibility: 'hidden' }}
       onClick={(e) => e.target === e.currentTarget && onClose()}
     >
-      <div className="case-modal__panel">
-        <button className="case-modal__close header__icon-btn" onClick={onClose} aria-label={t('close')}>
-          <img src={asset('/img/close.svg')} alt="" width="24" height="24" />
-        </button>
+      <div className="case-modal__panel" ref={panelRef}>
+        <div className="case-modal__tools">
+          <button
+            className="header__icon-btn"
+            onClick={copyLink}
+            aria-label={copied ? t('copied') : t('copyLink')}
+            title={copied ? t('copied') : t('copyLink')}
+          >
+            {/* lucide: link */}
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+              strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+              {copied ? (
+                <polyline points="20 6 9 17 4 12" />
+              ) : (
+                <>
+                  <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71" />
+                  <path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71" />
+                </>
+              )}
+            </svg>
+          </button>
+          <button className="case-modal__close header__icon-btn" onClick={onClose} aria-label={t('close')}>
+            <img src={asset('/img/close.svg')} alt="" width="24" height="24" />
+          </button>
+        </div>
 
         <nav className={`cs-nav${navOn ? ' is-visible' : ''}`} aria-label="Sections">
           {SECTIONS.map((s, i) => (
@@ -287,10 +391,8 @@ export default function CaseModal({ cover, data, onClose }) {
 
             <section className="cs-readalso">
               <h2 className="cs-readalso__title">{t('readAlso')}</h2>
-              <WorksTable
-                rows={readAlso}
-                onOpenCase={() => scrollRef.current?.scrollTo({ top: 0, behavior: 'smooth' })}
-              />
+              {/* the hovered cover morphs into the next case, same as from home */}
+              <WorksTable rows={readAlso} onOpenCase={onOpenCase} />
             </section>
           </article>
         </div>

@@ -43,7 +43,7 @@ export default function MaskedHeading({ as: Tag = 'h2', text, className = '', on
           stagger: 0.06,
           ease: 'osmo-ease',
           ...(onLoad
-            ? { delay: 0.45 }
+            ? { delay: 1 } // hands over from the preloader panel leaving
             : { scrollTrigger: { trigger: el, start: 'top bottom', once: true } }),
         }
       )

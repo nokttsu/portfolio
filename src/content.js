@@ -170,6 +170,7 @@ export const DEFAULTS = {
     showMore: { en: 'Show more', ru: 'Показать ещё' },
     readAlso: { en: 'Read also', ru: 'Читайте также' },
     close: { en: 'Close', ru: 'Закрыть' },
+    copyLink: { en: 'Copy link to this case', ru: 'Скопировать ссылку на кейс' },
     AWARD: { en: 'AWARD', ru: 'НАГРАДА' },
     FINALIST: { en: 'FINALIST', ru: 'ФИНАЛИСТ' },
     'HONORABLE MENTION': { en: 'HONORABLE MENTION', ru: 'ПООЩРЕНИЕ' },

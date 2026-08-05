@@ -63,6 +63,16 @@ body {
 img { display: block; max-width: none; }
 a { color: inherit; text-decoration: none; }
 
+/* keyboard navigation must stay visible */
+:focus-visible {
+  outline: 2px solid rgba(255, 255, 255, 0.85);
+  outline-offset: 3px;
+  border-radius: 4px;
+}
+
+/* images reveal by uncovering, not by fading */
+[data-reveal='clip'] { clip-path: inset(100% 0 0 0); will-change: clip-path; }
+
 /* native scrollbars hidden everywhere — the page uses a custom overlay bar
    (see Scrollbar.jsx) so nothing steals layout width */
 * { scrollbar-width: none; -ms-overflow-style: none; }
@@ -138,6 +148,29 @@ button { font: inherit; color: inherit; background: none; border: none; cursor: 
 .pill--grey { background: var(--pill); color: var(--white); }
 .pill--white { background: var(--white); color: var(--black); }
 
+
+/* ===== Preloader ===== */
+.preloader {
+  position: fixed;
+  inset: 0;
+  z-index: 300;
+  background: var(--bg);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  will-change: transform;
+}
+.preloader__mask { overflow: hidden; padding-bottom: 0.16em; }
+.preloader__name {
+  display: inline-block;
+  font-family: var(--hs);
+  font-weight: 500;
+  font-size: 40px;
+  line-height: 1.2;
+  letter-spacing: -1px;
+  color: var(--white);
+  will-change: transform;
+}
 
 /* ===== Header (fixed chrome) ===== */
 .header {
@@ -643,7 +676,8 @@ button { font: inherit; color: inherit; background: none; border: none; cursor: 
 .case-modal { position: fixed; inset: 0; z-index: 100; }
 .case-modal__panel { position: absolute; inset: 0; background: var(--bg); overflow: hidden; }
 .case-modal__scroll { position: absolute; inset: 0; overflow-y: auto; overflow-x: hidden; container-type: inline-size; overscroll-behavior: contain; }
-.case-modal__close { position: absolute; top: 24px; right: 24px; z-index: 8; cursor: pointer; }
+.case-modal__tools { position: absolute; top: 24px; right: 24px; z-index: 8; display: flex; gap: 8px; }
+.case-modal__tools .header__icon-btn { cursor: pointer; color: var(--white); }
 /* hero image sits inside the same grid as the article (not full-bleed) */
 .case-modal__hero {
   max-width: calc(var(--content) + var(--gutter) * 2);

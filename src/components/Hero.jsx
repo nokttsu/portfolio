@@ -29,7 +29,7 @@ export default function Hero() {
         muted
         loop
         playsInline
-        preload="auto"
+        preload="metadata"
       />
 
       <div className="hero__inner" data-anim="hero-inner">

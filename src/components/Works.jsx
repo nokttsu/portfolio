@@ -14,7 +14,7 @@ function WorkCard({ w, onOpenCase, t }) {
     <article className="work" data-anim="work" ref={cardRef} role="button" tabIndex={0}
       onClick={open} onKeyDown={(e) => (e.key === 'Enter' ? open() : null)}>
       <div className="work__cover">
-        <img src={asset(w.cover)} alt={w.title} />
+        <img src={asset(w.cover)} alt={w.title} data-reveal="clip" loading="lazy" decoding="async" />
       </div>
       <div className="work__info">
         <div className="work__titles">
