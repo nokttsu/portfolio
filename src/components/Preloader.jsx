@@ -27,12 +27,9 @@ export default function Preloader() {
     const counter = { v: 0 }
     const tl = gsap.timeline({ onComplete: () => setDone(true) })
 
-    tl.from('.preloader__row, .preloader__line', { autoAlpha: 0, duration: 0.4, ease: 'power2.out' })
-      .to(
-        '.preloader__fill',
-        { width: '100%', duration: COUNT_S, ease: 'power1.inOut' },
-        0
-      )
+    // the label, counter and line are visible from the first frame (as in the
+    // reference) — fading them in here would fight the fade-out at the end
+    tl.to('.preloader__fill', { width: '100%', duration: COUNT_S, ease: 'power1.inOut' }, 0)
       .to(
         counter,
         {
