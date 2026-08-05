@@ -4,8 +4,8 @@ import { ScrollToPlugin } from 'gsap/ScrollToPlugin'
 
 gsap.registerPlugin(ScrollToPlugin)
 
-const SPEED = 1.35 // travel per wheel notch
-const DURATION = 0.2 // short glide — snappy, but still eased
+const SPEED = 2.2 // travel per wheel notch
+const DURATION = 0.18 // short glide — snappy, but still eased
 
 /**
  * Eased wheel scrolling. Instead of ScrollSmoother (which transforms a wrapper

@@ -42,35 +42,47 @@ export default function Scrollbar({ hidden = false, getTarget }) {
       }, IDLE_MS)
     }
 
-    let lastTop = -1
-    const update = () => {
+    // Measuring on every frame forced a layout recalc 60x/sec and made the whole
+    // page feel heavy — take the sizes only when they can actually change.
+    let scrollable = false
+    const measure = () => {
       const t = target()
       if (hidden || !t) {
+        scrollable = false
         bar.classList.remove('is-on')
         return
       }
       const total = fullH(t)
       const view = viewH(t)
       maxScroll = total - view
-      if (maxScroll <= 1) {
-        bar.classList.remove('is-on')
-        return
-      }
-      bar.classList.add('is-on')
+      scrollable = maxScroll > 1
+      bar.classList.toggle('is-on', scrollable)
+      if (!scrollable) return
       trackH = bar.clientHeight
-      thumbH = Math.max(MIN_THUMB, (view / total) * trackH)
-      thumb.style.height = `${thumbH}px`
-      const top = scrollTop(t)
-      if (!dragging) setY((top / maxScroll) * (trackH - thumbH))
-      if (top !== lastTop) {
-        lastTop = top
-        reveal() // scrolling reveals it
+      const h = Math.max(MIN_THUMB, (view / total) * trackH)
+      if (h !== thumbH) {
+        thumbH = h
+        thumb.style.height = `${h}px`
       }
     }
 
-    update()
+    let lastTop = -1
+    const update = () => {
+      if (!scrollable || dragging) return
+      const top = scrollTop(target()) // cheap read; no layout is invalidated here
+      if (top === lastTop) return
+      lastTop = top
+      setY((top / maxScroll) * (trackH - thumbH))
+      reveal() // scrolling reveals it
+    }
+
+    measure()
     gsap.ticker.add(update) // stays in sync with the eased wheel scrolling
-    window.addEventListener('resize', update)
+    window.addEventListener('resize', measure)
+    // content height changes (Show more, view switch, images loading)
+    const ro = new ResizeObserver(measure)
+    const observed = isWin(target()) ? document.documentElement : target()
+    if (observed) ro.observe(observed)
 
     // reveal when the pointer comes near the right edge
     const onPointerMove = (e) => {
@@ -116,8 +128,9 @@ export default function Scrollbar({ hidden = false, getTarget }) {
 
     return () => {
       clearTimeout(idleTimer)
+      ro.disconnect()
       gsap.ticker.remove(update)
-      window.removeEventListener('resize', update)
+      window.removeEventListener('resize', measure)
       window.removeEventListener('pointermove', onPointerMove)
       thumb.removeEventListener('pointerdown', onDown)
       window.removeEventListener('pointermove', onMove)
