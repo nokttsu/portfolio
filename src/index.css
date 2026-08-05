@@ -154,22 +154,30 @@ button { font: inherit; color: inherit; background: none; border: none; cursor: 
   position: fixed;
   inset: 0;
   z-index: 300;
-  background: var(--bg);
+  background: #000;
   display: flex;
   align-items: center;
-  justify-content: center;
   will-change: transform;
 }
-.preloader__mask { overflow: hidden; padding-bottom: 0.16em; }
-.preloader__name {
-  display: inline-block;
+/* the counter travels across this track: 0 at the left edge, 100 at the right */
+.preloader__track {
+  position: relative;
+  width: calc(100% - 48px);
+  margin: 0 24px;
+  height: 1em;
+}
+.preloader__num {
+  position: absolute;
+  top: 0;
+  left: 0;
   font-family: var(--hs);
   font-weight: 500;
-  font-size: 40px;
-  line-height: 1.2;
-  letter-spacing: -1px;
+  font-size: 64px;
+  line-height: 1;
+  letter-spacing: -2px;
   color: var(--white);
-  will-change: transform;
+  font-variant-numeric: tabular-nums;
+  will-change: transform, left;
 }
 
 /* ===== Header (fixed chrome) ===== */
@@ -676,7 +684,9 @@ button { font: inherit; color: inherit; background: none; border: none; cursor: 
 .case-modal { position: fixed; inset: 0; z-index: 100; }
 .case-modal__panel { position: absolute; inset: 0; background: var(--bg); overflow: hidden; }
 .case-modal__scroll { position: absolute; inset: 0; overflow-y: auto; overflow-x: hidden; container-type: inline-size; overscroll-behavior: contain; }
-.case-modal__tools { position: absolute; top: 24px; right: 24px; z-index: 8; display: flex; gap: 8px; }
+.case-modal__tools { position: absolute; top: 24px; z-index: 8; display: flex; gap: 8px; }
+.case-modal__tools--left { left: 24px; }
+.case-modal__tools--right { right: 24px; }
 .case-modal__tools .header__icon-btn { cursor: pointer; color: var(--white); }
 /* hero image sits inside the same grid as the article (not full-bleed) */
 .case-modal__hero {

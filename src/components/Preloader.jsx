@@ -1,29 +1,42 @@
 import { useEffect, useRef, useState } from 'react'
 import gsap from 'gsap'
-import { useLang } from '../i18n.jsx'
+
+const MIN_MS = 2000 // always give the counter room to read as an intro
 
 /**
- * Short intro mask: the name sits on a full-screen panel that slides up and
- * hands over to the hero title reveal. It also covers the hero video load.
+ * Intro screen: a counter runs 0 → 100 while travelling from the left edge to
+ * the right, then the panel leaves and hands over to the hero title reveal.
+ * Also covers the hero video load.
  */
 export default function Preloader() {
   const root = useRef(null)
+  const numRef = useRef(null)
   const [done, setDone] = useState(false)
-  const { content } = useLang()
 
   useEffect(() => {
     const el = root.current
-    if (!el) return
+    const num = numRef.current
+    if (!el || !num) return
     if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
       setDone(true)
       return
     }
 
+    const counter = { v: 0 }
     const tl = gsap.timeline({ onComplete: () => setDone(true) })
-    tl.from('.preloader__name', { yPercent: 110, duration: 0.7, ease: 'power3.out' })
-      .to('.preloader__name', { yPercent: -110, duration: 0.5, ease: 'power3.in' }, 0.75)
-      // the panel leaves just as the hero title starts rising
-      .to(el, { yPercent: -100, duration: 0.8, ease: 'power3.inOut' }, 0.9)
+
+    tl.to(counter, {
+      v: 100,
+      duration: MIN_MS / 1000,
+      ease: 'power1.inOut',
+      onUpdate: () => {
+        const v = Math.round(counter.v)
+        num.textContent = String(v)
+        // 0 sits at the left edge, 100 lands at the right edge
+        gsap.set(num, { xPercent: -v, left: `${v}%` })
+      },
+    })
+      .to(el, { yPercent: -100, duration: 0.8, ease: 'power3.inOut' }, '>-0.05')
 
     return () => tl.kill()
   }, [])
@@ -32,8 +45,8 @@ export default function Preloader() {
 
   return (
     <div className="preloader" ref={root}>
-      <div className="preloader__mask">
-        <span className="preloader__name">{content.site.name}</span>
+      <div className="preloader__track">
+        <span className="preloader__num" ref={numRef}>0</span>
       </div>
     </div>
   )

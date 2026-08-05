@@ -325,7 +325,7 @@ export default function CaseModal({ cover, data, instant = false, onClose, onOpe
       onClick={(e) => e.target === e.currentTarget && onClose()}
     >
       <div className="case-modal__panel" ref={panelRef}>
-        <div className="case-modal__tools">
+        <div className="case-modal__tools case-modal__tools--left">
           <button
             className="header__icon-btn"
             onClick={copyLink}
@@ -345,6 +345,9 @@ export default function CaseModal({ cover, data, instant = false, onClose, onOpe
               )}
             </svg>
           </button>
+        </div>
+
+        <div className="case-modal__tools case-modal__tools--right">
           <button className="case-modal__close header__icon-btn" onClick={onClose} aria-label={t('close')}>
             <img src={asset('/img/close.svg')} alt="" width="24" height="24" />
           </button>
