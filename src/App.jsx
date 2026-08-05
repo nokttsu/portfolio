@@ -39,6 +39,7 @@ export default function App() {
   const [caseInstant, setCaseInstant] = useState(false)
   const originRef = useRef(null) // the clicked cover element
   const openRef = useRef(false) // popstate handler needs the live value, not a closure
+  const enterRef = useRef(null) // entrance geometry, replayed once the modal mounts
 
   useHomeAnimation(scope)
   useButtonHover()
@@ -72,42 +73,45 @@ export default function App() {
       setCaseInstant(!coverEl)
       if (push && data?.id) history.pushState({ case: data.id }, '', caseUrl(data.id))
 
-      const first = coverEl?.getBoundingClientRect()
+      // the entrance runs once the modal reports it is mounted (it is a lazy
+      // chunk — on the first open it is not in the DOM yet)
+      enterRef.current = { coverEl, first: coverEl?.getBoundingClientRect(), already }
       setCaseOpen(true)
       lockPageScroll()
-
-      requestAnimationFrame(() => {
-        const heroImg = document.querySelector('.case-modal__hero-img')
-        const modal = document.querySelector('.case-modal')
-        const scroller = document.querySelector('.case-modal__scroll')
-        if (!heroImg || !modal) return
-        // switching between cases: start the next one from the top
-        if (already && scroller) scroller.scrollTop = 0
-        if (!first) {
-          gsap.set(modal, { autoAlpha: 1 })
-          return
-        }
-        const last = heroImg.getBoundingClientRect()
-
-        // stage everything *before* the modal becomes visible, so the first
-        // painted frame already has the hero sitting exactly on the card
-        gsap.set(heroImg, {
-          x: first.left - last.left,
-          y: first.top - last.top,
-          scaleX: first.width / last.width,
-          scaleY: first.height / last.height,
-          transformOrigin: 'top left',
-        })
-        gsap.set(coverEl, { autoAlpha: 0 })
-        gsap.set(modal, { autoAlpha: 1 })
-        gsap.set('.case-modal__article, .cs-nav, .case-modal__tools', { clearProps: 'visibility' })
-
-        // pure morph — no cross-fade
-        gsap.to(heroImg, { x: 0, y: 0, scaleX: 1, scaleY: 1, duration: 0.7, ease: 'power3.inOut' })
-      })
     },
     [caseOpen]
   )
+
+  const playEntrance = useCallback(() => {
+    const { coverEl, first, already } = enterRef.current || {}
+    const heroImg = document.querySelector('.case-modal__hero-img')
+    const modal = document.querySelector('.case-modal')
+    const scroller = document.querySelector('.case-modal__scroll')
+    if (!modal) return
+    // switching between cases: start the next one from the top
+    if (already && scroller) scroller.scrollTop = 0
+    if (!first || !heroImg) {
+      gsap.set(modal, { autoAlpha: 1 })
+      return
+    }
+    const last = heroImg.getBoundingClientRect()
+
+    // stage everything *before* the modal becomes visible, so the first
+    // painted frame already has the hero sitting exactly on the card
+    gsap.set(heroImg, {
+      x: first.left - last.left,
+      y: first.top - last.top,
+      scaleX: first.width / last.width,
+      scaleY: first.height / last.height,
+      transformOrigin: 'top left',
+    })
+    gsap.set(coverEl, { autoAlpha: 0 })
+    gsap.set(modal, { autoAlpha: 1 })
+    gsap.set('.case-modal__article, .cs-nav, .case-modal__tools', { clearProps: 'visibility' })
+
+    // pure morph — no cross-fade
+    gsap.to(heroImg, { x: 0, y: 0, scaleX: 1, scaleY: 1, duration: 0.7, ease: 'power3.inOut' })
+  }, [])
 
   const closeCase = useCallback(
     (opts) => {
@@ -191,6 +195,7 @@ export default function App() {
             cover={caseCover}
             data={caseData}
             instant={caseInstant}
+            onReady={playEntrance}
             onClose={closeCase}
             onOpenCase={openCase}
           />

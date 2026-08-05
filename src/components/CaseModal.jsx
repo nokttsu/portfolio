@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState, useMemo, useCallback } from 'react'
+import { useEffect, useLayoutEffect, useRef, useState, useMemo, useCallback } from 'react'
 import { asset } from '../asset.js'
 import gsap from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
@@ -103,7 +103,7 @@ function Block({ b, tr }) {
   }
 }
 
-export default function CaseModal({ cover, data, instant = false, onClose, onOpenCase }) {
+export default function CaseModal({ cover, data, instant = false, onReady, onClose, onOpenCase }) {
   const { content, t, tr } = useLang()
   const CASE = data || content.cases[0]
   const SECTIONS = (CASE.blocks || []).filter((b) => b.type === 'section')
@@ -116,6 +116,14 @@ export default function CaseModal({ cover, data, instant = false, onClose, onOpe
     () => content.cases.filter((c) => c.id !== CASE.id).sort(() => Math.random() - 0.5).slice(0, 4),
     [content.cases, CASE.id]
   )
+
+  // tell the app the DOM is here so it can play the opening morph — this is a
+  // lazy chunk, so on the first open the modal mounts later than the click
+  const readyRef = useRef(onReady)
+  readyRef.current = onReady
+  useLayoutEffect(() => {
+    readyRef.current?.()
+  }, [CASE.id])
 
   // share: copy a direct link to this case
   const [copied, setCopied] = useState(false)
