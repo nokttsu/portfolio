@@ -2,9 +2,9 @@
 // public/content.json — loaded at runtime and merged over these defaults.
 
 const INTRO_EN =
-  "I'm Vadim, a product designer and art director with experience across fintech, aviation, sports and media — from Aeroflot and Yandex to experimental products of my own"
+  'Lead product designer at Aeroflot — redesigning the website, the mobile app and the services around them for millions of travellers. Five years across aviation, crypto, esports and media. Open to relocation and visa sponsorship in Europe.'
 const INTRO_RU =
-  'Я Вадим, продуктовый дизайнер и арт-директор с опытом в финтехе, авиации, спорте и медиа — от Аэрофлота и Яндекса до собственных экспериментальных продуктов'
+  'Ведущий продуктовый дизайнер в Аэрофлоте — веду редизайн сайта, мобильного приложения и сервисов вокруг них для миллионов пассажиров. Пять лет в авиации, крипте, киберспорте и медиа. Готов к переезду и визовой поддержке в Европе.'
 
 const CASE_BLOCKS = [
   { type: 'section', name: { en: 'Overview', ru: 'Обзор' }, title: { en: 'A startup inside the football industry', ru: 'Стартап внутри футбольной индустрии' } },
@@ -176,8 +176,8 @@ export const DEFAULTS = {
   },
   hero: {
     title: {
-      en: 'Leaving a huuuuge digital trail and making users happy',
-      ru: 'Оставляю огро-о-омный цифровой след и делаю пользователей счастливыми',
+      en: 'Design that ships — and moves the numbers',
+      ru: 'Дизайн, который доходит до релиза и двигает метрики',
     },
     intro: { en: INTRO_EN, ru: INTRO_RU },
     video: '/img/hero.mp4',
@@ -190,9 +190,12 @@ export const DEFAULTS = {
   },
   experience: {
     heading: { en: 'Experience', ru: 'Опыт' },
-    text: { en: INTRO_EN, ru: INTRO_RU },
+    text: {
+      en: 'I started in 2020 in communication design — creative landing pages, storyboards for national promo campaigns, Figma courses — then moved through crypto and esports into product. Today I lead design at Aeroflot and act as art director.',
+      ru: 'Начинал в 2020 году в коммуникационном дизайне — креативные лендинги, раскадровки для крупных промокампаний, курсы по Figma, — затем через крипту и киберспорт пришёл в продукт. Сейчас веду дизайн в Аэрофлоте и исполняю обязанности арт-директора.',
+    },
     items: [
-      { company: 'Aeroflot', role: { en: 'Art director', ru: 'Арт-директор' }, meta: { en: 'Currently at :)', ru: 'Сейчас здесь :)' }, logo: '/img/exp-aeroflot.svg', highlight: true },
+      { company: 'Aeroflot', role: { en: 'Lead product designer, acting art director', ru: 'Ведущий продуктовый дизайнер, и. о. арт-директора' }, meta: { en: 'Currently at :)', ru: 'Сейчас здесь :)' }, logo: '/img/exp-aeroflot.svg', highlight: true },
       { company: 'Plan9', role: { en: 'Senior designer', ru: 'Старший дизайнер' }, meta: { en: '2023-2024', ru: '2023-2024' }, logo: '/img/exp-plan9.png', round: true },
       { divider: true },
       { company: 'div.', role: { en: 'Lead UX/UI designer', ru: 'Ведущий UX/UI дизайнер' }, meta: { en: '2023-2024', ru: '2023-2024' }, logo: '/img/exp-div.svg' },
@@ -206,9 +209,18 @@ export const DEFAULTS = {
   },
   about: {
     heading: { en: 'About me', ru: 'Обо мне' },
-    p1: { en: `${INTRO_EN} ${INTRO_EN}`, ru: `${INTRO_RU} ${INTRO_RU}` },
-    p2: { en: INTRO_EN, ru: INTRO_RU },
-    p3: { en: `${INTRO_EN} I'm Vadim`, ru: `${INTRO_RU} Я Вадим` },
+    p1: {
+      en: "I'm Vadim, a product designer working at airline scale. At Aeroflot I lead the redesign of the website, the mobile app and the products around them — interfaces where one missed detail costs a passenger their flight, and one good decision saves the support team thousands of calls.",
+      ru: 'Я Вадим, продуктовый дизайнер, работаю в масштабе авиакомпании. В Аэрофлоте веду редизайн сайта, мобильного приложения и продуктов вокруг них — интерфейсы, где одна упущенная деталь стоит пассажиру рейса, а одно верное решение экономит поддержке тысячи обращений.',
+    },
+    p2: {
+      en: 'I came into product from communication design: creative landing pages, storyboards for national promo campaigns, Figma courses, then crypto and esports. That range is why I read a business quickly and design for the outcome rather than the shot.',
+      ru: 'В продукт я пришёл из коммуникационного дизайна: креативные лендинги, раскадровки для крупных промокампаний, курсы по Figma, затем крипта и киберспорт. Этот разброс научил быстро считывать бизнес и проектировать ради результата, а не ради красивой картинки.',
+    },
+    p3: {
+      en: "As acting art director I keep the design system and the products consistent, mentor junior designers, and hold the bar above what competitors ship — user experience first, but never a step behind. I'm looking for a product team in Europe and I'm open to relocation and visa sponsorship.",
+      ru: 'Исполняя обязанности арт-директора, держу дизайн-систему и продукты в едином языке, обучаю младших коллег и держу планку выше, чем у конкурентов: опыт пользователя в приоритете, но продукт не должен отставать. Ищу продуктовую команду в Европе, готов к переезду и визовой поддержке.',
+    },
     photos: [
       { src: '/img/about/1.jpg', tall: false },
       { src: '/img/about/2.jpg', tall: true },
