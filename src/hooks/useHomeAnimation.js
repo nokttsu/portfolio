@@ -78,14 +78,30 @@ export default function useHomeAnimation(scopeRef) {
         })
       })
 
+      // Cases behave like a deck: the one coming up from the bottom grows from
+      // 80% to full size, and as it leaves the top it shrinks back to 80%.
       q('[data-anim="work"]').forEach((el) => {
-        gsap.from(el, {
-          y: 60,
-          autoAlpha: 0,
-          duration: 1,
-          ease: 'power3.out',
-          scrollTrigger: { trigger: el, start: START, once: true },
-        })
+        gsap.fromTo(
+          el,
+          { scale: 0.8 },
+          {
+            scale: 1,
+            ease: 'none',
+            scrollTrigger: { trigger: el, start: 'top bottom', end: 'top 25%', scrub: 0.4 },
+          }
+        )
+        // explicit start value + no immediate render, otherwise this tween bakes
+        // 0.8 as its "from" (the entrance already set it) and never shrinks
+        gsap.fromTo(
+          el,
+          { scale: 1 },
+          {
+            scale: 0.8,
+            ease: 'none',
+            immediateRender: false,
+            scrollTrigger: { trigger: el, start: 'bottom 75%', end: 'bottom top', scrub: 0.4 },
+          }
+        )
       })
 
       // covers uncover themselves instead of fading in
