@@ -197,18 +197,7 @@ export default function CaseModal({ cover, data, instant = false, onReady, onClo
           scrollTrigger: { scroller: root, trigger: el, start: 'top bottom-=40', once: true },
         })
       })
-      root.querySelectorAll('.cs-figure img, .cs-gallery img').forEach((img) => {
-        gsap.fromTo(
-          img,
-          { clipPath: 'inset(100% 0 0 0)' },
-          {
-            clipPath: 'inset(0% 0 0 0)',
-            duration: 1.1,
-            ease: 'power3.out',
-            scrollTrigger: { scroller: root, trigger: img, start: 'top bottom-=20', once: true },
-          }
-        )
-      })
+      // (images inside a case are deliberately static — no reveal on them)
       ScrollTrigger.refresh()
     }, root)
     return () => ctx.revert()
