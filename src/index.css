@@ -891,7 +891,7 @@ button { font: inherit; color: inherit; background: none; border: none; cursor: 
   left: 0;
   right: 0; /* full width, so centring needs no transform of its own — GSAP
                owns the y offset it rides in on */
-  bottom: 24px;
+  bottom: calc(24px + env(safe-area-inset-bottom, 0px));
   z-index: 9;
   display: none; /* only shown where .cs-nav is not (see the responsive block) */
   flex-direction: column;
@@ -1171,8 +1171,8 @@ button { font: inherit; color: inherit; background: none; border: none; cursor: 
   /* 360 - 2 x 12 = 336, the column the mobile design is drawn on */
   :root { --gutter: 12px; --edge: 16px; }
 
-  /* --- chrome --- */
-  .header { padding: 12px var(--edge) 32px; }
+  /* --- chrome (kept clear of the status bar / home indicator) --- */
+  .header { padding: calc(12px + env(safe-area-inset-top, 0px)) var(--edge) 32px; }
   .header__blur { height: 110px; }
   .header__avatar { width: 48px; height: 48px; }
   /* the name breaks onto two lines beside the avatar */
@@ -1189,7 +1189,7 @@ button { font: inherit; color: inherit; background: none; border: none; cursor: 
     display: inline-flex;
     position: fixed;
     left: 50%;
-    bottom: 24px;
+    bottom: calc(24px + env(safe-area-inset-bottom, 0px));
     transform: translateX(-50%);
     z-index: 30;
   }
@@ -1198,8 +1198,10 @@ button { font: inherit; color: inherit; background: none; border: none; cursor: 
   .kebab__menu { top: 44px; left: auto; right: 0; transform: none; align-items: flex-end; }
   .kebab__pill { max-width: calc(100vw - 32px); }
 
-  /* --- hero: one centred column, the stamp above the title --- */
-  .hero { height: 100svh; }
+  /* --- hero: one centred column, the stamp above the title ---
+     No svh here: the content below starts at 100vh, which on iOS is the *large*
+     viewport, so a small-viewport hero left a band of bare background showing
+     under the video. Matching them also puts the video under both bars. */
   .hero__inner {
     justify-content: center;
     align-items: center;
@@ -1245,13 +1247,18 @@ button { font: inherit; color: inherit; background: none; border: none; cursor: 
     /* snapping aligns cards to the scrollport, which ignores the padding —
        without this the card at rest would sit flush against the screen edge
        instead of lining up with the section title */
-    scroll-padding-left: var(--gutter);
+    scroll-padding: 0 var(--gutter);
     -webkit-overflow-scrolling: touch;
     scrollbar-width: none;
     margin: 0 calc(var(--gutter) * -1);
     padding: 0 var(--gutter) 16px; /* the bottom strip is where the tail shows */
   }
   .exp__row::-webkit-scrollbar { display: none; }
+  /* The last card can never reach the left-hand snap position — the reel runs
+     out of scroll first — so it snaps to the right-hand edge instead. Without
+     this the browser drags the scroll back to the previous snap point and the
+     selection flicks onto the last card and straight back off it. */
+  .exp__card:last-child { scroll-snap-align: end; }
   .exp__card { flex: 0 0 240px; width: 240px; scroll-snap-align: start; }
   .about__text, .exp__text { font-size: 16px; line-height: 28px; }
 

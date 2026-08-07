@@ -258,8 +258,6 @@ export default function CaseModal({ cover, data, instant = false, onReady, onClo
           stagger: { each: 0.045, from: 'end' }, // nearest the button first
         }
       )
-      // the icon points both ways, so it only shifts weight rather than flipping
-      tl.fromTo(self.selector('.cs-toc__chev'), { scale: 1 }, { scale: 0.86, duration: 0.3, ease: 'power3.out' }, 0)
       tocTlRef.current = tl
     }, tocRef)
     return () => {
@@ -504,9 +502,19 @@ export default function CaseModal({ cover, data, instant = false, onReady, onClo
                 strokeLinejoin="round"
                 aria-hidden="true"
               >
-                {/* lucide: chevrons-up-down */}
-                <path d="m7 15 5 5 5-5" />
-                <path d="m7 9 5-5 5 5" />
+                {tocOpen ? (
+                  <>
+                    {/* lucide: chevrons-down-up */}
+                    <path d="m7 20 5-5 5 5" />
+                    <path d="m7 4 5 5 5-5" />
+                  </>
+                ) : (
+                  <>
+                    {/* lucide: chevrons-up-down */}
+                    <path d="m7 15 5 5 5-5" />
+                    <path d="m7 9 5-5 5 5" />
+                  </>
+                )}
               </svg>
             </button>
           </div>

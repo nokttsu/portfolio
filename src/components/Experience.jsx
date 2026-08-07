@@ -153,8 +153,16 @@ export default function Experience() {
     const pick = () => {
       raf = 0
       const cards = Array.from(row.querySelectorAll('.exp__card'))
-      // the snap position is the row's content start (its padding edge), so the
-      // selected card is whichever one is resting closest to it
+      // The end of the reel belongs to the last card: it can never reach the
+      // left-hand snap position, so measuring against that one would hand the
+      // selection back to its neighbour the moment the scroll settles.
+      if (row.scrollLeft >= row.scrollWidth - row.clientWidth - 2) {
+        pointerRef.current = null
+        setActive(cards.length - 1)
+        return
+      }
+      // otherwise the snap position is the row's content start (its padding
+      // edge), and the selected card is the one resting closest to it
       const r = row.getBoundingClientRect()
       const anchor = r.left + parseFloat(getComputedStyle(row).paddingLeft)
       let best = 0
