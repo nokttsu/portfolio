@@ -1,6 +1,9 @@
 import { useRef, useEffect, useMemo } from 'react'
 import { asset } from '../asset.js'
 import gsap from 'gsap'
+import { ScrollTrigger } from 'gsap/ScrollTrigger'
+
+gsap.registerPlugin(ScrollTrigger)
 
 const N = 12
 const BASE_VEL = 0.0016 // idle orbit speed (rad / frame)
@@ -38,25 +41,39 @@ export default function AboutWheel({ photos = [] }) {
     const tiles = Array.from(ring.querySelectorAll('.wheel__tile'))
     const angles = tiles.map((_, i) => (i / tiles.length) * Math.PI * 2)
 
-    // radii follow the band size, so the ring always reaches its edges
+    // radii follow the band size, so the ring always reaches its edges.
+    // Tile sizes are read from the DOM (CSS shrinks them on small screens),
+    // otherwise the ring would orbit wider than the band on a phone.
     let baseRX = 320
     let baseRY = 110
+    let maxExtra = MAX_EXTRA
     const measure = () => {
-      baseRX = Math.max(220, (band.clientWidth - TILE_W) / 2)
-      baseRY = Math.max(60, (band.clientHeight - TILE_H) / 2)
+      const tw = tiles[0]?.offsetWidth || TILE_W
+      const th = tiles.reduce((m, t) => Math.max(m, t.offsetHeight), 0) || TILE_H
+      baseRX = Math.max(90, (band.clientWidth - tw) / 2)
+      baseRY = Math.max(40, (band.clientHeight - th) / 2)
+      maxExtra = Math.min(MAX_EXTRA, baseRX * 0.5)
     }
     measure()
 
     const s = { rotation: 0, angVel: BASE_VEL, radius: baseRX, speed: 0, dragging: false, lastDelta: 0 }
+
+    // Until the section is reached the photos sit in one pile in the middle,
+    // each dropped at a slight angle. `spread` carries them out to the ring.
+    const spread = tiles.map(() => ({ v: 0 }))
+    const tilt = tiles.map(() => gsap.utils.random(-14, 14))
 
     const place = () => {
       const rx = s.radius
       const ry = baseRY * (s.radius / baseRX) // keep the ellipse proportional
       for (let i = 0; i < tiles.length; i++) {
         const a = angles[i] + s.rotation
-        const x = Math.cos(a) * rx
-        const y = Math.sin(a) * ry
-        tiles[i].style.transform = `translate(-50%, -50%) translate(${x.toFixed(1)}px, ${y.toFixed(1)}px)`
+        const out = spread[i].v
+        const x = Math.cos(a) * rx * out
+        const y = Math.sin(a) * ry * out
+        const r = (1 - out) * tilt[i] // straightens as it leaves the pile
+        tiles[i].style.transform =
+          `translate(-50%, -50%) translate(${x.toFixed(1)}px, ${y.toFixed(1)}px) rotate(${r.toFixed(2)}deg)`
       }
     }
 
@@ -69,11 +86,25 @@ export default function AboutWheel({ photos = [] }) {
       }
       const inst = Math.abs(s.dragging ? s.lastDelta : s.angVel)
       s.speed += (inst - s.speed) * 0.15
-      const extra = Math.min(Math.max(s.speed - BASE_VEL, 0) * SPEED_TO_GAP, MAX_EXTRA)
+      const extra = Math.min(Math.max(s.speed - BASE_VEL, 0) * SPEED_TO_GAP, maxExtra)
       s.radius += (baseRX + extra - s.radius) * 0.1
       place()
     }
     gsap.ticker.add(update)
+
+    // deal the pile out into the ring when the block comes into view
+    const reveal = ScrollTrigger.create({
+      trigger: band,
+      start: 'top bottom',
+      once: true,
+      onEnter: () =>
+        gsap.to(spread, {
+          v: 1,
+          duration: 1.3,
+          ease: 'power3.out',
+          stagger: { each: 0.06, from: 'random' },
+        }),
+    })
 
     // ---- drag to spin ----
     const angleOf = (e) => {
@@ -118,6 +149,7 @@ export default function AboutWheel({ photos = [] }) {
     window.addEventListener('resize', measure)
 
     return () => {
+      reveal.kill()
       gsap.ticker.remove(update)
       band.removeEventListener('pointerdown', onDown)
       band.removeEventListener('pointermove', onMove)

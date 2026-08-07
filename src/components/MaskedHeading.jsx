@@ -3,6 +3,7 @@ import gsap from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
 import { SplitText } from 'gsap/SplitText'
 import { CustomEase } from 'gsap/CustomEase'
+import { onIntroOpen } from '../introGate.js'
 
 gsap.registerPlugin(ScrollTrigger, SplitText, CustomEase)
 if (!CustomEase.get?.('osmo-ease')) CustomEase.create('osmo-ease', '0.625, 0.05, 0, 1')
@@ -42,11 +43,14 @@ export default function MaskedHeading({ as: Tag = 'h2', text, className = '', on
           duration: 0.8,
           stagger: 0.06,
           ease: 'osmo-ease',
+          // the hero waits for the preloader curtain to actually open — on a
+          // fixed delay it would play behind it and be over before it is seen
           ...(onLoad
-            ? { delay: 1 } // hands over from the preloader panel leaving
+            ? { paused: true }
             : { scrollTrigger: { trigger: el, start: 'top bottom', once: true } }),
         }
       )
+      if (onLoad) onIntroOpen(() => tween.play())
       ScrollTrigger.refresh()
     })
 

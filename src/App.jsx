@@ -46,28 +46,55 @@ export default function App() {
   // eased page scrolling (the case modal smooths its own scroller)
   useSmoothWheel(getWindow, { enabled: !caseOpen, ignore: '.case-modal' })
 
+  // The reader is a separate chunk, so the very first click would otherwise
+  // spend a beat fetching it before the morph could start. Warm it once the
+  // page is idle.
+  useEffect(() => {
+    const warm = () => import('./components/CaseModal.jsx')
+    if ('requestIdleCallback' in window) {
+      const id = requestIdleCallback(warm, { timeout: 3000 })
+      return () => cancelIdleCallback(id)
+    }
+    const id = setTimeout(warm, 1500)
+    return () => clearTimeout(id)
+  }, [])
+
   // safety net: never leave the page locked if a close animation is interrupted
   useEffect(() => {
     openRef.current = caseOpen
     if (!caseOpen) unlockPageScroll()
   }, [caseOpen])
 
+  // The card a case grew out of is hidden for the duration of the morph. Give
+  // it back before another card takes its place, or it stays invisible on the
+  // page behind the modal and leaves a hole in the Works list.
+  const releaseOrigin = useCallback((next) => {
+    const prev = originRef.current
+    if (prev && prev !== next) gsap.set(prev, { autoAlpha: 1 })
+  }, [])
+
   // open a case with no origin element (deep link / back-forward): no morph
   const showCase = useCallback((data) => {
+    releaseOrigin(null)
     originRef.current = null
     setCaseData(data)
     setCaseCover(data.cover)
     setCaseInstant(true)
     setCaseOpen(true)
     lockPageScroll()
-  }, [])
+  }, [releaseOrigin])
 
   // open the case modal; the clicked cover FLIP-expands into the hero image
   const openCase = useCallback(
     (coverEl, data, { push = true } = {}) => {
       const already = caseOpen
+      releaseOrigin(coverEl) // diving from one case into the next
       originRef.current = coverEl
-      const img = coverEl?.querySelector('img')
+      // the cover photo, not the expand icon that also lives inside the card
+      // (a table row hands over its thumbnail directly)
+      const img = coverEl?.matches?.('img')
+        ? coverEl
+        : coverEl?.querySelector('.work__img') || coverEl?.querySelector('img')
       if (img) setCaseCover(img.src)
       if (data) setCaseData(data)
       setCaseInstant(!coverEl)
@@ -79,11 +106,18 @@ export default function App() {
       setCaseOpen(true)
       lockPageScroll()
     },
-    [caseOpen]
+    [caseOpen, releaseOrigin]
   )
 
   const playEntrance = useCallback(() => {
-    const { coverEl, first, already } = enterRef.current || {}
+    // Consume the geometry: this may be called more than once for one open
+    // (React runs layout effects twice in dev). A second staging pass would
+    // measure the hero *after* the first one already displaced it, read a zero
+    // offset, and animate from the finish line to the finish line — which is
+    // exactly what a missing transition looks like.
+    const entry = enterRef.current
+    enterRef.current = null
+    const { coverEl, first, already } = entry || {}
     const heroImg = document.querySelector('.case-modal__hero-img')
     const modal = document.querySelector('.case-modal')
     const scroller = document.querySelector('.case-modal__scroll')
@@ -109,7 +143,9 @@ export default function App() {
     gsap.set(modal, { autoAlpha: 1 })
     gsap.set('.case-modal__article, .cs-nav, .case-modal__tools', { clearProps: 'visibility' })
 
-    // pure morph — no cross-fade
+    // pure morph — no cross-fade. The card cover and the case hero share both
+    // their width and their 12px corners, so nothing has to be tweened but the
+    // position.
     gsap.to(heroImg, { x: 0, y: 0, scaleX: 1, scaleY: 1, duration: 0.7, ease: 'power3.inOut' })
   }, [])
 

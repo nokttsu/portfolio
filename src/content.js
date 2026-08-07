@@ -1,11 +1,6 @@
 // Default site content. Everything here is editable in admin.html, which writes
 // public/content.json — loaded at runtime and merged over these defaults.
 
-const INTRO_EN =
-  'I design interfaces — currently the Aeroflot website, its mobile app and the products around them. Most of my attention goes to the quiet parts: type, grids, states and the details that decide how a product feels.'
-const INTRO_RU =
-  'Занимаюсь интерфейсами — сейчас это сайт Аэрофлота, мобильное приложение и продукты вокруг них. Больше всего внимания уходит на тихие вещи: шрифт, сетки, состояния и детали, от которых зависит ощущение продукта.'
-
 const CASE_BLOCKS = [
   { type: 'section', name: { en: 'Overview', ru: 'Обзор' }, title: { en: 'A startup inside the football industry', ru: 'Стартап внутри футбольной индустрии' } },
   {
@@ -180,7 +175,6 @@ export const DEFAULTS = {
       en: 'Quiet interfaces for complicated products',
       ru: 'Спокойные интерфейсы для сложных продуктов',
     },
-    intro: { en: INTRO_EN, ru: INTRO_RU },
     video: '/img/hero.mp4',
     poster: '/img/hero.png',
     nav: {
@@ -191,17 +185,47 @@ export const DEFAULTS = {
   },
   experience: {
     heading: { en: 'Experience', ru: 'Опыт' },
-    text: {
-      en: 'Started in communication design in 2020 — landing pages, storyboards, a course on Figma — and slowly moved towards products: crypto, esports, now aviation. The interest stayed the same the whole time: how an interface holds together.',
-      ru: 'Начал в коммуникационном дизайне в 2020-м — лендинги, раскадровки, курс по Figma — и постепенно ушёл в продукты: крипта, киберспорт, теперь авиация. Интерес всё это время был один: как держится интерфейс.',
-    },
     items: [
-      { company: 'Aeroflot', role: { en: 'Lead designer', ru: 'Ведущий дизайнер' }, meta: { en: 'Currently at :)', ru: 'Сейчас здесь :)' }, logo: '/img/exp-aeroflot.svg', highlight: true },
-      { company: 'Plan9', role: { en: 'Senior designer', ru: 'Старший дизайнер' }, meta: { en: '2023-2024', ru: '2023-2024' }, logo: '/img/exp-plan9.png', round: true },
-      { divider: true },
-      { company: 'div.', role: { en: 'Lead UX/UI designer', ru: 'Ведущий UX/UI дизайнер' }, meta: { en: '2023-2024', ru: '2023-2024' }, logo: '/img/exp-div.svg' },
-      { divider: true },
-      { company: { en: 'Freelance', ru: 'Фриланс' }, meta: { en: '2023-2024', ru: '2023-2024' } },
+      {
+        company: 'Aeroflot',
+        role: { en: 'Lead designer', ru: 'Ведущий дизайнер' },
+        meta: { en: 'Currently at :)', ru: 'Сейчас здесь :)' },
+        logo: '/img/exp-aeroflot.svg',
+        highlight: true, // the tab that is open by default
+        text: {
+          en: 'The website, the mobile app and the pieces that hold them together — booking, check-in, the states around them, and the design system underneath. Aviation is mostly edge cases, so the work is really about keeping a long journey legible when something goes wrong.',
+          ru: 'Сайт, мобильное приложение и то, что их связывает, — бронирование, регистрация, состояния вокруг них и дизайн-система под всем этим. В авиации почти всё — краевые случаи, поэтому работа в основном про то, чтобы длинный сценарий оставался понятным, когда что-то идёт не так.',
+        },
+      },
+      {
+        company: 'Plan9',
+        role: { en: 'Senior designer', ru: 'Старший дизайнер' },
+        meta: { en: '2023-2024', ru: '2023-2024' },
+        logo: '/img/exp-plan9.png',
+        round: true,
+        text: {
+          en: 'Product work for fintech and media teams — interfaces, prototypes, the occasional pitch. A studio pace: several products at once, each with its own language to pick up quickly.',
+          ru: 'Продуктовая работа для финтех- и медиакоманд — интерфейсы, прототипы, иногда питчи. Студийный темп: несколько продуктов сразу, и у каждого свой язык, который нужно быстро освоить.',
+        },
+      },
+      {
+        company: 'div.',
+        role: { en: 'Lead UX/UI designer', ru: 'Ведущий UX/UI дизайнер' },
+        meta: { en: '2023-2024', ru: '2023-2024' },
+        logo: '/img/exp-div.svg',
+        text: {
+          en: 'UX and UI for crypto and esports products, from research and structure to the components the team built on afterwards. Mostly a question of making dense, technical data feel calm.',
+          ru: 'UX и UI в криптовалютных и киберспортивных продуктах — от исследований и структуры до компонентов, на которых дальше работала команда. По сути вопрос был один: как сделать плотные технические данные спокойными.',
+        },
+      },
+      {
+        company: { en: 'Freelance', ru: 'Фриланс' },
+        meta: { en: '2023-2024', ru: '2023-2024' },
+        text: {
+          en: 'Landing pages, brand sites and small products for teams without a designer. A good school for scope — deciding what actually needs to exist before drawing any of it.',
+          ru: 'Лендинги, сайты брендов и небольшие продукты для команд без дизайнера. Хорошая школа объёма: сначала решить, что действительно нужно, и только потом рисовать.',
+        },
+      },
     ],
   },
   works: {

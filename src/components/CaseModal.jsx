@@ -8,6 +8,9 @@ import useSmoothWheel from '../hooks/useSmoothWheel.js'
 import Scrollbar from './Scrollbar.jsx'
 import { useLang } from '../i18n.jsx'
 
+// how far below the screen edge the contents button parks (see .cs-toc)
+const TOC_TRAVEL = 96
+
 function Block({ b, tr }) {
   switch (b.type) {
     case 'section':
@@ -111,6 +114,11 @@ export default function CaseModal({ cover, data, instant = false, onReady, onClo
   const scrollRef = useRef(null)
   const [active, setActive] = useState(0)
   const [navOn, setNavOn] = useState(false)
+  // the bottom contents dropdown (stands in for the rail on narrow screens)
+  const [tocOpen, setTocOpen] = useState(false)
+  const tocRef = useRef(null)
+  const tocTlRef = useRef(null)
+  const tocLabelRef = useRef(null)
   // four other cases, shuffled
   const readAlso = useMemo(
     () => content.cases.filter((c) => c.id !== CASE.id).sort(() => Math.random() - 0.5).slice(0, 4),
@@ -230,6 +238,94 @@ export default function CaseModal({ cover, data, instant = false, onReady, onClo
     secs?.[i]?.scrollIntoView({ behavior: 'smooth', block: 'start' })
   }
 
+  // The contents open the way the header menu does — pills out of blur with a
+  // soft spring, melting back on close (built once, played/reversed on state).
+  useLayoutEffect(() => {
+    const el = tocRef.current
+    if (!el) return
+    const ctx = gsap.context((self) => {
+      const tl = gsap.timeline({ paused: true })
+      tl.fromTo(
+        self.selector('.cs-toc__item'),
+        { y: 12, scale: 0.82, autoAlpha: 0, filter: 'blur(12px)' },
+        {
+          y: 0,
+          scale: 1,
+          autoAlpha: 1,
+          filter: 'blur(0px)',
+          duration: 0.42,
+          ease: 'back.out(1.7)',
+          stagger: { each: 0.045, from: 'end' }, // nearest the button first
+        }
+      )
+      // the icon points both ways, so it only shifts weight rather than flipping
+      tl.fromTo(self.selector('.cs-toc__chev'), { scale: 1 }, { scale: 0.86, duration: 0.3, ease: 'power3.out' }, 0)
+      tocTlRef.current = tl
+    }, tocRef)
+    return () => {
+      tocTlRef.current = null
+      ctx.revert()
+    }
+  }, [SECTIONS.length, CASE.id])
+
+  useEffect(() => {
+    const tl = tocTlRef.current
+    if (!tl) return
+    if (tocOpen) tl.timeScale(1).play()
+    else tl.timeScale(1.6).reverse()
+  }, [tocOpen])
+
+  // It rides in from under the screen edge at full strength, and leaves the way
+  // the cards' corner button does — smeared into blur, the colour letting go
+  // only at the end (a plain fade reads as a light switch).
+  useLayoutEffect(() => {
+    const el = tocRef.current
+    if (!el) return
+    gsap.killTweensOf(el)
+    if (navOn) {
+      // `none`, not `blur(0px)`: an ancestor carrying any filter at all becomes
+      // a backdrop root, and the pills inside would have nothing left to frost
+      // with their own backdrop-filter. Setting it outright (rather than
+      // clearing props) also means an interrupted exit can never leave the
+      // button sitting there blurred.
+      gsap.set(el, { opacity: 1, filter: 'none' })
+      gsap.to(el, { y: 0, duration: 0.5, ease: 'power3.out' })
+    } else {
+      gsap.to(el, {
+        opacity: 0,
+        duration: 0.34,
+        ease: 'power2.in',
+        onComplete: () => gsap.set(el, { y: TOC_TRAVEL }), // reset for the next rise
+      })
+      // an explicit start value: GSAP cannot interpolate out of `none`
+      gsap.fromTo(el, { filter: 'blur(0px)' }, { filter: 'blur(12px)', duration: 0.28, ease: 'power2.out' })
+    }
+  }, [navOn])
+
+  // The name swaps outright and the pill takes the width that name needs —
+  // no tweening in between. Animating the two against each other is what kept
+  // leaving the chevron mid-jump; the reveal of the whole dropdown carries the
+  // motion instead.
+  useLayoutEffect(() => {
+    const label = tocLabelRef.current
+    if (!label) return
+    label.textContent = tr(SECTIONS[active]?.name) || ''
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [active, CASE.id, tr])
+
+  // a new section under the reader is a new label — don't leave the list open
+  useEffect(() => setTocOpen(false), [active])
+
+  // ...and neither does a tap anywhere else
+  useEffect(() => {
+    if (!tocOpen) return
+    const onDown = (e) => {
+      if (tocRef.current && !tocRef.current.contains(e.target)) setTocOpen(false)
+    }
+    document.addEventListener('pointerdown', onDown)
+    return () => document.removeEventListener('pointerdown', onDown)
+  }, [tocOpen])
+
   // ---- lightbox: click any case image to expand it full screen (FLIP) ----
   const [lightbox, setLightbox] = useState(null)
   const lbImgRef = useRef(null)
@@ -322,6 +418,14 @@ export default function CaseModal({ cover, data, instant = false, onReady, onClo
       onClick={(e) => e.target === e.currentTarget && onClose()}
     >
       <div className="case-modal__panel" ref={panelRef}>
+        {/* the same progressive-blur backdrop the home header sits on */}
+        <div className="header__blur case-modal__blur" aria-hidden="true">
+          <div />
+          <div />
+          <div />
+          <div />
+        </div>
+
         <div className="case-modal__tools case-modal__tools--left">
           <button
             className="header__icon-btn"
@@ -362,6 +466,51 @@ export default function CaseModal({ cover, data, instant = false, onReady, onClo
             </button>
           ))}
         </nav>
+
+        {/* the same contents, where the side rail has no room: a dropdown
+            parked at the bottom of the screen, on the home CTA's coordinates */}
+        {SECTIONS.length > 0 && (
+          <div className={`cs-toc${navOn ? ' is-visible' : ''}`} ref={tocRef}>
+            <div className={`cs-toc__menu${tocOpen ? ' is-open' : ''}`}>
+              {SECTIONS.map((s, i) => (
+                <button
+                  key={i}
+                  className={`cs-toc__item${i === active ? ' is-active' : ''}`}
+                  onClick={() => {
+                    setTocOpen(false)
+                    goTo(i)
+                  }}
+                >
+                  {tr(s.name)}
+                </button>
+              ))}
+            </div>
+
+            <button
+              className="cs-toc__btn"
+              aria-expanded={tocOpen}
+              onClick={() => setTocOpen((v) => !v)}
+            >
+              <span className="cs-toc__label" ref={tocLabelRef} />
+              <svg
+                className="cs-toc__chev"
+                width="16"
+                height="16"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                aria-hidden="true"
+              >
+                {/* lucide: chevrons-up-down */}
+                <path d="m7 15 5 5 5-5" />
+                <path d="m7 9 5-5 5 5" />
+              </svg>
+            </button>
+          </div>
+        )}
 
         <div className="case-modal__scroll" ref={scrollRef}>
           <div className="case-modal__hero">

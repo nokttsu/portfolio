@@ -1,10 +1,13 @@
 import { useRef, useEffect } from 'react'
 import { asset } from '../asset.js'
 import gsap from 'gsap'
+import useMedia, { PHONE } from '../hooks/useMedia.js'
 import { useLang } from '../i18n.jsx'
 
 export default function WorksTable({ onOpenCase, rows = [] }) {
   const { t } = useLang()
+  // no cursor to follow on a phone: each row carries its own thumbnail instead
+  const phone = useMedia(PHONE)
   const tableRef = useRef(null)
   const highlightRef = useRef(null)
   const thumbRef = useRef(null)
@@ -85,7 +88,11 @@ export default function WorksTable({ onOpenCase, rows = [] }) {
           className="wt-row"
           key={row.id || row.title || i}
           data-cover={asset(row.cover)}
-          onClick={() => onOpenCase(thumbRef.current, row)}
+          onClick={(e) =>
+            // the morph grows out of whatever the reader can actually see: the
+            // cursor preview on a desktop, the row's own thumbnail on a phone
+            onOpenCase(phone ? e.currentTarget.querySelector('.wt-mini') : thumbRef.current, row)
+          }
         >
           <div className="wt-name">{row.title}</div>
           <div className="wt-metrics">
@@ -93,6 +100,7 @@ export default function WorksTable({ onOpenCase, rows = [] }) {
               <span key={m}>{t(m)}</span>
             ))}
           </div>
+          <img className="wt-mini" src={asset(row.cover)} alt="" loading="lazy" decoding="async" />
         </div>
       ))}
 

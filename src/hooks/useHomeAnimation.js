@@ -1,6 +1,7 @@
 import { useLayoutEffect } from 'react'
 import gsap from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
+import { onIntroOpen } from '../introGate.js'
 
 gsap.registerPlugin(ScrollTrigger)
 
@@ -16,12 +17,12 @@ export default function useHomeAnimation(scopeRef) {
       const q = self.selector
 
       // ---- Hero intro (on load) ----
-      // starts as the preloader panel clears the screen
-      const tl = gsap.timeline({ defaults: { ease: 'power3.out' }, delay: 0.9 })
+      // held until the preloader curtain opens (see introGate)
+      const tl = gsap.timeline({ defaults: { ease: 'power3.out' }, paused: true })
+      onIntroOpen(() => tl.play())
 
       tl.from(q('[data-anim="header"]'), { y: -20, autoAlpha: 0, duration: 0.8 }, 0)
       // (the hero title uses the SplitText masked reveal set up below, after fonts load)
-      tl.from(q('[data-anim="intro"]'), { y: 24, autoAlpha: 0, duration: 0.9 }, 0.35)
       tl.from(q('[data-anim="hero-nav"]'), { y: 16, autoAlpha: 0, duration: 0.8 }, 0.5)
 
       // ---- Hero scroll-out transition ----

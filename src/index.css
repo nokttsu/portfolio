@@ -63,6 +63,10 @@ body {
 img { display: block; max-width: none; }
 a { color: inherit; text-decoration: none; }
 
+/* text selection — a wash of the accent instead of the browser's blue */
+::selection { background: rgba(146, 126, 255, 0.2); color: var(--white); }
+::-moz-selection { background: rgba(146, 126, 255, 0.2); color: var(--white); }
+
 /* keyboard navigation must stay visible */
 :focus-visible {
   outline: 2px solid rgba(255, 255, 255, 0.85);
@@ -355,9 +359,17 @@ button { font: inherit; color: inherit; background: none; border: none; cursor: 
   cursor: pointer;
   transition: background 0.2s ease;
   will-change: transform, opacity;
+  /* the pills sit over the page, not over the header's own blur — they frost
+     whatever they happen to be covering */
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
 }
 .kebab__pill:hover { background: rgba(136, 136, 136, 0.85); }
 .kebab__pill img { width: 16px; height: 16px; display: block; }
+/* the CV link only joins the menu on phones, where it leaves the header row */
+.kebab__pill--cv { display: none; }
+/* ...and the contact button becomes a CTA fixed to the bottom of the screen */
+.header__cta { display: none; }
 
 /* ===== Hero (fixed behind the page; the black content slides up over it) ===== */
 .hero {
@@ -395,11 +407,15 @@ button { font: inherit; color: inherit; background: none; border: none; cursor: 
   overflow: hidden; /* clip child section backgrounds to the rounded top corners */
 }
 .hero__title {
+  /* centred in the same 924px column the sections below use */
   position: absolute;
-  left: 24px;
-  top: calc(50% - 120px);
-  width: 807px;
-  max-width: calc(100% - 48px);
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  width: 100%;
+  max-width: calc(var(--content) + var(--gutter) * 2);
+  padding: 0 var(--gutter);
+  text-align: center;
   font-family: var(--hs);
   font-weight: 500;
   font-size: 80px;
@@ -409,25 +425,15 @@ button { font: inherit; color: inherit; background: none; border: none; cursor: 
   z-index: 2;
   visibility: hidden; /* revealed by the SplitText masked reveal after fonts load */
 }
-.hero__intro {
-  position: absolute;
-  right: 24px;
-  bottom: 24px;
-  width: 456px;
-  max-width: calc(100% - 48px);
-  font-family: var(--serif);
-  font-weight: 400;
-  font-size: 20px;
-  line-height: 36px;
-  color: var(--white);
-  z-index: 2;
-}
+/* spans the hero's full width: Experience left, Works centred, About me right */
 .hero__nav {
   position: absolute;
-  left: 24px;
+  left: var(--edge);
+  right: var(--edge);
   bottom: 24px;
   display: flex;
   align-items: center;
+  justify-content: space-between;
   gap: 24px;
   color: var(--white);
   z-index: 2;
@@ -439,6 +445,15 @@ button { font: inherit; color: inherit; background: none; border: none; cursor: 
   line-height: 24px;
 }
 .hero__nav-works { display: inline-flex; align-items: center; gap: 2px; }
+/* the phone-only copy of the Moscow stamp (shown by the responsive block) */
+.hero__time { display: none; }
+.hero__nav-time {
+  font-family: var(--hs);
+  font-weight: 500;
+  font-size: 14px;
+  line-height: 24px;
+  font-variant-numeric: tabular-nums; /* the minute ticking must not shift it */
+}
 .hero__nav-count {
   font-family: var(--serif);
   font-weight: 500;
@@ -449,19 +464,52 @@ button { font: inherit; color: inherit; background: none; border: none; cursor: 
 /* ===== Experience ===== */
 .experience { background: var(--black); padding: 64px 0; }
 .experience .container { display: flex; flex-direction: column; gap: 40px; }
-.exp__row { display: flex; gap: 12px; align-items: stretch; width: 100%; }
+.exp__row { position: relative; display: flex; gap: 12px; align-items: stretch; width: 100%; }
+/* the highlight that slides between companies (positioned by GSAP) */
+.exp__marker {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 0;
+  height: 0;
+  border-radius: 12px;
+  background: var(--w10);
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+  z-index: 0;
+  will-change: transform, width, height;
+}
+/* The tail hangs off the highlighted card. It is translucent like the card, so
+   any overlap between the two would read as a bright patch — the box clips it
+   to the strip below the card's edge, and the tail slides out from under it. */
+.exp__marker-tailbox {
+  position: absolute;
+  left: 50%;
+  top: 100%;
+  width: 32px;
+  height: 16px;
+  margin-left: -16px;
+  overflow: hidden;
+  opacity: 0;
+  visibility: hidden;
+}
+.exp__marker-tail { display: block; width: 32px; height: 16px; }
 .exp__card {
   flex: 1 1 0;
   min-width: 0;
   display: flex;
   flex-direction: column;
-  gap: 24px;
+  gap: 32px;
   /* pin the period to the bottom so a two-line role (RU) can't shift it */
   justify-content: space-between;
   padding: 12px;
+  /* the outline is handed over to GSAP, which drops it on the highlighted card
+     only once the growing fill has reached the edges (see Experience.jsx) */
+  border: 1px solid var(--w10);
   border-radius: 12px;
 }
-.exp__card--active { background: var(--w10); }
+.exp__card { position: relative; z-index: 1; cursor: default; } /* sits above the marker */
 .exp__card--between { justify-content: space-between; }
 .exp__card-top { display: flex; gap: 16px; align-items: flex-start; width: 100%; }
 .exp__card-main { flex: 1 1 0; min-width: 0; display: flex; flex-direction: column; align-items: flex-start; }
@@ -491,12 +539,13 @@ button { font: inherit; color: inherit; background: none; border: none; cursor: 
   color: var(--white);
   white-space: nowrap;
 }
-.exp__divider { width: 1px; align-self: stretch; background: var(--w10); flex: none; }
+/* the hovered company's story — the box tweens between heights, so it clips */
+.exp__story { width: 100%; overflow: hidden; }
 .exp__text {
   font-family: var(--serif);
   font-weight: 400;
-  font-size: 20px;
-  line-height: 36px;
+  font-size: 16px;
+  line-height: 28px;
   color: var(--white);
   width: 100%;
 }
@@ -504,51 +553,94 @@ button { font: inherit; color: inherit; background: none; border: none; cursor: 
 /* ===== Works ===== */
 .works { background: var(--black); padding: 64px 0; }
 .works .container { display: flex; flex-direction: column; gap: 40px; }
-.works__head { display: flex; align-items: center; justify-content: space-between; width: 100%; }
-.works__toggle { display: flex; align-items: center; }
-.works__toggle-btn {
-  height: 40px;
-  padding: 4px 12px;
-  border-radius: 99999px;
-  font-family: var(--hs);
-  font-weight: 500;
-  font-size: 14px;
-  line-height: 24px;
-  color: var(--w60);
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-}
-.works__toggle-btn { cursor: pointer; transition: color 0.2s ease, background 0.2s ease; }
-.works__toggle-btn--active { background: var(--w10); color: var(--white); }
-.works__body { display: flex; flex-direction: column; gap: 40px; width: 100%; }
-.works__list { display: flex; flex-direction: column; gap: 40px; width: 100%; }
-.work { position: relative; display: flex; flex-direction: column; gap: 16px; align-items: center; width: 100%; cursor: pointer; will-change: transform; }
+.works__list { display: flex; flex-direction: column; gap: 24px; width: 100%; }
+
+/* a case is just its photo; the meta panel rides in from the right on hover */
+.work { position: relative; width: 100%; cursor: pointer; }
 .work__cover {
+  position: relative;
   aspect-ratio: 160 / 90;
   width: 100%;
-  background: var(--card);
-  border: 0.5px solid var(--w05);
+  /* 12px, same as the case hero image — the photo keeps its corners through
+     the FLIP into the case instead of jumping from one radius to another */
   border-radius: 12px;
+  background: #111111;
   overflow: hidden;
   cursor: pointer;
   will-change: transform;
 }
-.work__cover img {
+.work__img {
   width: 100%;
   height: 100%;
   object-fit: cover;
   display: block;
   will-change: transform;
 }
-.work__info { display: flex; gap: 32px; align-items: flex-start; width: 100%; }
-.work__titles { flex: 1 1 0; min-width: 0; display: flex; flex-direction: column; gap: 6px; align-items: flex-start; }
+/* Blur layer for the button/panel. It matches the photo's box so the panel's
+   own offsets are unchanged, and passes pointer events through to the panel. */
+.work__handle {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  opacity: 0;
+  filter: blur(12px);
+  transform: translateY(64px); /* parked below the photo until hover */
+  will-change: opacity, filter, transform;
+}
+/* invisible pointer target, cropped by the same timeline as the panel */
+.work__hitbox {
+  position: absolute;
+  inset: 0;
+  pointer-events: auto;
+  clip-path: inset(calc(100% - 88px) 0px 0px calc(100% - 88px));
+}
+.work__panel {
+  position: absolute;
+  pointer-events: none;
+  right: 0;
+  /* The photo's height is fractional (924 x 9/16 = 519.75), so the panel's
+     bottom edge and the photo's would antialias on the same half-pixel and the
+     photo would glow through as a hairline. Hanging 1px lower (the cover clips
+     it) puts the panel's edge off that boundary. The border keeps the content
+     32px above the card's real bottom edge. */
+  bottom: -1px;
+  border-bottom: 1px solid #1f1f1f;
+  width: 433px;
+  max-width: 100%;
+  display: flex;
+  gap: 32px;
+  align-items: flex-end;
+  padding: 32px;
+  background: #1f1f1f;
+  border-radius: 12px;
+  /* At rest the panel is cropped to a 40px round button around its icon, 24px
+     in from the corner (the JS rebuilds this in px so it can be animated).
+     A clipped-away area is not hit-testable, so only the button is hoverable. */
+  clip-path: inset(calc(100% - 65px) 24px 25px calc(100% - 64px) round 20px);
+  will-change: clip-path;
+}
+.work__main { flex: 1 1 0; min-width: 0; display: flex; flex-direction: column; gap: 24px; align-items: flex-start; }
+.work__titles { display: flex; flex-direction: column; gap: 6px; align-items: flex-start; width: 100%; }
 .work__title {
   font-family: var(--hs);
   font-weight: 500;
-  font-size: 24px;
-  line-height: 32px;
+  font-size: 40px;
+  line-height: 48px;
   color: var(--white);
+}
+.work__intro {
+  font-family: var(--serif);
+  font-weight: 400;
+  font-size: 20px;
+  line-height: 36px;
+  color: var(--white);
+  width: 100%;
+  /* case intros run longer than the design's sample copy — without a cap the
+     panel grows to swallow the whole photo */
+  display: -webkit-box;
+  -webkit-line-clamp: 4;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
 }
 .work__metrics {
   display: flex;
@@ -560,11 +652,37 @@ button { font: inherit; color: inherit; background: none; border: none; cursor: 
   line-height: 24px;
   color: var(--w40);
   white-space: nowrap;
+  padding-right: 44px; /* keeps clear of the icon parked in the corner */
+}
+/* Out of the flow, so the copy gets the panel's full width and the panel stays
+   short. The 32px offsets are fixed (not tied to the padding) because the
+   collapsed button is cropped around this exact spot. */
+.work__open {
+  position: absolute;
+  right: 32px;
+  bottom: 32px;
+  width: 24px;
+  height: 24px;
+  display: block;
+}
+
+/* nothing to hover on a touch screen — the panel just stays open */
+@media (hover: none) {
+  .work__panel { clip-path: none; }
+  .work__handle { opacity: 1; filter: none; transform: none; }
+  .work__hitbox { display: none; }
 }
 
 /* Show more */
 .works__more { display: flex; justify-content: center; width: 100%; }
 .works__more .pill { cursor: pointer; }
+.pill--ghost {
+  height: 56px;
+  padding: 16px 32px;
+  font-size: 16px;
+  background: var(--w10);
+  color: var(--white);
+}
 
 /* ===== Works — Table view ===== */
 .works__table { position: relative; width: 100%; }
@@ -626,13 +744,14 @@ button { font: inherit; color: inherit; background: none; border: none; cursor: 
   height: 157px;
   border-radius: 12px;
   overflow: hidden;
-  border: 0.5px solid var(--w05);
   background: var(--card);
   pointer-events: none;
   opacity: 0;
   will-change: transform, opacity;
 }
 .wt-thumb img { width: 100%; height: 100%; object-fit: cover; display: block; }
+/* per-row thumbnail — phones only, where there is no cursor preview */
+.wt-mini { display: none; }
 
 /* ===== About ===== */
 .about { background: var(--black); padding: 64px 0; }
@@ -668,6 +787,8 @@ button { font: inherit; color: inherit; background: none; border: none; cursor: 
   position: absolute;
   left: 50%;
   top: 50%;
+  border-radius: 8px;
+  overflow: hidden;
   background: #2a2a2a; /* grey placeholder */
   will-change: transform;
   user-select: none;
@@ -705,6 +826,9 @@ button { font: inherit; color: inherit; background: none; border: none; cursor: 
 .case-modal { position: fixed; inset: 0; z-index: 100; }
 .case-modal__panel { position: absolute; inset: 0; background: var(--bg); overflow: hidden; }
 .case-modal__scroll { position: absolute; inset: 0; overflow-y: auto; overflow-x: hidden; container-type: inline-size; overscroll-behavior: contain; }
+/* .header__blur carries the four masked layers; here it only has to sit above
+   the article that scrolls under it (the tools stay one layer higher) */
+.case-modal__blur { z-index: 7; }
 .case-modal__tools { position: absolute; top: 24px; z-index: 8; display: flex; gap: 8px; }
 .case-modal__tools--left { left: 24px; }
 .case-modal__tools--right { right: 24px; }
@@ -757,6 +881,59 @@ button { font: inherit; color: inherit; background: none; border: none; cursor: 
 .cs-nav__item:hover .cs-nav__name { opacity: 0.5; transform: translateX(0); }
 .cs-nav__item.is-active .cs-nav__tick { width: 30px; background: var(--white); }
 .cs-nav__item.is-active .cs-nav__name { opacity: 1; transform: translateX(0); }
+
+/* ---- contents dropdown (stands in for the rail once it is hidden) ----
+   Absolute inside the panel rather than fixed: the panel already fills the
+   viewport, so the coordinates are the home CTA's, without depending on
+   whether an ancestor happens to be transformed. */
+.cs-toc {
+  position: absolute;
+  left: 0;
+  right: 0; /* full width, so centring needs no transform of its own — GSAP
+               owns the y offset it rides in on */
+  bottom: 24px;
+  z-index: 9;
+  display: none; /* only shown where .cs-nav is not (see the responsive block) */
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  opacity: 0;
+  transform: translateY(96px); /* parked below the screen edge until needed */
+  pointer-events: none;
+  /* No will-change at all: `will-change: opacity` (like a real filter or a
+     translucent ancestor) turns this into a backdrop root, and the pills inside
+     would have nothing behind them left to frost. */
+}
+/* The closed list still takes up its space above the button (so opening it
+   shifts nothing), which is why nothing here is clickable by default — only
+   the button, and the list once it is actually open. Opacity is GSAP's. */
+.cs-toc.is-visible .cs-toc__btn { pointer-events: auto; }
+.cs-toc__menu { display: flex; flex-direction: column; align-items: center; gap: 8px; pointer-events: none; }
+.cs-toc.is-visible .cs-toc__menu.is-open { pointer-events: auto; }
+.cs-toc__btn,
+.cs-toc__item {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  height: 40px;
+  padding: 8px 20px;
+  max-width: calc(100vw - 32px);
+  border-radius: 99999px;
+  background: var(--pill);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  font-family: var(--hs);
+  font-weight: 500;
+  font-size: 14px;
+  line-height: 24px;
+  color: var(--white);
+  white-space: nowrap;
+  cursor: pointer;
+}
+.cs-toc__item.is-active { background: var(--white); color: var(--black); }
+.cs-toc__label { overflow: hidden; text-overflow: ellipsis; }
+.cs-toc__chev { flex: none; }
 
 /* article head */
 .cs-head { margin-bottom: 56px; }
@@ -926,3 +1103,243 @@ button { font: inherit; color: inherit; background: none; border: none; cursor: 
   letter-spacing: -0.8px; color: var(--white); margin-bottom: 12px;
 }
 .cs-endcta__text { font-family: var(--serif); font-size: 20px; line-height: 30px; color: var(--w60); margin-bottom: 28px; }
+
+/* =========================================================================
+   Responsive
+   The layout is one column at every size, so adapting is mostly a matter of
+   shrinking the side gutter (--gutter drives .container and the case grid
+   alike) and stepping the display type down. Below 768px the hero switches
+   from absolute placement to normal flow, and the rows that sit side by side
+   (experience, work info, table) stack.
+   ========================================================================= */
+
+/* ---- large laptops: the fixed 258px gutter is the first thing to give ---- */
+@media (max-width: 1280px) {
+  :root { --gutter: 104px; }
+}
+
+@media (max-width: 1080px) {
+  :root { --gutter: 56px; }
+
+  .section-title { font-size: 48px; line-height: 56px; letter-spacing: -1.44px; }
+  .hero__title { font-size: 64px; line-height: 66px; letter-spacing: -1.92px; width: 100%; }
+
+  /* the scroll-spy rail has no room left beside the article — the contents
+     move into the dropdown pinned to the bottom of the screen */
+  .cs-nav { display: none; }
+  .cs-toc { display: flex; }
+  .cs-title { font-size: 48px; line-height: 56px; letter-spacing: -1.44px; }
+  .wt-metrics { width: auto; flex: 0 1 auto; }
+}
+
+/* ---- tablets ---- */
+@media (max-width: 900px) {
+  :root { --gutter: 40px; }
+
+  .experience, .works, .about, .footer { padding: 56px 0; }
+  .work__panel { width: 62%; padding: 24px; gap: 24px; }
+  .work__title { font-size: 30px; line-height: 38px; }
+  .work__intro { font-size: 17px; line-height: 30px; }
+  .about__wheel { aspect-ratio: 4 / 3; }
+  .cs-columns { grid-template-columns: 1fr; gap: 24px; }
+
+  /* the title's fixed 807px column no longer fits, so the hero drops its
+     absolute placement and becomes a normal column from here down */
+  .hero__inner {
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    gap: 28px;
+    padding: 96px var(--gutter) 32px;
+  }
+  .hero__title,
+  .hero__nav {
+    position: static;
+    transform: none;
+    width: 100%;
+    max-width: none;
+    padding: 0; /* .hero__inner already carries the gutter here */
+  }
+  .hero__title { margin-top: auto; font-size: 56px; line-height: 58px; letter-spacing: -1.68px; }
+
+  /* three companies side by side leave no room for the names */
+  .exp__row { flex-direction: column; gap: 12px; }
+}
+
+/* ---- phones: the 360px layout from the mobile design ---- */
+@media (max-width: 767px) {
+  /* 360 - 2 x 12 = 336, the column the mobile design is drawn on */
+  :root { --gutter: 12px; --edge: 16px; }
+
+  /* --- chrome --- */
+  .header { padding: 12px var(--edge) 32px; }
+  .header__blur { height: 110px; }
+  .header__avatar { width: 48px; height: 48px; }
+  /* the name breaks onto two lines beside the avatar */
+  /* text-align: left — a <button> centres its text by default */
+  .header__name { font-size: 18px; line-height: 20px; white-space: normal; width: min-content; text-align: left; }
+  .header__actions { gap: 8px; }
+
+  /* Only the round menu button is left in the header row: the CV link moves
+     into the menu, and Telegram becomes a CTA fixed to the bottom edge. */
+  .header__actions .pill--grey,
+  .header__actions .pill--white { display: none; }
+  .kebab__pill--cv { display: inline-flex; }
+  .header__cta {
+    display: inline-flex;
+    position: fixed;
+    left: 50%;
+    bottom: 24px;
+    transform: translateX(-50%);
+    z-index: 30;
+  }
+
+  /* the button now sits at the right edge, so the menu opens leftward from it */
+  .kebab__menu { top: 44px; left: auto; right: 0; transform: none; align-items: flex-end; }
+  .kebab__pill { max-width: calc(100vw - 32px); }
+
+  /* --- hero: one centred column, the stamp above the title --- */
+  .hero { height: 100svh; }
+  .hero__inner {
+    justify-content: center;
+    align-items: center;
+    gap: 40px;
+    padding: 96px var(--gutter);
+  }
+  .hero__time {
+    display: block;
+    font-family: var(--hs);
+    font-weight: 500;
+    font-size: 14px;
+    line-height: 24px;
+    color: var(--white);
+    font-variant-numeric: tabular-nums; /* the minute ticking must not shift it */
+  }
+  .hero__title { margin-top: 0; font-size: 48px; line-height: 48px; letter-spacing: -1.44px; }
+  .hero__nav { justify-content: center; gap: 24px; }
+  .hero__nav-time { display: none; } /* shown above the title instead */
+
+  .content { border-radius: 32px 32px 0 0; }
+  .section-title { font-size: 32px; line-height: 40px; letter-spacing: -0.96px; }
+
+  /* --- sections --- */
+  .experience, .works, .about, .footer { padding: 32px 0; }
+  .experience { padding-top: 64px; }
+  /* the contact button floats over the bottom of the screen — leave the footer
+     enough room to clear it instead of sliding under it */
+  .footer { padding-bottom: 128px; }
+  .experience .container,
+  .works .container,
+  .about .container { gap: 32px; }
+
+  /* --- experience: a horizontal reel that bleeds to both screen edges --- */
+  .exp__row {
+    flex-direction: row;
+    gap: 12px;
+    /* the base rule pins this to 100% of the column, which with the negative
+       margins would end the reel 24px short of the right edge */
+    width: auto;
+    overflow-x: auto;
+    overflow-y: hidden;
+    scroll-snap-type: x proximity;
+    /* snapping aligns cards to the scrollport, which ignores the padding —
+       without this the card at rest would sit flush against the screen edge
+       instead of lining up with the section title */
+    scroll-padding-left: var(--gutter);
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+    margin: 0 calc(var(--gutter) * -1);
+    padding: 0 var(--gutter) 16px; /* the bottom strip is where the tail shows */
+  }
+  .exp__row::-webkit-scrollbar { display: none; }
+  .exp__card { flex: 0 0 240px; width: 240px; scroll-snap-align: start; }
+  .about__text, .exp__text { font-size: 16px; line-height: 28px; }
+
+  /* --- works: photo on top, meta panel under it inside a #111 card --- */
+  .works__list { gap: 12px; }
+  .work { background: #111111; border-radius: 16px; overflow: hidden; }
+  .work > .work__panel {
+    position: static;
+    width: 100%;
+    padding: 16px;
+    gap: 12px;
+    background: transparent; /* the card behind it already carries the colour */
+    border: 0;
+    border-radius: 0;
+    clip-path: none;
+  }
+  .work__main { gap: 16px; }
+  .work__titles { gap: 4px; }
+  .work__title { font-size: 24px; line-height: 32px; }
+  .work__intro { font-size: 14px; line-height: 24px; -webkit-line-clamp: 3; }
+  .work__metrics { padding-right: 0; flex-wrap: wrap; white-space: normal; gap: 4px 12px; }
+  /* in the flow the arrow is the panel's last item, sitting on its baseline */
+  .work > .work__panel .work__open { position: static; width: 16px; height: 16px; flex: none; }
+  .pill--ghost { height: 48px; padding: 12px 32px; font-size: 16px; }
+
+  /* the row is the title and a small cover, nothing else */
+  .wt-row { align-items: center; justify-content: space-between; gap: 16px; padding: 12px 0; }
+  .wt-name { font-size: 20px; line-height: 28px; }
+  .wt-metrics { display: none; }
+  .wt-mini {
+    display: block;
+    flex: none;
+    width: 88px;
+    height: 50px;
+    object-fit: cover;
+    border-radius: 8px;
+  }
+
+  /* --- about wheel: a wide, shallow band, clipped like the design's strip
+     (the ring is taller than 141px, so without this it would orbit out over
+     the paragraphs above and below) --- */
+  .about__wheel { aspect-ratio: 336 / 141; overflow: hidden; touch-action: pan-y; }
+  .wheel__tile--wide { width: 72px; height: 54px; }
+  .wheel__tile--tall { width: 54px; height: 72px; }
+
+  /* --- footer: centred, one item per line --- */
+  .footer .container { justify-content: center; }
+  .footer__row { flex-direction: column; align-items: center; gap: 12px; }
+  .footer__made { flex: none; justify-content: center; }
+  .footer__txt { white-space: normal; text-align: center; }
+
+  /* --- case pages --- */
+  /* the blur backdrop above keeps the tools legible, exactly as on the home
+     header (whose height this same class already steps down here) */
+  .case-modal__tools { top: 16px; }
+  .case-modal__tools--left { left: var(--edge); }
+  .case-modal__tools--right { right: var(--edge); }
+  .case-modal__hero { padding-top: 72px; }
+  .case-modal__article { padding: 48px var(--gutter) 96px; }
+
+  .cs-head { margin-bottom: 40px; }
+  .cs-title { font-size: 34px; line-height: 40px; letter-spacing: -1.02px; }
+  .cs-subtitle { font-size: 19px; line-height: 28px; }
+  .cs-meta { grid-template-columns: 1fr; gap: 16px; padding-bottom: 24px; }
+  .cs-lead { font-size: 19px; line-height: 32px; }
+  .cs-section { margin-top: 64px; }
+  .cs-section__title { font-size: 28px; line-height: 34px; letter-spacing: -0.5px; }
+  .cs-h2 { font-size: 24px; line-height: 30px; margin-top: 48px; }
+  .cs-h3 { font-size: 19px; line-height: 26px; margin-top: 40px; }
+  .cs-p, .cs-list, .cs-label, .cs-callout p, .cs-columns p { font-size: 16px; line-height: 28px; }
+  .cs-quote { padding-left: 20px; margin-top: 40px; }
+  .cs-quote p { font-size: 19px; line-height: 28px; }
+  .cs-callout { padding: 20px; gap: 12px; }
+  .cs-metrics { grid-template-columns: 1fr 1fr; gap: 12px; }
+  .cs-metric { padding: 18px; }
+  .cs-metric__val { font-size: 30px; line-height: 34px; }
+  .cs-figure { margin-top: 36px; }
+  .cs-people__role { min-width: 0; flex: 0 0 110px; font-size: 13px; }
+  .cs-lightbox { padding: 16px; }
+  .cs-readalso { margin-top: 64px; }
+  .cs-readalso__title,
+  .cs-endcta__title { font-size: 28px; line-height: 34px; letter-spacing: -0.5px; }
+  .cs-endcta { margin-top: 64px; padding-top: 40px; }
+  .cs-endcta__text { font-size: 17px; line-height: 28px; }
+}
+
+/* touch devices have no cursor to hint with, and no scrollbar to overlay */
+@media (hover: none) {
+  .wt-thumb, .wt-highlight { display: none; }
+  .scrollbar { display: none; }
+}

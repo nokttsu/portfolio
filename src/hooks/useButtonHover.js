@@ -1,13 +1,12 @@
 import { useEffect } from 'react'
 import gsap from 'gsap'
 
-// Every button-ish control on the site (header actions, kebab pills, view tabs,
+// Every button-ish control on the site (header actions, kebab pills,
 // Show more, case-modal buttons…) shrinks a touch on hover.
 const SELECTOR = [
   '.pill',
   '.header__icon-btn',
   '.kebab__pill',
-  '.works__toggle-btn',
   '.cs-head__cta',
 ].join(',')
 

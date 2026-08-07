@@ -12,6 +12,9 @@ export default function Header() {
 
   const LINKS = [
     { label: site.email, copy: true },
+    // phones have no room for the CV pill in the header row, so it lives in the
+    // menu there (hidden here on wider screens — see the responsive CSS)
+    { label: t('openCV'), href: site.cvUrl, cls: 'kebab__pill--cv' },
     ...(site.links || []),
     { label: t('langToggle'), lang: true },
   ]
@@ -110,7 +113,7 @@ export default function Header() {
     toggleLang()
   }
 
-  return (
+  const header = (
     <header className="header" data-anim="header">
       {/* progressive blur backdrop (stacked masked layers) */}
       <div className="header__blur" aria-hidden="true">
@@ -163,7 +166,13 @@ export default function Header() {
                   {l.label}
                 </button>
               ) : (
-                <a className="kebab__pill" href={l.href} key={l.label}>
+                <a
+                  className={`kebab__pill${l.cls ? ` ${l.cls}` : ''}`}
+                  href={l.href}
+                  key={l.label}
+                  target="_blank"
+                  rel="noreferrer"
+                >
                   {l.label}
                 </a>
               )
@@ -175,5 +184,18 @@ export default function Header() {
         <a className="pill pill--white" href={site.telegram} target="_blank" rel="noreferrer">{t('contact')}</a>
       </div>
     </header>
+  )
+
+  // On phones the contact button leaves the header row and becomes a CTA
+  // pinned to the bottom of the screen. It cannot live inside <header>: GSAP
+  // transforms that element on the intro, and a transformed ancestor makes
+  // `position: fixed` resolve against it instead of the viewport.
+  return (
+    <>
+      {header}
+      <a className="header__cta pill pill--white" href={site.telegram} target="_blank" rel="noreferrer">
+        {t('contact')}
+      </a>
+    </>
   )
 }
