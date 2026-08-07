@@ -37,13 +37,22 @@ export default function useHomeAnimation(scopeRef) {
           invalidateOnRefresh: true,
         },
       })
+      // On a phone the video is the whole screen, and pulling it back would
+      // frame it in bare background on every side — there it only fades.
+      const phone = window.matchMedia('(max-width: 767px)').matches
       heroOut
         // "Slides Pinning" transition (GreenSock pen bGRdvMy): the hero scales
         // back and fades out as the next block slides up over it.
         .fromTo(
           q('.hero'),
           { scale: 1, autoAlpha: 1, borderRadius: 0 },
-          { scale: 0.7, autoAlpha: 0.5, borderRadius: 24, duration: 0.9, ease: 'none' },
+          {
+            scale: phone ? 1 : 0.7,
+            autoAlpha: 0.5,
+            borderRadius: phone ? 0 : 24,
+            duration: 0.9,
+            ease: 'none',
+          },
           0
         )
         .to(q('.hero'), { autoAlpha: 0, duration: 0.1, ease: 'none' }, 0.9)
