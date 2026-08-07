@@ -1,4 +1,4 @@
-import { useState, useEffect, useMemo, useRef } from 'react'
+import { useState, useEffect, useMemo } from 'react'
 import gsap from 'gsap'
 import { asset } from '../asset.js'
 import { ScrollToPlugin } from 'gsap/ScrollToPlugin'
@@ -34,80 +34,10 @@ function useMoscowStamp() {
   return stamp
 }
 
-const BLACK = '#000000'
-
-/**
- * The strip along the bottom of a phone browser is the toolbar, and a page
- * cannot draw into it — the one thing it can do is say what colour it should
- * be. So the hero keeps that colour in step with the bottom edge of its own
- * video: the strip reads as part of the footage instead of a black band, and
- * goes back to black once the content has scrolled over the hero.
- */
-function useToolbarTint(videoRef) {
-  useEffect(() => {
-    const meta = document.querySelector('meta[name="theme-color"]')
-    const video = videoRef.current
-    if (!meta || !video) return
-
-    const canvas = document.createElement('canvas')
-    canvas.width = 8
-    canvas.height = 2
-    const ctx = canvas.getContext('2d', { willReadFrequently: true })
-    let last = ''
-    let lastRgb = null
-    const apply = (css, rgb) => {
-      // only when the footage has actually moved on: Safari eases between bar
-      // colours, and nudging it every half-second would keep it shimmering
-      if (css === last) return
-      if (rgb && lastRgb && rgb.every((v, i) => Math.abs(v - lastRgb[i]) < 8)) return
-      meta.setAttribute('content', css)
-      last = css
-      lastRgb = rgb || null
-    }
-
-    const sample = () => {
-      // past the hero — or behind an open case — the toolbar sits over the
-      // black page, as it should
-      if (window.scrollY > window.innerHeight * 0.6 || document.querySelector('.case-modal')) {
-        return apply(BLACK)
-      }
-      if (!video.videoWidth) return
-      // the video is object-fit: cover, so its own bottom edge is what shows
-      const strip = Math.max(2, Math.round(video.videoHeight * 0.06))
-      try {
-        ctx.drawImage(video, 0, video.videoHeight - strip, video.videoWidth, strip, 0, 0, 8, 2)
-      } catch {
-        return // a tainted frame — leave whatever colour is set
-      }
-      const px = ctx.getImageData(0, 0, 8, 2).data
-      let r = 0
-      let g = 0
-      let b = 0
-      for (let i = 0; i < px.length; i += 4) {
-        r += px[i]
-        g += px[i + 1]
-        b += px[i + 2]
-      }
-      const n = px.length / 4
-      const rgb = [Math.round(r / n), Math.round(g / n), Math.round(b / n)]
-      apply(`rgb(${rgb[0]}, ${rgb[1]}, ${rgb[2]})`, rgb)
-    }
-
-    sample()
-    const id = setInterval(sample, 500)
-    return () => {
-      clearInterval(id)
-      meta.setAttribute('content', BLACK)
-    }
-  }, [videoRef])
-}
-
 export default function Hero() {
   const { content, tr } = useLang()
   const hero = content.hero
   const stamp = useMoscowStamp()
-  const videoRef = useRef(null)
-  useToolbarTint(videoRef)
 
   const scrollTo = (e, target) => {
     e.preventDefault()
@@ -122,7 +52,6 @@ export default function Hero() {
     <section className="hero" id="top">
       <video
         className="hero__bg"
-        ref={videoRef}
         src={asset(hero.video)}
         poster={asset(hero.poster)}
         autoPlay

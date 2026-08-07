@@ -373,13 +373,17 @@ button { font: inherit; color: inherit; background: none; border: none; cursor: 
 
 /* ===== Hero (fixed behind the page; the black content slides up over it) ===== */
 .hero {
-  position: fixed;
-  inset: 0;
+  /* Sticky, not fixed. A phone browser insets fixed elements to the *visible*
+     viewport, so the video stopped dead at the toolbar's top edge; sticky is
+     ordinary in-flow content, which is what shows through the translucent bar
+     the way it does on any other site. It also means the hero occupies its own
+     viewport of the page — hence no margin on .content below. */
+  position: sticky;
+  top: 0;
   width: 100%;
   height: 100vh;
   /* the *large* viewport explicitly: on a phone `vh` can resolve to the small
-     one (the browser's toolbars taken off), which left the video ending in a
-     band of bare background where the toolbar sits */
+     one, with the browser's toolbars taken off */
   height: 100lvh;
   overflow: hidden;
   background: var(--bg);
@@ -401,12 +405,11 @@ button { font: inherit; color: inherit; background: none; border: none; cursor: 
   z-index: 0;
 }
 
-/* page content sits above the hero and starts one viewport down */
+/* page content sits above the hero, which is the viewport-tall block before it */
 .content {
   position: relative;
   z-index: 1;
-  margin-top: 100vh;
-  margin-top: 100lvh; /* must match the hero's height exactly, or a band shows */
+  margin-top: 0;
   background: var(--black);
   border-radius: 64px 64px 0 0; /* animated down to 0 with scroll (see useHomeAnimation) */
   overflow: hidden; /* clip child section backgrounds to the rounded top corners */
